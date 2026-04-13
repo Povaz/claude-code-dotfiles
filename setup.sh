@@ -20,6 +20,7 @@ BACKUP_BASE="${TARGET_DIR}/backups"
 info() { printf '\033[0;34m[INFO]\033[0m %s\n' "$1"; }
 ok()   { printf '\033[0;32m[OK]\033[0m %s\n' "$1"; }
 warn() { printf '\033[0;33m[WARN]\033[0m %s\n' "$1"; }
+die()  { printf '\033[0;31m[ERROR]\033[0m %s\n' "$1" >&2; exit 1; }  # fatal: prints to stderr and exits
 
 # ---------------------------------------------------------------------------
 # Items the setup script should never symlink
@@ -47,17 +48,33 @@ is_correctly_linked() {
 # ---------------------------------------------------------------------------
 echo ""
 echo "  ┌─────────────────────────────────────────────┐"
-echo "  │  Claude Code Dotfiles — Setup                │"
+echo "  │  Claude Code Dotfiles — Setup               │"
 echo "  └─────────────────────────────────────────────┘"
 echo ""
 info "Repo:   ${REPO_DIR}"
 info "Target: ${TARGET_DIR}"
+info "Backup: ${BACKUP_BASE}"
+echo ""
+
+# ---------------------------------------------------------------------------
+# Manual confirmation — let the user verify paths before touching anything
+# ---------------------------------------------------------------------------
+read -r -p "  Proceed with these paths? [y/N] " _confirm
+case "$_confirm" in
+    [yY][eE][sS]|[yY]) ;;
+    *) die "Aborted." ;;
+esac
 echo ""
 
 # ---------------------------------------------------------------------------
 # Ensure target directory exists
 # ---------------------------------------------------------------------------
 mkdir -p "$TARGET_DIR"
+# Fail early if we can't write to TARGET_DIR — avoids partial state from a mid-run
+# permission error (e.g. directory owned by another user or chmod 555).
+if [ ! -w "$TARGET_DIR" ]; then
+    die "Target directory is not writable: ${TARGET_DIR}"
+fi
 
 # ---------------------------------------------------------------------------
 # Discover items to manage (top-level files and dirs, minus IGNORE list)
@@ -74,6 +91,9 @@ if [ ${#items[@]} -eq 0 ]; then
     warn "No items found in repo to symlink."
     exit 0
 fi
+
+# Sort for deterministic output — find(1) returns filesystem order, which varies across runs.
+IFS=$'\n' items=($(printf '%s\n' "${items[@]}" | sort))
 
 info "Found ${#items[@]} item(s) to manage: ${items[*]}"
 echo ""
@@ -103,7 +123,9 @@ if [ ${#needs_backup[@]} -gt 0 ]; then
     mkdir -p "$backup_dir"
     info "Backing up ${#needs_backup[@]} existing item(s) to ${backup_dir}"
     for name in "${needs_backup[@]}"; do
-        mv "${TARGET_DIR}/${name}" "${backup_dir}/${name}"
+        # set -e would abort on mv failure, but || die gives a formatted [ERROR] message
+        # instead of a raw shell error — consistent with the rest of the output style.
+        mv "${TARGET_DIR}/${name}" "${backup_dir}/${name}" || die "Failed to back up: ${name}"
         ok "Backed up: ${name}"
     done
     echo ""
@@ -121,6 +143,13 @@ for name in "${items[@]}"; do
         ok "Already linked: ${name}"
         skipped=$((skipped + 1))
     else
+        # Guard against broken symlinks: source could disappear between discovery
+        # and this pass (race condition). Warn and skip rather than die so the
+        # rest of the items still get linked.
+        if [ ! -e "$source" ]; then
+            warn "Source no longer exists, skipping: ${name}"
+            continue
+        fi
         ln -sfn "$source" "$target"
         ok "Linked: ${name}"
         linked=$((linked + 1))
