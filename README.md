@@ -8,6 +8,15 @@ Claude Code stores its configuration in `~/.claude/`. This repo turns that direc
 
 No files are copied — the symlinks point directly into your clone. Edit in the repo, commit, push, and every linked machine sees the update on the next `git pull`.
 
+## Branches: clean template vs. personal configs
+
+This repo is published in two states:
+
+- **`main`** — the **clean template**. Setup scripts plus empty `dotclaude/` placeholders (`.gitkeep` files under `agents/`, `commands/`, `skills/`, a minimal `CLAUDE.md`, and default `settings.json` / `statusline.sh`). No personal agents, commands, or skills. This is the intended starting point for anyone adopting these dotfiles.
+- **`povaz/main`** — the **author's personal config**, layered on top of the template. Adds personal agents, commands, and skills. Browse [`povaz/main`](https://github.com/Povaz/claude-code-dotfiles/tree/povaz/main) for a working example, but don't check it out as your own — [create your own branch](#setting-up-your-own-personal-branch) off `main` instead.
+
+The naming convention `<username>/main` is a hint, not a requirement — any branch name works.
+
 ## Repo Structure
 
 ```
@@ -83,25 +92,37 @@ This removes every symlink in `~/.claude/` that points into this repo and replac
 
 Anything **outside** `dotclaude/` — including the scripts, the repo-root `CLAUDE.md`, and the repo-root `.claude/` — is repo plumbing and is never synced into `~/.claude/`. Credentials and machine-local state are never touched by `setup.sh` or `teardown.sh`.
 
-## Multiple Configurations
+## Setting up your own personal branch
 
-### Git branches
-
-Keep different configs on different branches:
+`main` is intentionally clean so anyone can clone it as a fresh starting point. To layer your own agents, commands, and skills on top, branch off `main`:
 
 ```bash
-# Personal machine
-git checkout personal
-./setup.sh
+git clone https://github.com/Povaz/claude-code-dotfiles.git
+cd claude-code-dotfiles
 
-# Work machine
-git checkout company
+# Branch off main for your personal config
+git checkout -b <your-username>/main
+git push -u origin <your-username>/main
+
 ./setup.sh
 ```
 
-### Separate clones
+Add your content under `dotclaude/` and commit it to your branch. When the template evolves on `main`, pull the updates into your branch:
 
-Alternatively, maintain two clones (e.g. `claude-code-dotfiles-personal` and `claude-code-dotfiles-work`) and run the appropriate `setup.sh`.
+```bash
+git checkout <your-username>/main
+git merge main
+```
+
+Because your personal content was added **after** branching from `main`, it's a branch-exclusive change — future `main → <your-username>/main` merges will never try to remove it. (This is also why `code-reviewer.md` lives on `povaz/main` rather than `main`: it was removed from `main` *before* `povaz/main` branched, so `povaz/main` re-introduces it as its own commit.)
+
+### Multiple personal branches
+
+You can keep several per-context branches off `main` — e.g., `<username>/personal` and `<username>/work` — and `git checkout` between them when switching machines.
+
+### Separate clones (alternative)
+
+If you prefer physically separate checkouts — e.g., one per machine — maintain multiple clones of the repo and run `setup.sh` in each.
 
 ## Migrating From the Old Layout
 
