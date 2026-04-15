@@ -1,5 +1,12 @@
+# Backups and temporary files
 .DS_Store
 *.bak
 backups/
+/temp
+
+# IDE and editor files
 .idea/
+
+# Local settings for Claude
 .claude/settings.local.json
+
