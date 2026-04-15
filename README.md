@@ -4,7 +4,7 @@ Portable Claude Code configuration — sync agents, commands, settings & skills 
 
 ## How It Works
 
-Claude Code stores its configuration in `~/.claude/`. This repo turns that directory into a Git-managed set of **symlinks**: each top-level file or folder in this repo gets linked into `~/.claude/`, so changes you commit here are instantly picked up by Claude Code on any machine where you've run `setup.sh`.
+Claude Code stores its configuration in `~/.claude/`. This repo turns that directory into a Git-managed set of **symlinks**: each entry under `dotclaude/` gets linked into `~/.claude/`, so changes you commit here are instantly picked up by Claude Code on any machine where you've run `setup.sh`.
 
 No files are copied — the symlinks point directly into your clone. Edit in the repo, commit, push, and every linked machine sees the update on the next `git pull`.
 
@@ -12,21 +12,24 @@ No files are copied — the symlinks point directly into your clone. Edit in the
 
 ```
 claude-code-dotfiles/
-├── setup.sh           # Creates symlinks from ~/.claude/ → this repo
+├── setup.sh           # Creates symlinks from ~/.claude/ → dotclaude/
 ├── teardown.sh        # Removes symlinks, leaves standalone local copies
-├── status.sh          # Dev utility — shows current symlink state (not synced)
+├── status.sh          # Dev utility — shows current symlink state
 ├── README.md
 ├── LICENSE
 ├── .gitignore
-├── CLAUDE.md          # Global instructions Claude reads every session
-├── settings.json      # Claude Code settings
-├── statusline.sh      # Status bar script invoked by Claude Code
-├── commands/          # Custom slash commands
-├── agents/            # Custom agent definitions
-└── skills/            # Custom skills
+├── CLAUDE.md          # Project-level instructions for working on THIS repo
+├── .claude/           # Project-level Claude config for THIS repo (commitable)
+└── dotclaude/         # << everything in here is synced to ~/.claude/ >>
+    ├── CLAUDE.md      # Global instructions Claude reads every session
+    ├── settings.json  # Claude Code settings
+    ├── statusline.sh  # Status bar script invoked by Claude Code
+    ├── commands/      # Custom slash commands
+    ├── agents/        # Custom agent definitions
+    └── skills/        # Custom skills
 ```
 
-The repo structure **is** the config. `setup.sh` doesn't maintain a hardcoded list — it scans the repo root and symlinks everything it finds (minus a small ignore list). Add a new file or directory to the repo, re-run `setup.sh`, and it gets linked automatically.
+`dotclaude/` **is** the sync manifest. `setup.sh` doesn't maintain an ignore list — it links every entry under `dotclaude/` and nothing else. Anything outside `dotclaude/` is repo plumbing (scripts, docs, the project-level `CLAUDE.md` / `.claude/` used when Claude Code runs inside this repo) and is never synced. Add a new file or directory under `dotclaude/`, re-run `setup.sh`, and it gets linked automatically.
 
 ## Quick Start
 
@@ -41,7 +44,7 @@ cd claude-code-dotfiles
 
 `setup.sh` will:
 1. Back up any existing files in `~/.claude/` that would be overwritten (into `~/.claude/backups/<timestamp>/`).
-2. Create symlinks from `~/.claude/<item>` → `<repo>/<item>`.
+2. Create symlinks from `~/.claude/<item>` → `<repo>/dotclaude/<item>` for every entry under `dotclaude/`.
 3. Skip items that are already correctly linked.
 
 ## Syncing Between Machines
@@ -68,17 +71,17 @@ This removes every symlink in `~/.claude/` that points into this repo and replac
 
 ## What Gets Synced
 
-| Synced | NOT Synced (private/local) |
+| Synced (everything under `dotclaude/`) | NOT Synced (private/local) |
 |---|---|
-| `CLAUDE.md` | `.credentials.json` |
-| `settings.json` | `settings.local.json` |
-| `statusline.sh` | `projects/` |
-| `commands/` | `statsig/` |
-| `agents/` | `backups/` |
-| `skills/` | Cache, sessions, telemetry, etc. |
-| Any file/dir you add to the repo | |
+| `dotclaude/CLAUDE.md` | `.credentials.json` |
+| `dotclaude/settings.json` | `settings.local.json` |
+| `dotclaude/statusline.sh` | `projects/` |
+| `dotclaude/commands/` | `statsig/` |
+| `dotclaude/agents/` | `backups/` |
+| `dotclaude/skills/` | Cache, sessions, telemetry, etc. |
+| Any file/dir you add under `dotclaude/` | |
 
-Credentials and machine-local state are never touched by `setup.sh` or `teardown.sh`.
+Anything **outside** `dotclaude/` — including the scripts, the repo-root `CLAUDE.md`, and the repo-root `.claude/` — is repo plumbing and is never synced into `~/.claude/`. Credentials and machine-local state are never touched by `setup.sh` or `teardown.sh`.
 
 ## Multiple Configurations
 
@@ -100,22 +103,20 @@ git checkout company
 
 Alternatively, maintain two clones (e.g. `claude-code-dotfiles-personal` and `claude-code-dotfiles-work`) and run the appropriate `setup.sh`.
 
-## Auto-Ignored Files
+## Migrating From the Old Layout
 
-`setup.sh` skips the following items and will never symlink them:
+Earlier versions of this repo symlinked each top-level file/directory directly. If you have an existing install with those old-style symlinks in `~/.claude/`, migrate with:
 
-| Ignored item | Reason |
-|---|---|
-| `setup.sh` | The setup script itself |
-| `teardown.sh` | The teardown script itself |
-| `status.sh` | Dev utility for inspecting symlink state |
-| `README.md` | Repo documentation |
-| `LICENSE` | Repo license |
-| `.git` | Git metadata |
-| `.gitignore` | Git ignore rules |
-| `.DS_Store` | macOS Finder metadata |
+```bash
+cd ~/claude-code-dotfiles             # wherever your clone lives
+git fetch
+git checkout <last-old-commit-sha>    # a commit before the dotclaude/ refactor
+./teardown.sh                         # converts old symlinks → real files in ~/.claude/
+git checkout main && git pull         # pull the new layout
+./setup.sh                            # creates symlinks into dotclaude/
+```
 
-To add more items to the ignore list, edit the `is_ignored()` function in `setup.sh` — it's a simple `case` statement.
+The intermediate `teardown.sh` step leaves `~/.claude/` with standalone real files, so Claude Code stays functional between the two steps even if something goes wrong.
 
 ## Notes
 

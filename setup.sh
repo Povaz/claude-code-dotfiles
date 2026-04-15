@@ -2,15 +2,17 @@
 set -euo pipefail
 
 # =============================================================================
-# setup.sh — Symlink repo contents into ~/.claude/
+# setup.sh — Symlink dotclaude/ contents into ~/.claude/
 #
-# Auto-discovers top-level files and directories in this repo (minus an IGNORE
-# list) and creates symlinks from ~/.claude/<item> → <repo>/<item>.
+# Creates symlinks from ~/.claude/<item> → <repo>/dotclaude/<item> for every
+# entry under dotclaude/. Anything outside dotclaude/ is repo plumbing and is
+# never synced — no ignore list to maintain.
 # Backs up any pre-existing items before overwriting.
 # Safe to re-run — skips items already correctly linked.
 # =============================================================================
 
 REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
+DOTCLAUDE_DIR="${REPO_DIR}/dotclaude"
 TARGET_DIR="${HOME}/.claude"
 BACKUP_BASE="${TARGET_DIR}/backups"
 
@@ -21,18 +23,6 @@ info() { printf '\033[0;34m[INFO]\033[0m %s\n' "$1"; }
 ok()   { printf '\033[0;32m[OK]\033[0m %s\n' "$1"; }
 warn() { printf '\033[0;33m[WARN]\033[0m %s\n' "$1"; }
 die()  { printf '\033[0;31m[ERROR]\033[0m %s\n' "$1" >&2; exit 1; }  # fatal: prints to stderr and exits
-
-# ---------------------------------------------------------------------------
-# Items the setup script should never symlink
-# ---------------------------------------------------------------------------
-is_ignored() {
-    case "$1" in
-        setup.sh|teardown.sh|status.sh|README.md|LICENSE|.git|.gitignore|.DS_Store|.idea|.claude)
-            return 0 ;;
-        *)
-            return 1 ;;
-    esac
-}
 
 # ---------------------------------------------------------------------------
 # Check if a target path is already a symlink pointing to the expected source
@@ -51,9 +41,10 @@ echo "  ┌───────────────────────
 echo "  │  Claude Code Dotfiles — Setup               │"
 echo "  └─────────────────────────────────────────────┘"
 echo ""
-info "Repo:   ${REPO_DIR}"
-info "Target: ${TARGET_DIR}"
-info "Backup: ${BACKUP_BASE}"
+info "Repo:      ${REPO_DIR}"
+info "Dotclaude: ${DOTCLAUDE_DIR}"
+info "Target:    ${TARGET_DIR}"
+info "Backup:    ${BACKUP_BASE}"
 echo ""
 
 # ---------------------------------------------------------------------------
@@ -67,8 +58,12 @@ esac
 echo ""
 
 # ---------------------------------------------------------------------------
-# Ensure target directory exists
+# Ensure source and target directories are usable
 # ---------------------------------------------------------------------------
+if [ ! -d "$DOTCLAUDE_DIR" ]; then
+    die "Source directory not found: ${DOTCLAUDE_DIR} (expected dotclaude/ in repo root)"
+fi
+
 mkdir -p "$TARGET_DIR"
 # Fail early if we can't write to TARGET_DIR — avoids partial state from a mid-run
 # permission error (e.g. directory owned by another user or chmod 555).
@@ -77,18 +72,16 @@ if [ ! -w "$TARGET_DIR" ]; then
 fi
 
 # ---------------------------------------------------------------------------
-# Discover items to manage (top-level files and dirs, minus IGNORE list)
+# Discover items to manage — every top-level entry under dotclaude/.
+# No ignore list: if you don't want it synced, don't put it in dotclaude/.
 # ---------------------------------------------------------------------------
 items=()
 while IFS= read -r -d '' entry; do
-    name="$(basename "$entry")"
-    if ! is_ignored "$name"; then
-        items+=("$name")
-    fi
-done < <(find "$REPO_DIR" -maxdepth 1 -mindepth 1 -print0)
+    items+=("$(basename "$entry")")
+done < <(find "$DOTCLAUDE_DIR" -maxdepth 1 -mindepth 1 -print0)
 
 if [ ${#items[@]} -eq 0 ]; then
-    warn "No items found in repo to symlink."
+    warn "No items found under ${DOTCLAUDE_DIR} to symlink."
     exit 0
 fi
 
@@ -106,7 +99,7 @@ echo ""
 needs_backup=()
 for name in "${items[@]}"; do
     target="${TARGET_DIR}/${name}"
-    source="${REPO_DIR}/${name}"
+    source="${DOTCLAUDE_DIR}/${name}"
     if is_correctly_linked "$target" "$source"; then
         continue
     elif [ -e "$target" ] || [ -L "$target" ]; then
@@ -138,7 +131,7 @@ linked=0
 skipped=0
 for name in "${items[@]}"; do
     target="${TARGET_DIR}/${name}"
-    source="${REPO_DIR}/${name}"
+    source="${DOTCLAUDE_DIR}/${name}"
     if is_correctly_linked "$target" "$source"; then
         ok "Already linked: ${name}"
         skipped=$((skipped + 1))

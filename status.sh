@@ -8,6 +8,7 @@ set -euo pipefail
 # =============================================================================
 
 REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
+DOTCLAUDE_DIR="${REPO_DIR}/dotclaude"
 TARGET_DIR="${HOME}/.claude"
 BACKUP_BASE="${TARGET_DIR}/backups"
 
@@ -17,18 +18,6 @@ BACKUP_BASE="${TARGET_DIR}/backups"
 info() { printf '\033[0;34m[INFO]\033[0m %s\n' "$1"; }
 ok()   { printf '\033[0;32m[OK]\033[0m %s\n' "$1"; }
 warn() { printf '\033[0;33m[WARN]\033[0m %s\n' "$1"; }
-
-# ---------------------------------------------------------------------------
-# Items the setup script never symlinks (must match setup.sh)
-# ---------------------------------------------------------------------------
-is_ignored() {
-    case "$1" in
-        setup.sh|teardown.sh|status.sh|README.md|LICENSE|.git|.gitignore|.DS_Store|.idea|.claude)
-            return 0 ;;
-        *)
-            return 1 ;;
-    esac
-}
 
 # ---------------------------------------------------------------------------
 # Check if a target path is already a symlink pointing to the expected source
@@ -47,24 +36,25 @@ echo "  ┌───────────────────────
 echo "  │  Claude Code Dotfiles — Status              │"
 echo "  └─────────────────────────────────────────────┘"
 echo ""
-info "Repo:   ${REPO_DIR}"
-info "Target: ${TARGET_DIR}"
-info "Backup: ${BACKUP_BASE}"
+info "Repo:      ${REPO_DIR}"
+info "Dotclaude: ${DOTCLAUDE_DIR}"
+info "Target:    ${TARGET_DIR}"
+info "Backup:    ${BACKUP_BASE}"
 echo ""
 
 # ---------------------------------------------------------------------------
-# Discover managed items (top-level repo contents, minus ignore list)
+# Discover managed items — every top-level entry under dotclaude/.
+# Must match setup.sh: no ignore list, dotclaude/ is the source of truth.
 # ---------------------------------------------------------------------------
 items=()
-while IFS= read -r -d '' entry; do
-    name="$(basename "$entry")"
-    if ! is_ignored "$name"; then
-        items+=("$name")
-    fi
-done < <(find "$REPO_DIR" -maxdepth 1 -mindepth 1 -print0)
+if [ -d "$DOTCLAUDE_DIR" ]; then
+    while IFS= read -r -d '' entry; do
+        items+=("$(basename "$entry")")
+    done < <(find "$DOTCLAUDE_DIR" -maxdepth 1 -mindepth 1 -print0)
+fi
 
 if [ ${#items[@]} -eq 0 ]; then
-    info "No managed items found in repo."
+    info "No managed items found under ${DOTCLAUDE_DIR}."
 else
     IFS=$'\n' items=($(printf '%s\n' "${items[@]}" | sort))
 
@@ -80,7 +70,7 @@ else
 
     for name in "${items[@]}"; do
         target="${TARGET_DIR}/${name}"
-        source="${REPO_DIR}/${name}"
+        source="${DOTCLAUDE_DIR}/${name}"
         if is_correctly_linked "$target" "$source"; then
             ok "  Linked:     ${name}  →  ${target}"
             linked=$((linked + 1))

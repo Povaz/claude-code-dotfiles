@@ -67,17 +67,20 @@ info "Found ${#symlinks[@]} symlink(s) to restore."
 echo ""
 
 # ---------------------------------------------------------------------------
-# Replace each symlink with a real copy from the repo
+# Replace each symlink with a real copy of whatever it pointed at.
+# We resolve the source from the symlink itself (readlink) rather than assuming
+# a fixed layout — this stays correct across repo reorganizations (e.g., files
+# living under dotclaude/ vs. at the repo root).
 # ---------------------------------------------------------------------------
 restored=0
 for path in "${symlinks[@]}"; do
     name="$(basename "$path")"
-    source="${REPO_DIR}/${name}"
+    source="$(readlink "$path")"
 
     # Remove the symlink
     rm "$path"
 
-    # Copy the current repo version as a real file or directory
+    # Copy whatever the symlink was pointing at as a real file or directory
     if [ -d "$source" ]; then
         cp -R "$source" "$path"
         ok "Restored directory: ${name}"
