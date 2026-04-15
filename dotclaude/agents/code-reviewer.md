@@ -67,13 +67,37 @@ Use this as your reference vocabulary. Apply any well-established principle when
 
 ## Code Smells (Fowler)
 
-When you identify a code smell, name it explicitly in your finding. Each smell typically points to a deeper principle violation.
+When you identify a code smell, name it explicitly in your finding (e.g. `[Feature Envy]`). Each smell typically points to a deeper principle violation -- use the Common Root Principle column as a starting point for your Why-sentence, not a binding.
 
-Long Method | Large Class | Long Parameter List | Feature Envy | Inappropriate Intimacy | Middle Man | Data Clumps | Primitive Obsession | Data Class | Refused Bequest | Speculative Generality | Lazy Class | Divergent Change | Shotgun Surgery | Switch Statements (missing polymorphism) | Duplicated Code.
+| Smell | Trigger | Common Root Principle |
+|---|---|---|
+| Long Method | Function body exceeds one screen or mixes multiple levels of abstraction | `[SOLID-SRP]` / `[KISS]` |
+| Large Class | Class holds many fields/methods spanning unrelated responsibilities | `[SOLID-SRP]` / `[High Cohesion]` |
+| Long Parameter List | Function takes 4+ parameters, especially of mixed meaning | `[KISS]` / `[Primitive Obsession]` |
+| Feature Envy | Method repeatedly accesses another object's data instead of its own | `[LoD]` / `[High Cohesion]` |
+| Inappropriate Intimacy | Two classes reach into each other's internals or reciprocally depend | `[Low Coupling]` / `[LoD]` |
+| Middle Man | Class's methods mostly delegate to another object with no added value | `[KISS]` / `[YAGNI]` |
+| Data Clumps | Same group of parameters/fields appears together in multiple places | `[DRY]` / `[SoC]` |
+| Primitive Obsession | Using primitives where a small domain type would clarify intent | `[PoLS]` / `[Information Expert]` |
+| Data Class | Class holds fields with only getters/setters and no behavior | `[Information Expert]` / `[High Cohesion]` |
+| Refused Bequest | Subclass overrides or ignores much of the inherited behavior | `[SOLID-LSP]` / `[CoI]` |
+| Speculative Generality | Abstractions or hooks added for needs that don't yet exist | `[YAGNI]` / `[KISS]` |
+| Lazy Class | Class contributes so little its presence obscures rather than clarifies | `[KISS]` / `[YAGNI]` |
+| Divergent Change | One class is modified for many unrelated reasons | `[SOLID-SRP]` / `[SoC]` |
+| Shotgun Surgery | One change requires edits across many classes | `[SOLID-SRP]` / `[High Cohesion]` |
+| Switch Statements | Repeated type-dispatch `if`/`switch` in place of polymorphism | `[SOLID-OCP]` / `[Polymorphism]` |
+| Duplicated Code | Same logic appears in two or more places | `[DRY]` |
 
 ## Clean Code (Martin)
 
-Meaningful names | Small functions | Single level of abstraction per function | No flag arguments | Avoid side effects | Functions should do one thing.
+| Rule | Brief Explanation |
+|---|---|
+| Meaningful names | Names should reveal intent; avoid abbreviations and disinformation |
+| Small functions | Functions should be short enough to do one thing well |
+| Single level of abstraction per function | Don't mix high-level orchestration with low-level detail in one body |
+| No flag arguments | A boolean parameter that changes behavior signals two functions masquerading as one |
+| Avoid side effects | Functions should not silently mutate state beyond their declared purpose |
+| Functions should do one thing | If you can extract a meaningful subfunction, the function was doing more than one thing |
 
 ## Security
 
