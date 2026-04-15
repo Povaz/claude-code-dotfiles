@@ -27,7 +27,7 @@ die()  { printf '\033[0;31m[ERROR]\033[0m %s\n' "$1" >&2; exit 1; }  # fatal: pr
 # ---------------------------------------------------------------------------
 is_ignored() {
     case "$1" in
-        setup.sh|teardown.sh|README.md|LICENSE|.git|.gitignore|.DS_Store|.idea|.claude)
+        setup.sh|teardown.sh|status.sh|README.md|LICENSE|.git|.gitignore|.DS_Store|.idea|.claude)
             return 0 ;;
         *)
             return 1 ;;

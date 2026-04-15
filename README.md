@@ -14,11 +14,13 @@ No files are copied — the symlinks point directly into your clone. Edit in the
 claude-code-dotfiles/
 ├── setup.sh           # Creates symlinks from ~/.claude/ → this repo
 ├── teardown.sh        # Removes symlinks, leaves standalone local copies
+├── status.sh          # Dev utility — shows current symlink state (not synced)
 ├── README.md
 ├── LICENSE
 ├── .gitignore
 ├── CLAUDE.md          # Global instructions Claude reads every session
 ├── settings.json      # Claude Code settings
+├── statusline.sh      # Status bar script invoked by Claude Code
 ├── commands/          # Custom slash commands
 ├── agents/            # Custom agent definitions
 └── skills/            # Custom skills
@@ -70,10 +72,11 @@ This removes every symlink in `~/.claude/` that points into this repo and replac
 |---|---|
 | `CLAUDE.md` | `.credentials.json` |
 | `settings.json` | `settings.local.json` |
-| `commands/` | `projects/` |
-| `agents/` | `statsig/` |
-| `skills/` | `backups/` |
-| Any file/dir you add to the repo | Cache, sessions, telemetry, etc. |
+| `statusline.sh` | `projects/` |
+| `commands/` | `statsig/` |
+| `agents/` | `backups/` |
+| `skills/` | Cache, sessions, telemetry, etc. |
+| Any file/dir you add to the repo | |
 
 Credentials and machine-local state are never touched by `setup.sh` or `teardown.sh`.
 
@@ -105,6 +108,7 @@ Alternatively, maintain two clones (e.g. `claude-code-dotfiles-personal` and `cl
 |---|---|
 | `setup.sh` | The setup script itself |
 | `teardown.sh` | The teardown script itself |
+| `status.sh` | Dev utility for inspecting symlink state |
 | `README.md` | Repo documentation |
 | `LICENSE` | Repo license |
 | `.git` | Git metadata |
