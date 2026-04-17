@@ -1,0 +1,14 @@
+{
+  "eval_id": 2,
+  "eval_name": "anti-pattern-detection",
+  "prompt": "Here are some tickets our team wants to add to the next sprint. Can you format them as user stories?\n\n- As an ops engineer, I want database query optimization on the reporting service so that monthly reports run faster.\n- As a content editor, I want the new video encoding from VendorX integrated so that I can upload 4K videos to courses.\n- As a learner, I want to receive a push notification when my enrolled course has a new lesson so that I don't miss content.",
+  "assertions": [
+    {"text": "Flags query-optimization ticket as Misleading Story / Solution Trap"},
+    {"text": "Flags VendorX ticket as Dependency-Locked"},
+    {"text": "Treats push-notification ticket as clean (no anti-pattern warnings)"},
+    {"text": "Uses 'I can' throughout; no 'I want' remaining"},
+    {"text": "Every story has a Title"},
+    {"text": "Every story's INVEST check lists each of the six principles (I, N, V, E, S, T) individually with its own verdict — no compact 'all criteria met' one-liner, applied consistently to all three stories"},
+    {"text": "Does not add Acceptance Criteria (no AC section or bullet list of measurable requirements) — ACs are out of scope"}
+  ]
+}

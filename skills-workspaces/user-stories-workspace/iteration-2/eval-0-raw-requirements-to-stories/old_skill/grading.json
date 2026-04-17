@@ -1,0 +1,55 @@
+{
+  "expectations": [
+    {
+      "text": "Produces at least 3 distinct user stories",
+      "passed": true,
+      "evidence": "Produces 5 distinct stories covering rate/comment, edit, delete, admin dashboard, and admin hide."
+    },
+    {
+      "text": "Uses the 'I can' phrasing (not 'I want' or 'I need')",
+      "passed": true,
+      "evidence": "All stories use 'I can' (e.g., 'I can give a lesson a 1-5 star rating...', 'I can edit the star rating...'). No 'I want' or 'I need' in narratives."
+    },
+    {
+      "text": "Every story has an explicit Title field separate from the Connextra narrative",
+      "passed": true,
+      "evidence": "Each story starts with '**Title:**' line separate from the Connextra block."
+    },
+    {
+      "text": "Uses Connextra format: every story contains 'As a', 'I can', and 'so that'",
+      "passed": true,
+      "evidence": "All five stories have 'As a / I can / so that' triads."
+    },
+    {
+      "text": "Every story's INVEST check lists each of the six principles (I, N, V, E, S, T) individually with its own verdict — no compact 'all criteria met' one-liner",
+      "passed": false,
+      "evidence": "Every story uses the compact one-liner form: '✓ INVEST: all criteria met.' followed by free-form prose. No story itemises I, N, V, E, S, T individually."
+    },
+    {
+      "text": "Names concrete roles (learner, admin) — does not use generic 'user'",
+      "passed": true,
+      "evidence": "Uses 'learner' and 'course admin'. No generic 'user' in narratives."
+    },
+    {
+      "text": "Handles the web-first/mobile-later platform constraint explicitly",
+      "passed": true,
+      "evidence": "Preamble: 'Mobile is explicitly deferred per the PM, so I haven't drafted mobile stories — the web stories below are scoped to web only.' Closing notes: 'Platform scoping: the PM called out \"web first, mobile can come later.\" I've written these as web stories implicitly...'"
+    },
+    {
+      "text": "Does not add Acceptance Criteria (no AC section or bullet list of measurable requirements) — ACs are out of scope",
+      "passed": true,
+      "evidence": "No dedicated AC section or bulleted measurable list. The 'Kept out of the narratives (belongs in Acceptance Criteria)' note merely explains what was intentionally left out, which is allowed."
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 1,
+    "total": 8,
+    "pass_rate": 0.88
+  },
+  "timing": {
+    "total_tokens": 21481,
+    "duration_ms": 36202,
+    "total_duration_seconds": 36.2
+  }
+}

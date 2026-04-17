@@ -1,0 +1,69 @@
+{
+  "expectations": [
+    {
+      "text": "Rewrites story 1 without leaking implementation details like 'template engine' or 'S3' into the narrative",
+      "passed": true,
+      "evidence": "Story 1's narrative reads: 'As a learner, I can download a PDF certificate once I've completed a course, so that I have a shareable record of my achievement.' Neither 'template engine' nor 'S3' appear in the narrative; they are mentioned only in the preamble/What Changed as things deliberately removed."
+    },
+    {
+      "text": "Flags story 2 as a Fake Story / Task / not a user story",
+      "passed": true,
+      "evidence": "Story 2 title explicitly reads '(flagged — not a user story)' and the body says: '⚠ **Fake Story** — the need is internal implementation work, not a learner-facing outcome. The \"developer adds a button\" framing is a task dressed as a story.'"
+    },
+    {
+      "text": "Splits story 3 into multiple independent stories (download, share, print, email)",
+      "passed": true,
+      "evidence": "Explicitly splits into '3a Download completion certificate as PDF', '3b Share certificate to LinkedIn', '3c Print completion certificate', '3d Email certificate to HR' — four independent stories."
+    },
+    {
+      "text": "Uses 'I can' throughout; no 'I want' remaining",
+      "passed": true,
+      "evidence": "Every rewritten narrative uses 'I can' (e.g., 'I can download a PDF certificate', 'I can share my certificate to LinkedIn', 'I can print my certificate', 'I can email my certificate'). No 'I want' remains in any story."
+    },
+    {
+      "text": "Every rewritten story has an explicit Title",
+      "passed": true,
+      "evidence": "Every story starts with a bolded '**Title:**' line (e.g., '**Title:** Download completion certificate as PDF', '**Title:** Share certificate to LinkedIn')."
+    },
+    {
+      "text": "Replaces generic 'user' in story 1 with a concrete role (e.g., 'learner')",
+      "passed": true,
+      "evidence": "Story 1 uses 'As a learner'. What Changed note: 'Role changed from \"user\" to \"learner\" — the more concrete Apprendere role.'"
+    },
+    {
+      "text": "Every story's INVEST check lists each of the six principles (I, N, V, E, S, T) individually with its own verdict — no compact 'all criteria met' one-liner",
+      "passed": true,
+      "evidence": "All six stories (1, 2, 3a, 3b, 3c, 3d) list each of I/N/V/E/S/T individually with per-principle verdicts ('pass', 'fail', 'partial'). No 'all criteria met' one-liner appears."
+    },
+    {
+      "text": "Each rewritten story has an inline 'What Changed' block (or similar per-story change note) directly following its INVEST check — not a single trailing summary table covering all stories",
+      "passed": false,
+      "evidence": "Stories 1 and 2 each have their own '**What Changed:**' block. However, stories 3a, 3b, 3c, 3d share a single combined 'What Changed (applies to the whole 3a-3d split)' block placed after 3a only — 3b, 3c, and 3d have no per-story change note of their own. Strict reading of the assertion requires each rewritten story to have its own inline block."
+    },
+    {
+      "text": "Does not reference system components, pages, endpoints, or concepts absent from the input drafts (e.g., no invented 'course-completion page', 'completion dashboard', or other named surfaces the user didn't write)",
+      "passed": true,
+      "evidence": "References to 'completion page' are present in the input (draft 2 says 'the completion page'). The response uses 'completion page' not 'course-completion page' or 'completion dashboard'. The '/certificate' endpoint is quoted from the input. LinkedIn, print, email, HR are all from draft 3. No invented surfaces."
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 1,
+    "total": 9,
+    "pass_rate": 0.89
+  },
+  "timing": {
+    "total_tokens": 24074,
+    "duration_ms": 62977,
+    "total_duration_seconds": 63.0
+  },
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "assertion": "Each rewritten story has an inline 'What Changed' block (or similar per-story change note) directly following its INVEST check — not a single trailing summary table covering all stories",
+        "reason": "The assertion is ambiguous when the response splits one draft into several daughter stories. The with_skill output provided a single 'What Changed (applies to the whole 3a-3d split)' block adjacent to the split, which is arguably the most information-dense way to explain the split — penalising it reads as rewarding boilerplate. Consider rewording to 'per logical rewrite unit' or allow a single shared block for a split set."
+      }
+    ],
+    "overall": "Assertions are generally discriminating; the only soft spot is the per-story What-Changed rule when a draft is split."
+  }
+}

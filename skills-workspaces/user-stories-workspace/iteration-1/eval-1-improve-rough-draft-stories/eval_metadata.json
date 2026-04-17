@@ -1,0 +1,14 @@
+{
+  "eval_id": 1,
+  "eval_name": "improve-rough-draft-stories",
+  "prompt": "I wrote some draft stories for our new certificate-download feature. Can you review and rewrite them so they follow our house style?\n\n1. As a user, I want the system to generate a PDF certificate using the new template engine and make it available via a signed S3 URL so that learners can download it.\n\n2. As a developer, I want to add a button to the completion page that calls the /certificate endpoint.\n\n3. As a learner, I want to be able to download certificates, share them on LinkedIn, print them, and email them to my HR department so that I can demonstrate my achievements.",
+  "assertions": [
+    {"text": "Rewrites story 1 without leaking implementation details like 'template engine' or 'S3' into the Connextra narrative (those are AC concerns, not story concerns)"},
+    {"text": "Flags story 2 as a Fake Story / Task / not a user story (it's a developer-internal change inside the team's Zone of Control)"},
+    {"text": "Splits story 3 into multiple independent stories — download, share, print, email should not remain bundled"},
+    {"text": "Uses 'I can' phrasing throughout; no 'I want' or 'I need' should remain in the rewritten narratives"},
+    {"text": "Every rewritten story has an explicit Title separate from the narrative"},
+    {"text": "Replaces the generic 'user' role in story 1 with a more concrete role (e.g., 'learner')"},
+    {"text": "Includes an INVEST quality check for each rewritten story"}
+  ]
+}

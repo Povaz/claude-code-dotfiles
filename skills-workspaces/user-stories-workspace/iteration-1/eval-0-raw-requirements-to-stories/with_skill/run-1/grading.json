@@ -1,0 +1,48 @@
+{
+  "eval_id": 0,
+  "eval_name": "raw-requirements-to-stories",
+  "run": "with_skill",
+  "expectations": [
+    {
+      "text": "Produces at least 3 distinct user stories",
+      "passed": true,
+      "evidence": "5 stories: submit rating, edit within 24h, delete within 24h, aggregated admin view, hide comment"
+    },
+    {
+      "text": "Uses the 'I can' phrasing (not 'I want' or 'I need')",
+      "passed": true,
+      "evidence": "Every narrative uses 'I can'; no occurrences of 'I want' in any story body"
+    },
+    {
+      "text": "Every story has an explicit Title field separate from the Connextra narrative",
+      "passed": true,
+      "evidence": "Each story begins with '**Title:** <phrase>' on its own line above the narrative"
+    },
+    {
+      "text": "Uses Connextra format: every story contains 'As a', 'I can', and 'so that'",
+      "passed": true,
+      "evidence": "All 5 stories follow the As a / I can / so that pattern"
+    },
+    {
+      "text": "Includes an INVEST quality check for each story",
+      "passed": true,
+      "evidence": "Each story has an 'INVEST: all criteria met' line with a brief justification"
+    },
+    {
+      "text": "Names concrete roles (learner, admin) \u2014 does not use generic 'user'",
+      "passed": true,
+      "evidence": "Uses 'learner' and 'course admin' throughout; no unqualified 'user'"
+    },
+    {
+      "text": "Handles the web-first/mobile-later platform constraint explicitly",
+      "passed": true,
+      "evidence": "Additional notes section: 'Mobile is out of scope for this iteration. The PM explicitly deferred mobile.'"
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "expectations": [
+    {
+      "text": "Produces at least 3 distinct user stories",
+      "passed": true,
+      "evidence": "Produces 5 distinct stories: 'Leave a rating and comment on a lesson', 'Edit my lesson feedback shortly after posting', 'Delete my lesson feedback shortly after posting', 'See aggregated feedback for my course on the dashboard', 'Hide a learner comment that violates content policy'."
+    },
+    {
+      "text": "Uses the 'I can' phrasing (not 'I want' or 'I need')",
+      "passed": true,
+      "evidence": "Every story uses 'I can' (e.g., 'I can leave a star rating and an optional written comment', 'I can edit the rating and comment I left'). No 'I want' or 'I need' appears in any narrative."
+    },
+    {
+      "text": "Every story has an explicit Title field separate from the Connextra narrative",
+      "passed": true,
+      "evidence": "Each story begins with a bolded '**Title:**' line (e.g., '**Title:** Leave a rating and comment on a lesson') preceding the 'As a / I can / so that' block."
+    },
+    {
+      "text": "Uses Connextra format: every story contains 'As a', 'I can', and 'so that'",
+      "passed": true,
+      "evidence": "All five stories use the tri-part Connextra format with explicit 'As a', 'I can', and 'so that' lines."
+    },
+    {
+      "text": "Every story's INVEST check lists each of the six principles (I, N, V, E, S, T) individually with its own verdict — no compact 'all criteria met' one-liner",
+      "passed": true,
+      "evidence": "Each story lists all six principles individually with a verdict: '**I**ndependent — pass/fail: ...', '**N**egotiable — pass: ...', '**V**aluable — pass: ...', '**E**stimable — pass: ...', '**S**mall — pass: ...', '**T**estable — pass: ...'. Verdicts differ per story (e.g., Edit/Delete stories are marked 'I — fail')."
+    },
+    {
+      "text": "Names concrete roles (learner, admin) — does not use generic 'user'",
+      "passed": true,
+      "evidence": "Uses 'course learner' for learner-facing stories and 'course admin' for admin-facing stories. No generic 'user' appears in any narrative."
+    },
+    {
+      "text": "Handles the web-first/mobile-later platform constraint explicitly",
+      "passed": true,
+      "evidence": "Preamble: 'kept the scope to **web only** per the \"mobile can come later\" note'. Closing note: 'Mobile is deliberately not represented; when it's picked up, clone the learner-side stories with a platform qualifier.' Story 1's What Changed also repeats: 'Scoped to web per the PM's \"web first\" direction'."
+    },
+    {
+      "text": "Does not add Acceptance Criteria (no AC section or bullet list of measurable requirements) — ACs are out of scope",
+      "passed": true,
+      "evidence": "No 'Acceptance Criteria' section or AC bullet list. The response only mentions AC to explain what was deliberately kept out of the narratives (e.g., '500-char cap out of the narrative — those are acceptance criteria')."
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  },
+  "timing": {
+    "total_tokens": 23115,
+    "duration_ms": 46220,
+    "total_duration_seconds": 46.2
+  }
+}

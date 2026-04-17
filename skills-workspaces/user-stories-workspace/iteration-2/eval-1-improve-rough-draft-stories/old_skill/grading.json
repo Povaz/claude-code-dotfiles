@@ -1,0 +1,60 @@
+{
+  "expectations": [
+    {
+      "text": "Rewrites story 1 without leaking implementation details like 'template engine' or 'S3' into the narrative",
+      "passed": true,
+      "evidence": "Story 1 narrative: 'As a learner, I can download a PDF certificate once I complete a course, so that I have a shareable record of my achievement.' Template engine and S3 are not in the narrative; they are mentioned only in the What Changed note as items removed."
+    },
+    {
+      "text": "Flags story 2 as a Fake Story / Task / not a user story",
+      "passed": true,
+      "evidence": "Story 2 title: 'Download button on completion page (flagged — reads as a task)'. Body: '⚠ **Misleading Story (Solution Trap)** — the original draft ... is phrased entirely as an implementation task ... If the real intent was purely \"wire up the button\" as a dev task, this should be tracked as a Task, not a story'. The response explicitly labels it as a task."
+    },
+    {
+      "text": "Splits story 3 into multiple independent stories (download, share, print, email)",
+      "passed": true,
+      "evidence": "Splits into 3a (Download PDF), 3b (Share to LinkedIn), 3c (Print-friendly layout), 3d (Email to chosen recipient) under 'Story 3 — split'."
+    },
+    {
+      "text": "Uses 'I can' throughout; no 'I want' remaining",
+      "passed": true,
+      "evidence": "All narratives use 'I can' (e.g., 'I can download a PDF certificate', 'I can share my certificate to my LinkedIn profile'). No 'I want' appears in any rewritten story."
+    },
+    {
+      "text": "Every rewritten story has an explicit Title",
+      "passed": true,
+      "evidence": "Each story begins with '**Title:**' (e.g., '**Title:** Download completion certificate as PDF', '**Title:** Share certificate to LinkedIn', etc.)."
+    },
+    {
+      "text": "Replaces generic 'user' in story 1 with a concrete role (e.g., 'learner')",
+      "passed": true,
+      "evidence": "Story 1 uses 'As a learner'. What-changed note: 'Role shifted from \"user\" to \"learner\" per house style.'"
+    },
+    {
+      "text": "Every story's INVEST check lists each of the six principles (I, N, V, E, S, T) individually with its own verdict — no compact 'all criteria met' one-liner",
+      "passed": false,
+      "evidence": "Every story uses the compact one-liner form: '✓ INVEST: all criteria met.' (Stories 1, 3a, 3c, 3d) or omits INVEST entirely (Story 2 has no INVEST block; 3b has only an anti-pattern note, no INVEST)."
+    },
+    {
+      "text": "Each rewritten story has an inline 'What Changed' block (or similar per-story change note) directly following its INVEST check — not a single trailing summary table covering all stories",
+      "passed": false,
+      "evidence": "Stories 1 and 2 have per-story '_What I changed:_' notes. Stories 3a, 3b, 3c, 3d have no individual What-Changed blocks — instead a single '_What I changed on Story 3 overall:_' is placed after 3d, and a 'Summary of edits' bullet list closes the response. 3a, 3b, 3c in particular lack any per-story change note."
+    },
+    {
+      "text": "Does not reference system components, pages, endpoints, or concepts absent from the input drafts (e.g., no invented 'course-completion page', 'completion dashboard', or other named surfaces the user didn't write)",
+      "passed": false,
+      "evidence": "Story 2 narrative invents 'course-completion page' ('I can trigger the certificate download directly from the course-completion page') — the input draft said 'the completion page'. The assertion explicitly calls out 'course-completion page' as an example of an invented surface."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 3,
+    "total": 9,
+    "pass_rate": 0.67
+  },
+  "timing": {
+    "total_tokens": 21492,
+    "duration_ms": 38274,
+    "total_duration_seconds": 38.3
+  }
+}

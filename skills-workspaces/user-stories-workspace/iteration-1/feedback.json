@@ -1,0 +1,35 @@
+{
+  "reviews": [
+    {
+      "run_id": "eval-0-raw-requirements-to-stories-with_skill",
+      "feedback": "The Split rationale was caught really well and the User Stories that follows are therefore well scoped.\nIt's also good that Acceptance Criteria were not written.",
+      "timestamp": "2026-04-17T10:16:44.135Z"
+    },
+    {
+      "run_id": "eval-0-raw-requirements-to-stories-without_skill",
+      "feedback": "I think it generally behaved similarly to the \"With Skill\" one, but there are some things that are worse and worth mentioning:\n- Story 6 is not mentioned in the original prompt and it feels like more of a UI issue rather than an actual feature.\n- Acceptance Criteria were written even if not requested driving some information out from the stories: like in Story 4, \"aggregated view\" is not really defined in the story. Usually a bullet point of measures/values the \"aggregated view\" needs to have is necessary for specifications to be correct. In this case, they all went only into Acceptance Criteria.",
+      "timestamp": "2026-04-17T10:16:44.135Z"
+    },
+    {
+      "run_id": "eval-1-improve-rough-draft-stories-with_skill",
+      "feedback": "What I did not like:\n- Story 1 added a \"course-completion page\" concept I'm not sure where it comes from. Probably should not have happened.\n- Not all Stories comes with an explanation of what was changed, so either make the summary more specific or add explanation for each Story in their own section.",
+      "timestamp": "2026-04-17T10:16:44.135Z"
+    },
+    {
+      "run_id": "eval-1-improve-rough-draft-stories-without_skill",
+      "feedback": "Generally similar. I like the \"What Changed\" section for each Story, but the Summary is way worse than the \"With Skill\" one.",
+      "timestamp": "2026-04-17T10:16:44.135Z"
+    },
+    {
+      "run_id": "eval-2-anti-pattern-detection-with_skill",
+      "feedback": "I really like the \"INVEST check\" structure where for each principle the answer is immediately given inline. It needs to be inserted everytime.",
+      "timestamp": "2026-04-17T10:16:44.135Z"
+    },
+    {
+      "run_id": "eval-2-anti-pattern-detection-without_skill",
+      "feedback": "Things I did not like:\n- Acceptance Criteria are defined from nothing, there is no information about them in the prompt.\n- There is no review or analysis done at all about the quality of the given user story, which is the main goal: I can format them properly by myself, I want the analysis from the model.",
+      "timestamp": "2026-04-17T10:16:44.135Z"
+    }
+  ],
+  "status": "in_progress"
+}
