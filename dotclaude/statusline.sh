@@ -74,7 +74,20 @@ if [ -n "$rl_5h" ] || [ -n "$rl_7d" ]; then
     rate_display="  |  5h ${rl_5h_fmt} 7d ${rl_7d_fmt}"
 fi
 
+# --- Project + git branch ---
+proj_dir=$(echo "$input" | jq -r '.workspace.project_dir // .workspace.current_dir // ""')
+proj_display=""
+if [ -n "$proj_dir" ]; then
+    proj_name=$(basename "$proj_dir")
+    branch=$(git -C "$proj_dir" rev-parse --abbrev-ref HEAD 2>/dev/null || true)
+    if [ -n "$branch" ]; then
+        proj_display="  |  ${proj_name} @ ${branch}"
+    else
+        proj_display="  |  ${proj_name}"
+    fi
+fi
+
 # --- Assemble ---
-printf "%s  |  %s%s  |  in %s  out %s  cache %s  |  \$%s" \
-    "$model" "$ctx_display" "$rate_display" "$in_k" "$out_k" "$cache_read_k" \
-    "$cost"
+printf "%s  |  %s%s%s  |  in %s  out %s  cache %s  |  \$%s" \
+    "$model" "$ctx_display" "$rate_display" "$proj_display" \
+    "$in_k" "$out_k" "$cache_read_k" "$cost"
