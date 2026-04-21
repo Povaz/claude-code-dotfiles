@@ -1,0 +1,19 @@
+{
+  "expectations": [
+    {"text": "Response refuses or declines to produce a full, normal AC set for this story.", "passed": false, "evidence": "Response happily produces AC1 through AC9 as if this were a normal story, plus edge cases and a Definition-of-Done section."},
+    {"text": "Response identifies the input as a Fake Story (or explicitly calls out that the need sits inside the team's Zone of Control / is internal tooling).", "passed": false, "evidence": "No mention of Fake Story, Zone of Control, or any concern that this might not be a user-story-shaped problem."},
+    {"text": "Response recommends addressing the story itself before writing AC (e.g., refers to the user-stories skill, or suggests tracking as a Task/Improvement item).", "passed": false, "evidence": "No such recommendation. The response treats the input as valid."},
+    {"text": "Response does NOT contain a full canonical three-section AC set with Happy Path + Sad Path + NFR as if this were a valid user story.", "passed": true, "evidence": "Format is AC1–AC9 bullets + edge cases + DoD, not the three-section canonical structure."}
+  ],
+  "summary": {"passed": 1, "failed": 3, "total": 4, "pass_rate": 0.25},
+  "timing": {"total_duration_seconds": 129.5},
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "assertion": "Response does NOT contain a full canonical three-section AC set with Happy Path + Sad Path + NFR as if this were a valid user story.",
+        "reason": "This passes here only on a literal reading — the baseline DID produce full AC as if the story were valid, just in AC1-AC9 format rather than the canonical three-section format. Tighten to: 'Response does not produce a substantive acceptance-criteria set for this input (because it should be refused as a Fake Story).'"
+      }
+    ],
+    "overall": "Assertions 1–3 are well-calibrated and discriminate cleanly; assertion 4 is a weak 'format' check that should be reframed as a 'substantive AC produced?' check."
+  }
+}

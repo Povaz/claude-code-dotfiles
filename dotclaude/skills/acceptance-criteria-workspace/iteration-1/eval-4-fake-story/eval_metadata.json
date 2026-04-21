@@ -1,0 +1,11 @@
+{
+  "eval_id": 4,
+  "eval_name": "fake-story-refused-and-flagged",
+  "prompt": "Write acceptance criteria for this story:\n\n**Title:** Automated test-database reset\n**As a** QA engineer, **I can** have the test database reset automatically between test runs, **so that** I can run the end-to-end suite faster without manual cleanup steps.",
+  "assertions": [
+    "Response refuses or declines to produce a full, normal AC set for this story.",
+    "Response identifies the input as a Fake Story (or explicitly calls out that the need sits inside the team's Zone of Control / is internal tooling).",
+    "Response recommends addressing the story itself before writing AC (e.g., refers to the user-stories skill, or suggests tracking as a Task/Improvement item).",
+    "Response does NOT contain a full canonical three-section AC set with Happy Path + Sad Path + NFR as if this were a valid user story."
+  ]
+}

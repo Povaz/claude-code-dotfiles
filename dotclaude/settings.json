@@ -7,6 +7,6 @@
     "skill-creator@claude-plugins-official": true
   },
   "effortLevel": "high",
-  "skipAutoPermissionPrompt": true,
-  "model": "sonnet"
+  "tui": "fullscreen",
+  "skipAutoPermissionPrompt": true
 }

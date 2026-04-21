@@ -1,0 +1,12 @@
+{
+  "expectations": [
+    {"text": "AC #1 is flagged as implementation-prescribing (mentions Elasticsearch/Redis leak or equivalent wording).", "passed": true, "evidence": "'Anti-pattern: Implementation leakage / solution bias.' 'Naming Elasticsearch, Redis, or specific TTLs locks the team into a design decision'."},
+    {"text": "AC #2 ('Search should be fast') is flagged as unmeasurable and is either replaced with a concrete threshold or marked as needing one.", "passed": true, "evidence": "'Anti-pattern: Subjective / untestable.' Replaced in AC5 with 'within 500 ms at p95 and 1 s at p99'."},
+    {"text": "AC #3 is flagged as a multi-trigger When clause and is split into two separate scenarios.", "passed": true, "evidence": "'Compound / multi-behavior AC + hidden UX decision. It bundles two behaviors... Split the behaviors.' Search behavior lives in AC1; panel interaction addressed separately in AC6 which inverts the default."},
+    {"text": "AC #4 ('Code is peer-reviewed and deployed to staging') is flagged as a Definition of Done item and removed from the AC set.", "passed": true, "evidence": "'Process / Definition-of-Done masquerading as AC.' Listed under 'Removed / relocated items'."},
+    {"text": "AC #5 ('user-friendly') is flagged as unmeasurable.", "passed": true, "evidence": "'Anti-pattern: Vague / unverifiable. User-friendly is a value, not a criterion.'"},
+    {"text": "Rewrite uses the three canonical sections (Happy Path / Sad Path / NFR).", "passed": false, "evidence": "Rewrite uses AC1–AC8 bulleted sections instead of the canonical Happy Path / Sad Path / NFR structure. There is no grouping into the three dimensions."},
+    {"text": "Response includes a `What Changed:` (or equivalently titled) block of 2–5 bullets explaining the edits adjacent to the rewritten AC.", "passed": true, "evidence": "'Removed / relocated items' and 'Summary of anti-patterns flagged' sections serve the same role and sit adjacent to the rewritten AC."}
+  ],
+  "summary": {"passed": 6, "failed": 1, "total": 7, "pass_rate": 0.857}
+}

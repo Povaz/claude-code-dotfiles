@@ -1,0 +1,11 @@
+{
+  "expectations": [
+    {"text": "Response opens with clarifying questions BEFORE producing a full AC set.", "passed": true, "evidence": "Response's first line is 'Before I draft AC, this story is quite thin...' followed by 5 numbered questions BEFORE any AC block."},
+    {"text": "At least 3 distinct clarifying questions are asked (about file types, size limits, sharing semantics, access control, failure handling, or user role).", "passed": true, "evidence": "5 distinct questions: user role/context, sharing semantics, file constraints (types/size/count), storage/retention/scanning, resumability."},
+    {"text": "Response does NOT invent concrete values for unspecified thresholds (no invented MB limits, no invented file-type whitelist, no invented storage backend).", "passed": true, "evidence": "No specific MB cap, no concrete allowed-types list, no named storage backend. Every unknown value is left as ?? in the Gherkin and in the NFR checklist."},
+    {"text": "If a partial draft is produced, invented values are marked with `??` placeholders AND listed explicitly for the user to confirm.", "passed": true, "evidence": "?? markers appear in Background, Scenario steps, error copy, and NFR items. A 'What to clarify (summary)' block restates the 5 questions at the end."},
+    {"text": "Response avoids producing a full, confident AC set as if the story were complete — the 'question, don't invent' rule is visibly honored.", "passed": true, "evidence": "The draft is explicitly labelled 'conservative'; every uncertain branch is guarded with ?? and a pointer back to the relevant question. The response also flags that 'upload' and 'share' are probably two stories."}
+  ],
+  "summary": {"passed": 5, "failed": 0, "total": 5, "pass_rate": 1.0},
+  "timing": {"total_duration_seconds": 181.0}
+}

@@ -1,0 +1,13 @@
+{
+  "expectations": [
+    {"text": "AC #1 is flagged as implementation-prescribing (mentions Elasticsearch/Redis leak or equivalent wording).", "passed": true, "evidence": "⚠ 'The backend hits Elasticsearch and caches the result in Redis for 60 seconds.' — *Prescribes the implementation.* AC must describe **what** the system does, not **how**.' Explicitly names Elasticsearch and Redis as the leak."},
+    {"text": "AC #2 ('Search should be fast') is flagged as unmeasurable and is either replaced with a concrete threshold or marked as needing one.", "passed": true, "evidence": "Flagged as 'Unmeasurable' and replaced with a latency NFR marked `??` pending Q1."},
+    {"text": "AC #3 is flagged as a multi-trigger When clause and is split into two separate scenarios.", "passed": true, "evidence": "Explicitly flagged as 'Multi-trigger When and conflated behaviors'. Search behavior kept as Happy Path scenario; panel-close dropped pending confirmation. Behaviors are no longer bundled."},
+    {"text": "AC #4 ('Code is peer-reviewed and deployed to staging') is flagged as a Definition of Done item and removed from the AC set.", "passed": true, "evidence": "Flagged 'Definition of Done, not AC' and removed."},
+    {"text": "AC #5 ('user-friendly') is flagged as unmeasurable.", "passed": true, "evidence": "'Unmeasurable. Replaced with concrete, testable usability/accessibility assertions (WCAG AA, keyboard operability).'"},
+    {"text": "Rewrite uses the three canonical sections (Happy Path / Sad Path / NFR).", "passed": true, "evidence": "Explicit '### Happy Path (Gherkin)', '### Sad Path (Gherkin)', '### Non-Functional Requirements (Checklist)' headings."},
+    {"text": "Response includes a `What Changed:` (or equivalently titled) block of 2–5 bullets explaining the edits adjacent to the rewritten AC.", "passed": true, "evidence": "**What Changed:** block with 6 bullets sits directly under the rewritten AC."}
+  ],
+  "summary": {"passed": 7, "failed": 0, "total": 7, "pass_rate": 1.0},
+  "timing": {"total_duration_seconds": 54.5}
+}

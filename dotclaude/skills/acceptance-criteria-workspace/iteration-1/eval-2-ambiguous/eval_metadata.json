@@ -1,0 +1,12 @@
+{
+  "eval_id": 2,
+  "eval_name": "ambiguous-story-triggers-questions",
+  "prompt": "Write acceptance criteria for this story:\n\n**Title:** Let users upload files\n**As a** user, **I can** upload files, **so that** I can share them.\n\nThat's all I have so far.",
+  "assertions": [
+    "Response opens with clarifying questions BEFORE producing a full AC set.",
+    "At least 3 distinct clarifying questions are asked (about file types, size limits, sharing semantics, access control, failure handling, or user role).",
+    "Response does NOT invent concrete values for unspecified thresholds (no invented MB limits, no invented file-type whitelist, no invented storage backend).",
+    "If a partial draft is produced, invented values are marked with `??` placeholders AND listed explicitly for the user to confirm.",
+    "Response avoids producing a full, confident AC set as if the story were complete — the 'question, don't invent' rule is visibly honored."
+  ]
+}
