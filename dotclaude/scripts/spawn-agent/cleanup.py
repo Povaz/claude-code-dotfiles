@@ -3,23 +3,22 @@
 cleanup.py
 Interactive cleanup of git worktrees.
 
+Discovers the current project by running ``git rev-parse --show-toplevel``
+in the invocation's working directory, so the script can live in one place
+and serve every project.
+
 Lists all non-main worktrees, lets you pick which ones to remove, and
 cleans up stale entries. Every git command is logged with a contextual
 explanation so you can learn the underlying operations.
 
 Usage:
-    python .scripts/cleanup.py
+    python cleanup.py
 """
 
 import logging
 import os
 import subprocess
 import sys
-
-# ---------------------------------------------------------------------------
-# Configuration
-# ---------------------------------------------------------------------------
-PROJECT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
 # ---------------------------------------------------------------------------
 # Logging
@@ -52,14 +51,33 @@ def run(cmd: list[str], cwd: str | None = None, context: str | None = None) -> s
     return subprocess.run(cmd, cwd=cwd, capture_output=True, text=True)
 
 
-def get_worktrees() -> list[dict[str, str]]:
+def discover_project_dir() -> str:
+    """Resolve the enclosing git repo root from the invocation's cwd.
+
+    Exits with a clear error if cwd is not inside a git working tree.
+    """
+    result = subprocess.run(
+        ["git", "rev-parse", "--show-toplevel"],
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        log.error(
+            "Not inside a git repository (cwd=%s). Run this from a project root.",
+            os.getcwd(),
+        )
+        sys.exit(1)
+    return result.stdout.strip()
+
+
+def get_worktrees(project_dir: str) -> list[dict[str, str]]:
     """Return a list of worktree dicts with 'path' and 'branch' keys.
 
     The main worktree (the one containing .git) is excluded.
     """
     result = run(
         ["git", "worktree", "list", "--porcelain"],
-        cwd=PROJECT_DIR,
+        cwd=project_dir,
         context="Listing worktrees",
     )
 
@@ -86,7 +104,10 @@ def get_worktrees() -> list[dict[str, str]]:
 # Main
 # ---------------------------------------------------------------------------
 def main() -> None:
-    worktrees = get_worktrees()
+    project_dir = discover_project_dir()
+    log.info("Project: %s", project_dir)
+
+    worktrees = get_worktrees(project_dir)
 
     if not worktrees:
         log.info("No agent worktrees found. Nothing to clean up.")
@@ -127,7 +148,7 @@ def main() -> None:
 
         result = run(
             ["git", "worktree", "remove", path],
-            cwd=PROJECT_DIR,
+            cwd=project_dir,
             context=f"Removing worktree at {path}",
         )
 
@@ -144,7 +165,7 @@ def main() -> None:
         if branch.startswith("wt/"):
             result = run(
                 ["git", "branch", "-d", branch],
-                cwd=PROJECT_DIR,
+                cwd=project_dir,
                 context=f"Deleting placeholder branch '{branch}'",
             )
             if result.returncode == 0:
@@ -155,7 +176,7 @@ def main() -> None:
     # --- Prune stale worktree metadata ---
     run(
         ["git", "worktree", "prune"],
-        cwd=PROJECT_DIR,
+        cwd=project_dir,
         context="Pruning stale worktree metadata",
     )
 

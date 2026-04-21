@@ -3,28 +3,24 @@
 launch.py
 Prepares a git worktree for a Claude Code agent.
 
-Accepts an agent number and branch name as CLI arguments, ensures the
-worktree exists (creating it on-demand if needed), checks out the
-requested branch, and prints the worktree path to stdout on success.
+Discovers the current project by running ``git rev-parse --show-toplevel``
+in the invocation's working directory, so the script can live in one place
+(e.g. ``~/.claude/scripts/spawn-agent/``) and serve every project.
+
+Accepts an agent number, branch name, and base branch as CLI arguments,
+ensures the worktree exists (creating it on-demand if needed), checks out
+the requested branch, and prints the worktree path to stdout on success.
 
 Called by launch.sh — not intended to be run directly.
 
 Usage:
-    python .scripts/launch.py <agent_number> <branch_name>
+    python launch.py <agent_number> <branch_name> <base_branch>
 """
 
 import logging
 import os
 import subprocess
 import sys
-
-# ---------------------------------------------------------------------------
-# Configuration
-# ---------------------------------------------------------------------------
-PROJECT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-PROJECT_NAME = os.path.basename(PROJECT_DIR)
-PARENT_DIR = os.path.dirname(PROJECT_DIR)
-BASE_BRANCH = "dev"
 
 # ---------------------------------------------------------------------------
 # Logging — all output goes to stderr so stdout stays clean for the
@@ -59,9 +55,28 @@ def run(cmd: list[str], cwd: str | None = None, context: str | None = None) -> s
     return subprocess.run(cmd, cwd=cwd, capture_output=True, text=True)
 
 
-def get_existing_worktrees() -> dict[str, str]:
+def discover_project_dir() -> str:
+    """Resolve the enclosing git repo root from the invocation's cwd.
+
+    Exits with a clear error if cwd is not inside a git working tree.
+    """
+    result = subprocess.run(
+        ["git", "rev-parse", "--show-toplevel"],
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        log.error(
+            "Not inside a git repository (cwd=%s). Run this from a project root.",
+            os.getcwd(),
+        )
+        sys.exit(1)
+    return result.stdout.strip()
+
+
+def get_existing_worktrees(project_dir: str) -> dict[str, str]:
     """Return a mapping of worktree path -> checked-out branch for all worktrees."""
-    result = run(["git", "worktree", "list", "--porcelain"], cwd=PROJECT_DIR, context="Listing worktrees")
+    result = run(["git", "worktree", "list", "--porcelain"], cwd=project_dir, context="Listing worktrees")
     worktrees: dict[str, str] = {}
     current_path = None
     for line in result.stdout.splitlines():
@@ -74,11 +89,11 @@ def get_existing_worktrees() -> dict[str, str]:
     return worktrees
 
 
-def branch_exists(branch: str) -> bool:
+def branch_exists(branch: str, project_dir: str) -> bool:
     """Check whether a branch name exists in the local repo."""
     result = run(
         ["git", "rev-parse", "--verify", f"refs/heads/{branch}"],
-        cwd=PROJECT_DIR,
+        cwd=project_dir,
         context=f"Checking if branch '{branch}' exists",
     )
     return result.returncode == 0
@@ -95,7 +110,7 @@ def branch_checked_out_in(branch: str, worktrees: dict[str, str]) -> str | None:
 # ---------------------------------------------------------------------------
 # Core steps
 # ---------------------------------------------------------------------------
-def ensure_worktree(agent_num: int, worktrees: dict[str, str]) -> str:
+def ensure_worktree(agent_num: int, project_dir: str, worktrees: dict[str, str]) -> str:
     """
     Ensure a worktree directory exists for the given agent number.
 
@@ -107,7 +122,9 @@ def ensure_worktree(agent_num: int, worktrees: dict[str, str]) -> str:
     str
         Absolute path to the worktree directory.
     """
-    worktree_path = os.path.join(PARENT_DIR, f"{PROJECT_NAME}-agent-{agent_num}")
+    project_name = os.path.basename(project_dir)
+    parent_dir = os.path.dirname(project_dir)
+    worktree_path = os.path.join(parent_dir, f"{project_name}-agent-{agent_num}")
 
     if worktree_path in worktrees:
         log.info("Worktree already exists: %s  (on branch '%s')", worktree_path, worktrees[worktree_path])
@@ -117,14 +134,14 @@ def ensure_worktree(agent_num: int, worktrees: dict[str, str]) -> str:
     # Try creating with a new placeholder branch
     result = run(
         ["git", "worktree", "add", worktree_path, "-b", placeholder],
-        cwd=PROJECT_DIR,
+        cwd=project_dir,
         context=f"Creating worktree at {worktree_path} on new branch '{placeholder}'",
     )
     if result.returncode != 0:
         # Placeholder branch already exists in git — attach worktree to it
         result = run(
             ["git", "worktree", "add", worktree_path, placeholder],
-            cwd=PROJECT_DIR,
+            cwd=project_dir,
             context=f"Branch '{placeholder}' already exists, attaching worktree to it",
         )
         if result.returncode != 0:
@@ -135,14 +152,20 @@ def ensure_worktree(agent_num: int, worktrees: dict[str, str]) -> str:
     return worktree_path
 
 
-def checkout_branch(branch: str, worktree_path: str, worktrees: dict[str, str]) -> None:
+def checkout_branch(
+    branch: str,
+    base_branch: str,
+    worktree_path: str,
+    project_dir: str,
+    worktrees: dict[str, str],
+) -> None:
     """
     Check out the requested branch inside the worktree.
 
     If the branch already exists and is not checked out elsewhere, it is
-    switched to directly. If it does not exist, it is created from the
-    base branch (``dev``). If it is already checked out in another
-    worktree, the script exits with a clear error.
+    switched to directly. If it does not exist, it is created from
+    ``base_branch``. If it is already checked out in another worktree,
+    the script exits with a clear error.
     """
     # Check if the worktree is already on the requested branch
     current = worktrees.get(worktree_path)
@@ -150,7 +173,7 @@ def checkout_branch(branch: str, worktree_path: str, worktrees: dict[str, str]) 
         log.info("Worktree is already on branch '%s' — nothing to do", branch)
         return
 
-    if branch_exists(branch):
+    if branch_exists(branch, project_dir):
         # Branch exists — check it's not checked out elsewhere
         occupied = branch_checked_out_in(branch, worktrees)
         if occupied and occupied != worktree_path:
@@ -170,9 +193,9 @@ def checkout_branch(branch: str, worktree_path: str, worktrees: dict[str, str]) 
         )
     else:
         result = run(
-            ["git", "checkout", "-b", branch, BASE_BRANCH],
+            ["git", "checkout", "-b", branch, base_branch],
             cwd=worktree_path,
-            context=f"Creating new branch '{branch}' from '{BASE_BRANCH}'",
+            context=f"Creating new branch '{branch}' from '{base_branch}'",
         )
 
     if result.returncode != 0:
@@ -186,8 +209,11 @@ def checkout_branch(branch: str, worktree_path: str, worktrees: dict[str, str]) 
 # Main
 # ---------------------------------------------------------------------------
 def main() -> None:
-    if len(sys.argv) != 3:
-        print(f"Usage: python {sys.argv[0]} <agent_number> <branch_name>", file=sys.stderr)
+    if len(sys.argv) != 4:
+        print(
+            f"Usage: python {sys.argv[0]} <agent_number> <branch_name> <base_branch>",
+            file=sys.stderr,
+        )
         sys.exit(1)
 
     # --- Agent number ---
@@ -197,18 +223,23 @@ def main() -> None:
         sys.exit(1)
     agent_num = int(agent_input)
 
-    # --- Branch name ---
+    # --- Branch names ---
     branch = sys.argv[2]
+    base_branch = sys.argv[3]
+
+    # --- Project discovery ---
+    project_dir = discover_project_dir()
+    log.info("Project: %s", project_dir)
 
     # --- Resolve worktree ---
-    worktrees = get_existing_worktrees()
-    worktree_path = ensure_worktree(agent_num, worktrees)
+    worktrees = get_existing_worktrees(project_dir)
+    worktree_path = ensure_worktree(agent_num, project_dir, worktrees)
 
     # Refresh worktree map after possible creation
-    worktrees = get_existing_worktrees()
+    worktrees = get_existing_worktrees(project_dir)
 
     # --- Checkout branch ---
-    checkout_branch(branch, worktree_path, worktrees)
+    checkout_branch(branch, base_branch, worktree_path, project_dir, worktrees)
 
     # Print the worktree path to stdout for the shell wrapper to capture
     log.info("Ready: %s", worktree_path)
