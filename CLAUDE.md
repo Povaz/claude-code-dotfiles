@@ -1,9 +1,5 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
-## What this repo is
-
 A dotfiles repo for Claude Code. Entries under `dotclaude/` are symlinked into the user's `~/.claude/` directory by `setup.sh`. This `CLAUDE.md` and the repo-root `.claude/` are **project-level** config for working on the dotfiles repo itself — they are deliberately **not** under `dotclaude/` and never get synced.
 
 ## The dotclaude/ invariant
@@ -51,9 +47,3 @@ Backups accumulate at `~/.claude/backups/YYYYMMDD_HHMMSS/` — never delete or "
 
 - Don't un-ignore `.claude/settings.local.json` in `.gitignore` — it's per-machine state.
 - Don't touch `~/.claude/` beyond what the scripts already manage. That directory also holds unrelated Claude Code state (`sessions/`, `projects/`, `statsig/`, `todos/`, `shell-snapshots/`, …) — never "tidy" it.
-- Don't edit `dotclaude/CLAUDE.md` to document this repo. That file is the user's **global** Claude instructions and gets loaded into every unrelated Claude Code session. Repo-specific guidance belongs here.
-
-## References
-
-- `@README.md` — user-facing docs including the migration recipe from the pre-`dotclaude/` layout.
-- `dotclaude/CLAUDE.md` — global user-level Claude instructions (symlinked to `~/.claude/CLAUDE.md`). Distinct from this file.
