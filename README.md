@@ -12,7 +12,7 @@ Portable Claude Code configuration — sync agents, commands, settings & skills 
   - [Uninstalling](#uninstalling)
   - [Backups](#backups)
   - [What Gets Synced](#what-gets-synced)
-  - [Setting up your own personal branch](#setting-up-your-own-personal-branch)
+  - [Setting up your own fork](#setting-up-your-own-fork)
 - [What's currently on `povaz/main`](#whats-currently-on-povazmain)
 
 ## How It Works
@@ -26,7 +26,7 @@ No files are copied — the symlinks point directly into your clone. Edit in the
 This repo is published in two states:
 
 - **`main`** — the **clean template**. Setup scripts plus empty `dotclaude/` placeholders (`.gitkeep` files under `agents/`, `commands/`, `skills/`, a minimal `CLAUDE.md`, and default `settings.json` / `statusline.sh`). No personal agents, commands, or skills. This is the intended starting point for anyone adopting these dotfiles.
-- **`povaz/main`** — the **author's personal config**, layered on top of the template. Adds personal agents, commands, and skills. Browse [`povaz/main`](https://github.com/Povaz/claude-code-dotfiles/tree/povaz/main) for a working example, but don't check it out as your own — [create your own branch](#setting-up-your-own-personal-branch) off `main` instead.
+- **`povaz/main`** — the **author's personal config**, layered on top of the template. Adds personal agents, commands, and skills. Browse [`povaz/main`](https://github.com/Povaz/claude-code-dotfiles/tree/povaz/main) for a working example, but don't check it out as your own — [fork the repo](#setting-up-your-own-fork) instead.
 
 The naming convention `<username>/main` is a hint, not a requirement — any branch name works.
 
@@ -105,29 +105,31 @@ Backups are a one-way safety net, not a restore mechanism: nothing in this repo 
 
 Anything **outside** `dotclaude/` — including the scripts, the repo-root `CLAUDE.md`, and the repo-root `.claude/` — is repo plumbing and is never synced into `~/.claude/`. Credentials and machine-local state are never touched by `setup.sh` or `teardown.sh`.
 
-### Setting up your own personal branch
+### Setting up your own fork
 
-`main` is intentionally clean so anyone can clone it as a fresh starting point. To layer your own agents, commands, and skills on top, branch off `main`:
+`main` is intentionally clean so anyone can use it as a fresh starting point. The recommended way to layer your own agents, commands, and skills on top is to **fork the repo** — that way your personal config lives in your own GitHub account, decoupled from this upstream.
+
+1. Fork [`Povaz/claude-code-dotfiles`](https://github.com/Povaz/claude-code-dotfiles) on GitHub into your own account.
+2. Clone your fork and register this repo as an `upstream` remote so you can pull template updates later:
 
 ```bash
-git clone https://github.com/Povaz/claude-code-dotfiles.git
+git clone https://github.com/<your-username>/claude-code-dotfiles.git
 cd claude-code-dotfiles
-
-# Branch off main for your personal config
-git checkout -b <your-username>/main
-git push -u origin <your-username>/main
+git remote add upstream https://github.com/Povaz/claude-code-dotfiles.git
 
 ./setup.sh
 ```
 
-Add your content under `dotclaude/` and commit it to your branch. When the template evolves on `main`, pull the updates into your branch:
+Add your content under `dotclaude/` and commit it to your fork's `main` (or any branch you prefer — per-machine or per-context branches still work inside your fork).
+
+When the template evolves upstream, pull the updates in:
 
 ```bash
-git checkout <your-username>/main
-git merge main
+git fetch upstream
+git merge upstream/main
 ```
 
-Because your personal content was added **after** branching from `main`, it's a branch-exclusive change — future `main → <your-username>/main` merges will never try to remove it. (This is also why `code-reviewer.md` lives on `povaz/main` rather than `main`: it was removed from `main` *before* `povaz/main` branched, so `povaz/main` re-introduces it as its own commit.)
+Because your personal content lives in **your fork**, not the upstream repo, future `upstream/main → main` merges will never try to remove it.
 
 ## What's currently on `povaz/main`
 
