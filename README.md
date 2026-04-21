@@ -13,7 +13,6 @@ Portable Claude Code configuration — sync agents, commands, settings & skills 
   - [Backups](#backups)
   - [What Gets Synced](#what-gets-synced)
   - [Setting up your own fork](#setting-up-your-own-fork)
-- [What's currently on `povaz/main`](#whats-currently-on-povazmain)
 
 ## How It Works
 
