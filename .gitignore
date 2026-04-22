@@ -8,5 +8,8 @@ backups/
 .idea/
 
 # Local settings for Claude
-.claude/settings.local.json
+.claude/
+CLAUDE.md
 
+# Junie Folder
+.junie/
