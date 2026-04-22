@@ -7,20 +7,23 @@ Discovers the current project by running ``git rev-parse --show-toplevel``
 in the invocation's working directory, so the script can live in one place
 (e.g. ``~/.claude/scripts/spawn-agent/``) and serve every project.
 
-Accepts an agent number, branch name, and base branch as CLI arguments,
+Accepts an agent name, branch name, and base branch as CLI arguments,
 ensures the worktree exists (creating it on-demand if needed), checks out
 the requested branch, and prints the worktree path to stdout on success.
 
 Called by launch.sh — not intended to be run directly.
 
 Usage:
-    python launch.py <agent_number> <branch_name> <base_branch>
+    python launch.py <agent_name> <branch_name> <base_branch>
 """
 
 import logging
 import os
+import re
 import subprocess
 import sys
+
+AGENT_NAME_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
 
 # ---------------------------------------------------------------------------
 # Logging — all output goes to stderr so stdout stays clean for the
@@ -110,12 +113,12 @@ def branch_checked_out_in(branch: str, worktrees: dict[str, str]) -> str | None:
 # ---------------------------------------------------------------------------
 # Core steps
 # ---------------------------------------------------------------------------
-def ensure_worktree(agent_num: int, project_dir: str, worktrees: dict[str, str]) -> str:
+def ensure_worktree(agent_name: str, project_dir: str, worktrees: dict[str, str]) -> str:
     """
-    Ensure a worktree directory exists for the given agent number.
+    Ensure a worktree directory exists for the given agent name.
 
     If the worktree already exists it is reused; otherwise a new one is
-    created on a placeholder branch ``wt/agent-{N}``.
+    created on a placeholder branch ``wt/agent-{name}``.
 
     Returns
     -------
@@ -124,13 +127,13 @@ def ensure_worktree(agent_num: int, project_dir: str, worktrees: dict[str, str])
     """
     project_name = os.path.basename(project_dir)
     parent_dir = os.path.dirname(project_dir)
-    worktree_path = os.path.join(parent_dir, f"{project_name}-agent-{agent_num}")
+    worktree_path = os.path.join(parent_dir, f"{project_name}-agent-{agent_name}")
 
     if worktree_path in worktrees:
         log.info("Worktree already exists: %s  (on branch '%s')", worktree_path, worktrees[worktree_path])
         return worktree_path
 
-    placeholder = f"wt/agent-{agent_num}"
+    placeholder = f"wt/agent-{agent_name}"
     # Try creating with a new placeholder branch
     result = run(
         ["git", "worktree", "add", worktree_path, "-b", placeholder],
@@ -211,17 +214,21 @@ def checkout_branch(
 def main() -> None:
     if len(sys.argv) != 4:
         print(
-            f"Usage: python {sys.argv[0]} <agent_number> <branch_name> <base_branch>",
+            f"Usage: python {sys.argv[0]} <agent_name> <branch_name> <base_branch>",
             file=sys.stderr,
         )
         sys.exit(1)
 
-    # --- Agent number ---
-    agent_input = sys.argv[1]
-    if not agent_input.isdigit() or int(agent_input) < 1:
-        log.error("Invalid agent number. Please enter a positive integer.")
+    # --- Agent name ---
+    agent_name = sys.argv[1]
+    if not AGENT_NAME_RE.match(agent_name):
+        log.error(
+            "Invalid agent name '%s'. Must match %s (letters, digits, '.', '-', '_'; "
+            "must start with a letter or digit).",
+            agent_name,
+            AGENT_NAME_RE.pattern,
+        )
         sys.exit(1)
-    agent_num = int(agent_input)
 
     # --- Branch names ---
     branch = sys.argv[2]
@@ -233,7 +240,7 @@ def main() -> None:
 
     # --- Resolve worktree ---
     worktrees = get_existing_worktrees(project_dir)
-    worktree_path = ensure_worktree(agent_num, project_dir, worktrees)
+    worktree_path = ensure_worktree(agent_name, project_dir, worktrees)
 
     # Refresh worktree map after possible creation
     worktrees = get_existing_worktrees(project_dir)
