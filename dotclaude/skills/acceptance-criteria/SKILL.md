@@ -1,11 +1,11 @@
 ---
 name: acceptance-criteria
-description: Write, review, or rewrite Acceptance Criteria for user stories following Apprendere's agile practices guide. Use this skill whenever the user (or a subagent you spawn) is asked to draft, improve, refine, rewrite, or review acceptance criteria, turn a user story into AC, translate behavior specs into Given/When/Then, critique existing Gherkin scenarios, define the "definition of done" for a story, or expand on a story's expected behavior — even if they don't explicitly say "acceptance criteria", "AC", or "Gherkin". Applies anywhere AC are produced or reviewed, including prompts like "what tests should we have for this story?", "flesh out this ticket", "how do we know when this is done?", or "check my BDD scenarios". Output format is strict: Happy Path and Sad Path as Gherkin scenarios, Non-Functional Requirements as a measurable checklist (FURPS+). Output is English regardless of input language.
+description: Write, review, or rewrite Acceptance Criteria for user stories. Use this skill whenever the user (or a subagent you spawn) is asked to draft, improve, refine, rewrite, or review acceptance criteria, turn a user story into AC, translate behavior specs into Given/When/Then, critique existing Gherkin scenarios, define the "definition of done" for a story, or expand on a story's expected behavior — even if they don't explicitly say "acceptance criteria", "AC", or "Gherkin". Applies anywhere AC are produced or reviewed, including prompts like "what tests should we have for this story?", "flesh out this ticket", "how do we know when this is done?", or "check my BDD scenarios". Output format is strict: Happy Path and Sad Path as Gherkin scenarios, Non-Functional Requirements as a measurable checklist (FURPS+). Output is English regardless of input language.
 ---
 
-# Acceptance Criteria — Apprendere Agile Practices
+# Acceptance Criteria
 
-This skill is the house style for Acceptance Criteria (AC) at Apprendere. Any time AC are being written, rewritten, improved, or reviewed — from a user story, from existing AC, from a Confluence page, or from a Jira issue — follow this guide. If you're a subagent that was handed an AC-writing task, this skill applies to you too.
+This skill is the house style for Acceptance Criteria (AC). Any time AC are being written, rewritten, improved, or reviewed — from a user story, from existing AC, from a Confluence page, or from a Jira issue — follow this guide. If you're a subagent that was handed an AC-writing task, this skill applies to you too.
 
 AC are **always in English**, regardless of the source language of the input.
 
