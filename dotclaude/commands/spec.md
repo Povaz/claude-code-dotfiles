@@ -1,6 +1,6 @@
 ---
 description: Drive the Context-Anchored Specifications pipeline (Dictionary → Stories → AC → review/propagate).
-argument-hint: "[dictionary | stories | ac | review | propagate <term>] [optional spec path]"
+argument-hint: "[dictionary | stories | ac | review | propagate <term> | assemble] [optional spec path]"
 ---
 
 # /spec — Context-Anchored Specifications orchestrator
@@ -24,7 +24,12 @@ This command's job is **orchestration only**: figure out where the project is in
 - `stories` — focused story phase (assumes `contexts.md` exists; produces anchored stories).
 - `ac` — focused AC phase (assumes anchored stories exist).
 - `review` — recurring spec review: prune the Dictionary, confirm anchoring on all stories, re-check multi-Context stories, ask about definitions changed since last review.
+- `assemble` — pure Assembly trigger: rebuild `docs/specs/spec.md` from the current source artifacts. No review, no prune, no other side effects on the lane skills. Three motivators:
+  - **First-run** — `spec.md` doesn't exist yet and you want to materialise it without driving a phase.
+  - **Regenerate-after-manual-edits** — you edited `contexts.md` / `user-stories.md` / `acceptance-criteria.md` / `specs.md` by hand and want the unified doc refreshed.
+  - **Foreign-source** — Contexts / Stories / AC originated outside this pipeline (different framework, different tool, manually authored elsewhere). `assemble` will normalize them to the canonical lane-skill formats before stitching.
 - `propagate <term>` — definition-change propagation pass for a single term.
+
 
 If the user passes an alternative path as the second token, treat it as the Spec File path (e.g. `/spec stories docs/specs/checkout.md`). Otherwise the default is `docs/specs/specs.md`.
 
@@ -64,6 +69,8 @@ Briefly summarise the state in one or two lines: which artifacts exist, whether 
 **`review`** — see the Recurring review subroutine below.
 
 **`propagate <term>`** — see the Propagation subroutine below.
+
+**`assemble`** — see the Assembly subroutine below. Run it directly with no preceding phase, review, or prune. If the source artifacts (per-skill files or whatever the user pointed at) diverge from the lane-skill canonical formats, the Assembly subroutine handles normalization — see its **Format normalization** clause.
 
 ### 3. Iterative refinement is the default
 
@@ -119,6 +126,7 @@ The assembly is **invisible to the lane skills** — they continue to write to t
   - [<US1 Title>](#<anchor>)
   - [<US2 Title>](#<anchor>)
 - [Non-Functional Requirements](#non-functional-requirements)
+- [Unstructured Specs](#unstructured-specs)
 
 ## Contexts & Dictionary
 
@@ -187,6 +195,14 @@ INVEST check:
 ### From: <US2 Title>
 
 - [ ] <…>
+
+## Unstructured Specs
+
+### <was H1 in the source Spec File>
+
+#### <was H2 in the source Spec File>
+
+…
 ```
 
 ### Heading-level remap rules
@@ -197,14 +213,31 @@ The lane skills emit at a flat heading depth (`# Context: …`, `**Title:** …`
 - **User Stories.** Each story gets a `### <Title>` heading (using the story's `**Title:**` value as the heading text). The `[Contexts: …]` tag, `**Title:**`, Connextra narrative, INVEST block, and any `What Changed:` block follow underneath, unchanged.
 - **Acceptance Criteria.** AC are nested under their parent story. The lane skill's `### Happy Path` and `### Sad Path` headings are dropped; instead each *scenario* becomes a `#### <Scenario Name> — Happy/Sad Path` heading (the suffix names which path it is). The `**Background:**` block, if any, sits under the first scenario's heading or as its own `#### Background` heading at the top of the AC group, the user's call.
 - **NFR.** NFR checklists from each story's AC are extracted out of the per-story AC section and grouped into a single `## Non-Functional Requirements` section at the bottom of the document, sub-grouped by parent story title (`### From: <US Title>`). **Do not dedupe automatically** — losing context on which story raised a given NFR is silent information loss; if the user wants dedupe, they ask for it explicitly.
+- **Unstructured Specs.** The full body of the input Spec File (default `docs/specs/specs.md`) is embedded verbatim under a final `## Unstructured Specs` H2 section, preserving the upstream prose the rest of the doc derives from. Because the unified doc already owns the document's H1 and the section's H2, **shift every heading in the source down by 2 levels** when embedding so the source's intra-document hierarchy stays intact but nests cleanly under the wrapper:
+
+  | Source heading | Heading inside `## Unstructured Specs` |
+  |---|---|
+  | `# foo`   | `### foo` |
+  | `## foo`  | `#### foo` |
+  | `### foo` | `##### foo` |
+  | `#### foo` | `###### foo` |
+
+  Stop at H6 — Markdown does not support deeper headings. If a source uses `#####`+ headings, flag the conflict and ask the user how to handle it (typical answer: flatten the deepest source levels to bold prose, since spec files don't usually need that depth). Non-heading content (paragraphs, lists, code blocks, tables, blockquotes) is copied through unchanged.
+
+  This embedding is **always re-pulled fresh** on every Assembly run. If `docs/specs/specs.md` is edited, the next Assembly reflects the edit; the unified doc is never the source of truth for unstructured prose, only the assembled view of it.
 
 ### Assembly mechanics
 
-1. **Read the source artifacts.** If the per-skill files exist, read them. If only the unified `spec.md` exists from a previous assembly, read that as the source of truth instead.
-2. **Apply the remap rules above** to produce the new full content of `spec.md`.
-3. **Show the proposed document to the user before writing.** This matches the framework's "always show before write" rule. For incremental updates (e.g., one new story added), it is acceptable to show only the diff against the current `spec.md`, but make the full new content available on request.
-4. **Write `spec.md`** once the user approves.
-5. **Per-skill files are not deleted by this subroutine.** They remain as the standalone-skill artifacts. If the user wants to consolidate (delete the per-skill files now that `spec.md` is canonical), they ask for it explicitly — destructive cleanup is not implicit in this command.
+1. **Read the source artifacts.** If the per-skill files exist, read them. If only the unified `spec.md` exists from a previous assembly, read that as the source of truth instead. If the user passed paths for foreign-source artifacts, read those.
+2. **Format normalization (enforce canonical lane-skill formats).** Source artifacts may not match the lane skills' canonical Output format specs — common when `assemble` is run on artifacts produced by a different framework, by hand, or by an older version of these skills. Before stitching, normalize each source artifact against the relevant lane skill's Output format spec:
+   - **Contexts** — `# Context: <Title>` + Relationships + Dictionary table per the `contexts-dictionaries` skill.
+   - **Stories** — Connextra format (one clause per line, **trailing backslash `\` on every non-final clause line** for CommonMark hard-line-break, bold `**As a**` / `**I can**` / `**so that**` keywords, no fence), per-principle INVEST block, optional `[Contexts: …]` tag line + backtick-highlighted Dictionary terms when the project is anchored, per the `user-stories` skill.
+   - **AC** — `**Scenario:**` / `**Background:**` / `**Feature:**` bold labels (outside any fence) followed by the body wrapped in a ` ```gherkin ` fenced code block, with one clause per line, 4-space indent on `And` continuations, trailing comma on every clause except the final one, and **no bold inside the fence** (bold doesn't render in code blocks). NFR as the FURPS+ checklist outside any fence, per the `acceptance-criteria` skill.
+   When divergence is detected (run-on Connextra missing trailing `\`, AC body not wrapped in a `gherkin` fence, AC keywords bolded inside the fence, missing tag line, etc.), surface the divergence to the user, show the proposed normalized form **before** rewriting, and never silently transform. This is the "always show before write" rule. If you can't normalize confidently (e.g., the source is in a wholly unfamiliar shape), ask the user how to interpret it rather than guessing.
+3. **Apply the remap rules above** — heading-level remap for Contexts/Stories/AC, NFR rollup, and the H1→H3 / H2→H4 / H3→H5 shift for the embedded Spec File — to produce the new full content of `spec.md`.
+4. **Show the proposed document to the user before writing.** For incremental updates (e.g., one new story added), it is acceptable to show only the diff against the current `spec.md`, but make the full new content available on request.
+5. **Write `spec.md`** once the user approves.
+6. **Per-skill files are not deleted by this subroutine.** They remain as the standalone-skill artifacts. If the user wants to consolidate (delete the per-skill files now that `spec.md` is canonical), they ask for it explicitly — destructive cleanup is not implicit in this command.
 
 ### When to assemble
 
@@ -215,8 +248,9 @@ Run Assembly:
 - After the AC phase completes (any new or revised AC set).
 - After a `/spec review` pass that resulted in any artifact change.
 - After a `/spec propagate <term>` pass that resulted in any artifact change.
+- **Always when invoked via `/spec assemble`**, regardless of whether anything changed — this is the explicit entry point for foreign-source assembly, regenerate-after-manual-edits, and first-run materialization.
 
-Skip Assembly only when nothing changed (e.g., the user ran `/spec review` and confirmed everything was already healthy).
+For phase-completion and review/propagate cases, skip Assembly when nothing changed *and* `spec.md` already exists. If `spec.md` is missing, run Assembly to materialise it on first contact, even if no artifact changed.
 
 ## Default file paths
 

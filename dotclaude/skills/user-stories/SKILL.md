@@ -24,16 +24,17 @@ Every story you produce has two parts: a **Title** and a **Connextra narrative**
 ```
 **Title:** <short, concrete phrase — the feature or outcome, not the implementation>
 
-**As a** <type of user>,
-**I can** <some goal>,
+**As a** <type of user>, \
+**I can** <some goal>, \
 **so that** <some reason>.
 ```
 
-This shape is **mandatory, not decorative**. The three rules:
+This shape is **mandatory, not decorative**. The four rules:
 
-1. **One clause per line.** `As a …`, `I can …`, and `so that …` each occupy their own source line, separated by single newlines. Do **not** collapse the narrative into one prose sentence even though Markdown's soft-break behaviour would render it as such. The clause-per-line shape is the house style and matches the reference at `docs/specs/user-stories.md`.
-2. **Bold keywords.** `**As a**`, `**I can**`, `**so that**` are always bolded. The bolding is the visual cue that tells a reviewer at a glance that this block is a Connextra story, not loose prose.
-3. **No fence.** The narrative is plain markdown, not a code block. Do not wrap it in ` ``` ` — the bolding wouldn't render and the story would lose its visual weight.
+1. **One clause per line.** `As a …`, `I can …`, and `so that …` each occupy their own source line.
+2. **Trailing backslash `\` on every non-final clause line.** This is CommonMark's hard-line-break syntax — it forces the renderer to emit a `<br>` regardless of the viewer's soft-break behaviour. Without it, Markdown collapses the three lines into one paragraph in many renderers (GitHub web, IDE preview, etc.). The final clause line has **no** trailing `\` — it's the end of the paragraph. Two trailing spaces (`  `) work too in CommonMark, but they're invisible and easily stripped by editors and linters; `\` is visible in source and survives editor whitespace handling.
+3. **Bold keywords.** `**As a**`, `**I can**`, `**so that**` are always bolded. The bolding is the visual cue that tells a reviewer at a glance that this block is a Connextra story, not loose prose.
+4. **No fence.** The narrative is plain markdown, not a code block. Do not wrap it in ` ``` ` — the bolding wouldn't render, backtick-highlighted Dictionary terms would display as literal characters instead of monospaced highlights, and the story would lose its visual weight.
 
 Title guidance:
 - Keep it under ~80 characters. It should read like a headline.
