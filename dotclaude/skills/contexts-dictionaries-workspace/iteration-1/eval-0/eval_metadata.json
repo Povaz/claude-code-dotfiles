@@ -1,0 +1,14 @@
+{
+  "eval_id": 0,
+  "eval_name": "initial-draft-from-spec",
+  "prompt": "Here is a draft spec for our new returns flow. Can you draft an initial dictionary?\n\n---\nLearners can request a refund within the **return window**. The return window is 14 days for individual purchases and 30 days for B2B purchases, measured from the date of purchase. Refunds are processed against the original payment method. Some courses are flagged as **non-refundable** (typically live cohort programmes); these display a banner at checkout. Restocking fees do not apply. The refund eligibility decision is automated unless the learner contacts support, in which case a support agent makes a manual override.\n---",
+  "assertions": [
+    {"text": "Output contains exactly one `# Context: <Title>` block (single Context is appropriate for this spec)"},
+    {"text": "Each Context block has a short description, a Relationships section, and a Dictionary table"},
+    {"text": "Defines 'Return Window' with the 14-day individual / 30-day B2B distinction"},
+    {"text": "Defines 'Non-Refundable Course' (or near-equivalent term) and notes the cohort-programme exception"},
+    {"text": "Does NOT define ordinary words like 'banner', 'purchase', or 'support'"},
+    {"text": "Either asks a clarifying question about ambiguous terms (e.g., whether 'Refund' itself needs a definition) OR explicitly notes that the bare term was deliberately not added"},
+    {"text": "Does not add backticks around terms inside any User Story or AC artifact (this skill stays in its lane)"}
+  ]
+}

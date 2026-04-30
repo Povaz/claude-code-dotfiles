@@ -1,0 +1,13 @@
+{
+  "eval_id": 2,
+  "eval_name": "pruning-at-review",
+  "prompt": "Sprint review time — please prune our Billing Context's Dictionary. I grepped citations by hand: Invoice 12, Customer 8, Dunning 0, Credit Note 1, Payment Term 1, Reconciliation Window 4. Current Dictionary:\n\n```markdown\n## Dictionary\n\n| Term                    | Definition |\n|-------------------------|------------|\n| Invoice                 | A formal request for payment. Once issued, immutable. |\n| Customer                | An entity with an active commercial relationship; identified by Customer ID. |\n| Dunning                 | The escalation process for overdue invoices. |\n| Credit Note             | An immutable supersede mechanism for an Invoice when amounts must change after issuance. |\n| Payment Term            | A 30-day net default unless otherwise negotiated. |\n| Reconciliation Window   | The monthly accounting close window during which Invoice/Payment matches are finalized. |\n```",
+  "assertions": [
+    {"text": "Recommends KEEPING Invoice, Customer, and Reconciliation Window without further discussion (multi-citation terms)"},
+    {"text": "Recommends REMOVING Dunning (zero citations)"},
+    {"text": "Surfaces Credit Note and Payment Term as single-citation review candidates with explicit reasoning per term — does not silently remove them"},
+    {"text": "Asks the user to confirm before applying any deletion"},
+    {"text": "Does not silently modify any term's definition that wasn't asked about"},
+    {"text": "Mentions that automatic citation tracking is a future-enhancement gap (or otherwise acknowledges the counts came from the user, not the skill)"}
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "expectations": [
+    {
+      "text": "Output contains exactly one `# Context: <Title>` block (single Context is appropriate for this spec)",
+      "passed": false,
+      "evidence": "The response contains no `# Context: <Title>` block at all. The only heading in that style is `## Returns Flow — Dictionary (v0.1)`, which is a level-2 heading and does not use the `# Context:` prefix required by the Context-Anchored Specifications framework."
+    },
+    {
+      "text": "Each Context block has a short description, a Relationships section, and a Dictionary table",
+      "passed": false,
+      "evidence": "No Context block exists, and there is no `Relationships` section anywhere in the response. The response contains only a single dictionary table and an Open Questions list. No description of the Context, no Relationships heading, and no scoping per Context."
+    },
+    {
+      "text": "Defines 'Return Window' with the 14-day individual / 30-day B2B distinction",
+      "passed": true,
+      "evidence": "Row in the dictionary: 'Return Window | The time period during which a refund may be requested, measured from the date of purchase. | 14 days for individual purchases, 30 days for B2B purchases.'"
+    },
+    {
+      "text": "Defines 'Non-Refundable Course' (or near-equivalent term) and notes the cohort-programme exception",
+      "passed": true,
+      "evidence": "The dictionary includes 'Non-Refundable Flag' ('A boolean attribute on a course indicating it is excluded from the refund process regardless of return window.') and 'Live Cohort Programme' ('Spec says these are \"typically\" non-refundable — implying the non-refundable flag is set per course...'). Together these cover the non-refundable concept and the cohort-programme exception."
+    },
+    {
+      "text": "Does NOT define ordinary words like 'banner', 'purchase', or 'support'",
+      "passed": false,
+      "evidence": "The response defines 'Purchase' ('A completed transaction in which a learner (or B2B buyer) acquires access to one or more courses.') and 'Checkout Banner' ('A UI notice shown at checkout when the cart contains a non-refundable course...'). 'Purchase' is precisely the kind of ordinary domain word the assertion warns against, and 'Checkout Banner' adds a definition for the ordinary word 'banner'. Support is treated as 'Support Agent' which is a more specific role, but Purchase and Banner clearly violate the rule."
+    },
+    {
+      "text": "Either asks a clarifying question about ambiguous terms (e.g., whether 'Refund' itself needs a definition) OR explicitly notes that the bare term was deliberately not added",
+      "passed": true,
+      "evidence": "The response includes an 'Open questions worth resolving before the dictionary is final' section with multiple clarifying questions, including ambiguity around what makes a purchase B2B, date-of-purchase semantics, mixed-cart eligibility, override scope, partial refunds, and currency. These constitute clarifying questions about ambiguous terms in the dictionary."
+    },
+    {
+      "text": "Does not add backticks around terms inside any User Story or AC artifact (this skill stays in its lane)",
+      "passed": true,
+      "evidence": "The response produces only a dictionary; no User Story (`As a... I can... so that...`) or Acceptance Criteria (Given/When/Then) artifacts were generated, so no out-of-lane backtick tagging occurred."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 3,
+    "total": 7,
+    "pass_rate": 0.57
+  },
+  "execution_metrics": {
+    "tool_calls": {},
+    "total_tool_calls": 0,
+    "total_steps": 0,
+    "errors_encountered": 0,
+    "output_chars": 4189,
+    "transcript_chars": 0
+  },
+  "timing": {
+    "executor_duration_seconds": 42.2,
+    "total_duration_seconds": 42.2
+  },
+  "claims": [
+    {
+      "claim": "The response output is a Context-Anchored Specifications dictionary",
+      "type": "process",
+      "verified": false,
+      "evidence": "The output uses a generic glossary table titled 'Returns Flow — Dictionary (v0.1)' rather than the framework's `# Context: <Title>` + Relationships + Dictionary table structure. It is a dictionary in the colloquial sense but not in the CAS framework sense."
+    },
+    {
+      "claim": "Restocking fees are explicitly recorded as not applied",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Row: 'Restocking Fee | A fee historically deducted from a refund. In this system, explicitly **not applied** — refunds are always for the full amount.'"
+    },
+    {
+      "claim": "Refunds are processed against the original payment method",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Captured in both the 'Refund' row ('Always processed against the original payment method.') and the 'Original Payment Method' row."
+    },
+    {
+      "claim": "The dictionary captures only domain-specific terminology",
+      "type": "quality",
+      "verified": false,
+      "evidence": "Several entries (Purchase, Course, Checkout Banner) define ordinary or only-loosely-domain words rather than the spec's distinct domain terminology."
+    }
+  ],
+  "user_notes_summary": {
+    "uncertainties": [],
+    "needs_review": [],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "assertion": "Each Context block has a short description, a Relationships section, and a Dictionary table",
+        "reason": "Vacuously passes when no Context block exists. Consider rewording so absence of a Context block is an explicit fail (e.g., 'A Context block exists AND it has a short description, a Relationships section, and a Dictionary table'), or split into two assertions to make the structural failure unambiguous."
+      },
+      {
+        "reason": "No assertion checks that Relationships are documented at all (the framework's `# Context` + Relationships + Dictionary trio). The current response omits Relationships entirely, but only the structural assertion above flags it indirectly. A dedicated assertion would make this explicit."
+      },
+      {
+        "assertion": "Does NOT define ordinary words like 'banner', 'purchase', or 'support'",
+        "reason": "Strong assertion as written, but consider clarifying whether compound forms like 'Checkout Banner' or 'Individual Purchase' count as ordinary words or as legitimate domain compounds — the response defines both, and reasonable graders could disagree."
+      }
+    ],
+    "overall": "Assertions cover the structural form well, but a couple are vacuously satisfied (or vacuously failed) when the output ignores the framework entirely. Tightening the structural assertions would make the eval more discriminating between framework-compliant and merely glossary-style outputs."
+  }
+}

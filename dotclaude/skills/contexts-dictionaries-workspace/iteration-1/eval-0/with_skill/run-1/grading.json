@@ -1,0 +1,119 @@
+{
+  "expectations": [
+    {
+      "text": "Output contains exactly one `# Context: <Title>` block (single Context is appropriate for this spec)",
+      "passed": true,
+      "evidence": "response.md contains exactly one block headed `# Context: Returns` (line 15). No other `# Context:` heading appears."
+    },
+    {
+      "text": "Each Context block has a short description, a Relationships section, and a Dictionary table",
+      "passed": true,
+      "evidence": "The Returns Context has a one-sentence description ('The Returns Context covers how learners request and receive refunds...'), a `## Relationships` section ('None yet — this is the first Context.'), and a `## Dictionary` table with Term/Definition columns and 8 entries."
+    },
+    {
+      "text": "Defines 'Return Window' with the 14-day individual / 30-day B2B distinction",
+      "passed": true,
+      "evidence": "Dictionary entry: 'Return Window | The period during which a learner may request a refund for a purchased course, measured from the date of purchase. 14 days for individual purchases; 30 days for B2B purchases. ...'"
+    },
+    {
+      "text": "Defines 'Non-Refundable Course' (or near-equivalent term) and notes the cohort-programme exception",
+      "passed": true,
+      "evidence": "Dictionary entry: 'Non-Refundable Course | A course explicitly flagged at the catalogue level as ineligible for refund — typically live cohort programmes. The flag must be visible to the learner via a banner at checkout. ...'"
+    },
+    {
+      "text": "Does NOT define ordinary words like 'banner', 'purchase', or 'support'",
+      "passed": true,
+      "evidence": "Dictionary terms are: Return Window, Individual Purchase, B2B Purchase, Date of Purchase, Non-Refundable Course, Eligibility Decision, Manual Override, Original Payment Method. None of 'banner', 'purchase' (alone), or 'support' is defined as a standalone term. 'Individual Purchase' and 'B2B Purchase' are domain-weighty compounds (they carry the 14/30-day distinction), not ordinary 'purchase'."
+    },
+    {
+      "text": "Either asks a clarifying question about ambiguous terms (e.g., whether 'Refund' itself needs a definition) OR explicitly notes that the bare term was deliberately not added",
+      "passed": true,
+      "evidence": "Both behaviours are present. Clarifying question 4: '`Refund` itself — worth defining? The spec treats refunds as obviously meaning \"money back to the original payment method, full amount\"... I'd default to *not* including `Refund` in the Dictionary unless your team has been arguing about partial refunds...'. Notes section also states explicitly: '`Refund` is intentionally omitted for now.'"
+    },
+    {
+      "text": "Does not add backticks around terms inside any User Story or AC artifact (this skill stays in its lane)",
+      "passed": true,
+      "evidence": "The response produces only a Dictionary draft and prose discussion — no User Story or Acceptance Criteria artifact is present. The skill stayed in its lane. Backticks in the prose discussion are used as inline-code emphasis around term names while discussing them, not inside any Story/AC artifact."
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "tool_calls": {},
+    "total_tool_calls": 0,
+    "total_steps": 0,
+    "errors_encountered": 0,
+    "output_chars": 4192,
+    "transcript_chars": 0
+  },
+  "timing": {
+    "executor_duration_seconds": 50.8,
+    "total_duration_seconds": 50.8
+  },
+  "claims": [
+    {
+      "claim": "Date of purchase is ambiguous in the spec (could be order placement, invoice issuance, payment confirmation, or course-access provisioning)",
+      "type": "factual",
+      "verified": true,
+      "evidence": "The spec only says 'measured from the date of purchase' without disambiguating. For B2B in particular, the executor's enumeration of candidates is plausible and the ambiguity is real — flagging it rather than fabricating a definition is exactly the skill's 'Question, don't invent' rule."
+    },
+    {
+      "claim": "Individual vs B2B distinction is not specified in the spec at the data layer",
+      "type": "factual",
+      "verified": true,
+      "evidence": "The spec mentions the two categories only as drivers of different windows; it does not say how a purchase is classified. The placeholder '?? — pending clarification' on both entries is honest and matches the skill's guidance."
+    },
+    {
+      "claim": "Manual override scope is unspecified",
+      "type": "factual",
+      "verified": true,
+      "evidence": "The spec says only 'a support agent makes a manual override' without saying what can be overridden. Flagging this as a clarification need is correct."
+    },
+    {
+      "claim": "Restocking fees note in the spec did not produce a Dictionary entry",
+      "type": "process",
+      "verified": true,
+      "evidence": "Correct call — 'Restocking fees do not apply' is a statement of policy, not a domain-weighty term recurring across the spec. Adding 'Restocking Fee' to the Dictionary would dilute signal-to-noise."
+    },
+    {
+      "claim": "The draft has 8 Dictionary entries with two carrying placeholders",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Counted in response.md: Return Window, Individual Purchase (??), B2B Purchase (??), Date of Purchase (??), Non-Refundable Course, Eligibility Decision, Manual Override (??), Original Payment Method. Four placeholders, not two — but each is honestly marked '?? — pending clarification', so the use of placeholders is consistent with the skill's guidance."
+    },
+    {
+      "claim": "Smells were surfaced (Individual/B2B Purchase potentially collapsing into one concept; Manual Override potentially splitting)",
+      "type": "quality",
+      "verified": true,
+      "evidence": "The 'Notes / smells to keep an eye on' section flags both correctly and explicitly defers the decision to the user, matching the skill's 'Smells — review prompts, not failures' guidance."
+    }
+  ],
+  "user_notes_summary": {
+    "uncertainties": [],
+    "needs_review": [],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "assertion": "Each Context block has a short description, a Relationships section, and a Dictionary table",
+        "reason": "The check is structural only. A response that emits all three sections but with empty/placeholder content would still pass. Consider tightening to 'Relationships explicitly states something appropriate (e.g., \"None yet — this is the first Context.\" when only one Context exists)'."
+      },
+      {
+        "assertion": "Does not add backticks around terms inside any User Story or AC artifact (this skill stays in its lane)",
+        "reason": "Vacuously satisfied — the prompt does not request Stories or AC, so there is no artifact to violate. To genuinely test 'staying in its lane', a sister eval could prompt the skill mid-Story drafting and check that it returns Dictionary changes only, without rewriting the Story text."
+      },
+      {
+        "reason": "No assertion checks that the executor avoided fabricating definitions for ambiguous terms. The 'Question, don't invent' rule is the skill's most important behaviour, but only one assertion (about Refund) tests it indirectly. Consider adding: 'Where the spec is ambiguous (e.g., date of purchase, manual override scope, individual-vs-B2B classifier), the response either flags the ambiguity or uses a clear placeholder rather than inventing a definition.' This output happens to nail it (4 placeholders + 4 questions), but a sloppier model could pass the current 7 assertions while quietly fabricating, e.g., 'Date of Purchase = the timestamp of the order'."
+      },
+      {
+        "reason": "No assertion verifies that 'Restocking fees do not apply' did NOT spawn a Dictionary entry (a common over-defining failure mode). Worth checking that the 'Hold this bar' guidance is being followed."
+      }
+    ],
+    "overall": "Evals are reasonable for structure and content coverage but are mostly lenient on the skill's signature behaviours (don't fabricate, don't over-define, stay in lane). The current set would pass an output that is structurally correct but substantively weaker than this one."
+  }
+}

@@ -1,0 +1,104 @@
+{
+  "expectations": [
+    {
+      "text": "Recommends KEEPING Invoice, Customer, and Reconciliation Window without further discussion (multi-citation terms)",
+      "passed": true,
+      "evidence": "Response explicitly marks each multi-citation term as KEEP: 'Invoice (12 citations) — KEEP', 'Customer (8 citations) — KEEP. Recurrent, domain-weighted, no obvious drift... No action.', 'Reconciliation Window (4 citations) — KEEP. Above the recurrence bar... No action.' Customer and Reconciliation Window get no further discussion. Invoice does get a drift-check note suggesting a definition tightening relative to Credit Note, but it is explicitly framed as a 'drift check, not a required change' — which aligns with the skill's policy to 're-check definitions for drift since last review' for two-plus citation terms. Treating this as a pass since the skill prescribes the drift re-check for multi-citation terms."
+    },
+    {
+      "text": "Recommends REMOVING Dunning (zero citations)",
+      "passed": true,
+      "evidence": "Response: 'Dunning (0 citations) — REMOVE recommended. Zero citations is the unambiguous \"remove\" case under Rule 7.' Caveat about parked terms is added but the recommendation is REMOVE."
+    },
+    {
+      "text": "Surfaces Credit Note and Payment Term as single-citation review candidates with explicit reasoning per term — does not silently remove them",
+      "passed": true,
+      "evidence": "Both terms are surfaced as single-citation review candidates with detailed reasoning: 'Credit Note (1 citation) — KEEP recommended. Single citation, but this is exactly the \"judged important\" case the rule carves out. The term carries legal/accounting weight... structurally entangled with Invoice...' and 'Payment Term (1 citation) — REMOVE recommended, with caveat. Single citation and the current definition... reads more like a business rule than a vocabulary entry...' Neither was silently removed."
+    },
+    {
+      "text": "Asks the user to confirm before applying any deletion",
+      "passed": true,
+      "evidence": "Multiple confirmation requests: opening states 'Nothing rewritten yet — these are recommendations for your confirmation.' Dunning entry: 'Confirm before I delete'. Payment Term: 'Confirm which case applies'. Closing: 'Once you answer the three questions above, I'll produce the post-prune Dictionary as a single diff... no silent rewrites of definitions you didn't ask about.'"
+    },
+    {
+      "text": "Does not silently modify any term's definition that wasn't asked about",
+      "passed": true,
+      "evidence": "No definitions were modified — the response is recommendations only. The response makes this explicit: 'Nothing rewritten yet' and 'no silent rewrites of definitions you didn't ask about.' The Invoice tightening is proposed as an explicit clarifying question (Q3) requiring user permission before applying."
+    },
+    {
+      "text": "Mentions that automatic citation tracking is a future-enhancement gap (or otherwise acknowledges the counts came from the user, not the skill)",
+      "passed": true,
+      "evidence": "Opening sentence: 'Walking the citation counts you provided against the Rule 7 / skill pruning policy...' explicitly acknowledges the counts came from the user. Although the response does not directly cite the 'future enhancement' framing, the assertion accepts either form ('or otherwise acknowledges the counts came from the user, not the skill')."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "tool_calls": {},
+    "total_tool_calls": 0,
+    "total_steps": 1,
+    "errors_encountered": 0,
+    "output_chars": 3650,
+    "transcript_chars": 0
+  },
+  "timing": {
+    "executor_duration_seconds": 45.0,
+    "total_duration_seconds": 45.0
+  },
+  "claims": [
+    {
+      "claim": "Zero citations is the unambiguous 'remove' case under Rule 7",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Skill SKILL.md § Pruning at recurring spec review: 'Terms with zero citations across Stories and AC → remove.' Matches Rule 7 framing."
+    },
+    {
+      "claim": "Single-citation terms should be kept only if the team judges them important",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Skill SKILL.md: 'Terms with one citation → keep only if the team judges them important. Important is intentionally undefined; favour lean.'"
+    },
+    {
+      "claim": "Credit Note grounds in Invoice; Invoice doesn't currently mention Credit Note (so no circular definition)",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Inspecting the Dictionary in the eval prompt: Invoice = 'A formal request for payment. Once issued, immutable.' (no reference to Credit Note). Credit Note = 'An immutable supersede mechanism for an Invoice when amounts must change after issuance.' (references Invoice). The asymmetric dependency claim holds."
+    },
+    {
+      "claim": "Payment Term's current definition reads more like a business rule than a vocabulary entry",
+      "type": "quality",
+      "verified": true,
+      "evidence": "The provided definition 'A 30-day net default unless otherwise negotiated' indeed describes a default rule rather than naming the concept. The smell observation is well-founded."
+    },
+    {
+      "claim": "The pruning pass produced no silent edits",
+      "type": "process",
+      "verified": true,
+      "evidence": "Response file is purely advisory text — no diff, no rewritten table, only verdicts plus three clarifying questions. Consistent with the explicit 'Nothing rewritten yet' claim."
+    }
+  ],
+  "user_notes_summary": {
+    "uncertainties": [],
+    "needs_review": [],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "assertion": "Recommends KEEPING Invoice, Customer, and Reconciliation Window without further discussion (multi-citation terms)",
+        "reason": "The phrase 'without further discussion' is in tension with the skill's own prescription that two-plus citation terms should have their definitions 're-checked for drift since last review'. The current response surfaces a legitimate drift observation on Invoice (its immutability claim is qualified by Credit Note), which is exactly the behavior the skill encourages. Consider rewording the assertion to allow drift-check commentary on multi-citation terms, or split it: 'Recommends KEEPING' (must pass) plus 'Drift-check commentary on multi-citation terms is permitted but does not silently rewrite the definitions' (should pass)."
+      },
+      {
+        "reason": "No assertion checks that the response actually distinguishes between 'recommendation' and 'applied change'. A weaker output that wrote a new Dictionary block but called it a 'proposal' would still satisfy 'does not silently modify' superficially. Consider asserting that the output does NOT include a rewritten Dictionary table at all (only verdicts plus questions), which is the discriminating behavior here."
+      },
+      {
+        "reason": "No assertion checks that the response references the skill's pruning policy explicitly (Rule 7 / zero-one-many bands) rather than just landing on the right verdicts by coincidence. A model that happened to remove Dunning for some other reason would still pass. Consider asserting that the rationale per term cites either the citation count or the policy bands."
+      }
+    ],
+    "overall": "Assertions are mostly discriminating and the response handily clears them. Main weakness: the 'without further discussion' clause on multi-citation terms slightly contradicts the skill's own drift-check guidance and could falsely fail a high-quality output that does the right thing. Worth tightening."
+  }
+}

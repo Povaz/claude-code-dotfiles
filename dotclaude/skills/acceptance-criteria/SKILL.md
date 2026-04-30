@@ -5,7 +5,7 @@ description: Write, review, or rewrite Acceptance Criteria for user stories. Use
 
 # Acceptance Criteria
 
-This skill is the house style for Acceptance Criteria (AC). Any time AC are being written, rewritten, improved, or reviewed — from a user story, from existing AC, from a Confluence page, or from a Jira issue — follow this guide. If you're a subagent that was handed an AC-writing task, this skill applies to you too.
+This skill is the house style for Acceptance Criteria (AC). Any time AC are being written, rewritten, improved, or reviewed — from a user story or from existing AC — follow this guide. If you're a subagent that was handed an AC-writing task, this skill applies to you too.
 
 AC are **always in English**, regardless of the source language of the input.
 
@@ -46,41 +46,64 @@ Every AC set you produce has **three sections**, matching the Three Dimensions o
 ```
 ## Acceptance Criteria
 
-### Happy Path (Gherkin)
-<one or more Scenario blocks>
+### Happy Path
+<one or more Scenario blocks in bold-keyword markdown>
 
-### Sad Path (Gherkin)
-<one or more Scenario blocks for validation, invalid input, external failure, recovery, boundary>
+### Sad Path
+<one or more Scenario blocks in bold-keyword markdown for validation, invalid input, external failure, recovery, boundary>
 
 ### Non-Functional Requirements (Checklist)
 - [ ] <measurable criterion mapped to a FURPS+ dimension>
 ```
 
-### Happy Path — Gherkin
+### Scenario format — bold-keyword markdown, no fence
 
-Positive flow: inputs valid, the system behaves as intended. **Write this as Gherkin** — the Given/When/Then shape makes the expected flow directly executable as a BDD scenario (via `behave`, `pytest-bdd`, Cucumber, SpecFlow, etc.).
+The house style for Happy Path and Sad Path scenarios is **plain markdown with bolded keywords**, *not* a fenced ` ```gherkin ` block. The shape is BDD-Gherkin (Given/When/Then/And); the rendering is markdown so backtick-highlighted Dictionary terms render as monospaced text per Rule 1 of the framework, and so the keywords themselves get the visual weight bold gives them. This matches the reference at `docs/specs/acceptance-criteria.md`.
 
-Template:
+Required shape:
 
-```gherkin
-Scenario: <short, outcome-focused name>
-  Given <pre-condition>
-    And <additional pre-condition>
-  When <single triggering action>
-  Then <observable outcome>
-    And <additional outcome>
+```
+**Scenario:** <short, outcome-focused name>
+
+**Given** <pre-condition>,
+    **And** <additional pre-condition>,
+**When** <single triggering action>,
+**Then** <observable outcome>,
+    **And** <additional outcome>.
 ```
 
-Guidance:
+Rules:
+
+- **No fence.** Don't wrap the scenario in ` ``` ` or ` ```gherkin ` — the bolding wouldn't render and backtick-highlighted Dictionary terms would display as literal characters instead of monospaced highlights.
+- **Bold all keywords.** `**Scenario:**`, `**Background:**`, `**Given**`, `**When**`, `**Then**`, `**And**` are always bolded. Bolding is the visual cue that tells a reviewer this block is BDD, not loose prose.
+- **One clause per line.** Each `Given/When/Then/And` clause occupies its own source line.
+- **Indent `**And**` continuations with 4 spaces.** This visually attaches the continuation to the parent `Given` / `Then` clause it extends. Plain `Given/When/Then` lines have no leading indent.
+- **Trailing punctuation.** Use commas at the end of `Given`/`When`/intermediate `Then`/`And` lines, and a period on the final line of the scenario. This keeps the scenario readable as one English sentence broken across lines.
+- **Blank line between the `**Scenario:**` header and the body.** This makes the scenario header stand out and keeps rendering consistent across viewers.
 - **`When` must contain exactly one action.** If two things happen, write two scenarios.
-- Use **`Background:`** for pre-conditions shared across all scenarios in the story (e.g., "Given a registered customer is logged in").
-- Use **`Scenario Outline:` + `Examples:`** when the same scenario differs only by data. Don't copy-paste when a data table would do it cleaner.
-- Optionally include a `Feature:` block at the top if the AC will end up in a `.feature` file — a 1–3 line narrative describing the capability.
-- Gherkin must describe **what** the system does, not **how**. No "the backend caches in Redis", no "the POST endpoint returns 200"; describe user-visible behavior.
+- Use **`**Background:**`** for pre-conditions shared across all scenarios in the story (e.g., "Given a registered customer is logged in"). The Background's body uses the same one-clause-per-line bold-keyword shape.
+- Use a **table-driven scenario** when the same scenario differs only by data: write one scenario whose `**Given**` references a table immediately after, and inline an Examples-style markdown table. Don't copy-paste when a data table would do it cleaner.
+- Optionally include a `**Feature:**` line at the top if the AC will end up in a `.feature` file (see `.feature` export below) — a 1–3 line narrative describing the capability.
+- Scenarios must describe **what** the system does, not **how**. No "the backend caches in Redis", no "the POST endpoint returns 200"; describe user-visible behavior.
 
-### Sad Path — Gherkin
+#### `.feature` export
 
-Negative flow: invalid input, validation boundaries, external failures, race conditions, recovery. **Also write as Gherkin**, one scenario per failure mode. Keeping each failure in its own scenario preserves the triggering context and outcome and makes each independently testable.
+If a downstream Cucumber/`behave`/`pytest-bdd` run needs a real `.feature` file, the bold/indent decoration is purely presentational — strip it before handing to the parser:
+
+- Remove the `**` markers around keywords.
+- Replace 4-space `**And**` indents with the Gherkin-conventional 2-space indent.
+- Drop trailing commas on lines and the final period if your tooling is strict.
+- Keep backticks around Dictionary terms — Cucumber-family parsers read them as plain step text and step-matching is unaffected.
+
+This is a tooling concern, not a content concern. The skill always emits the bold-keyword markdown form; format conversion happens at the integration boundary.
+
+### Happy Path
+
+Positive flow: inputs valid, the system behaves as intended. Write each flow as a `**Scenario:**` block per the format above. The Given/When/Then shape preserves the BDD structure and stays directly executable once exported (see `.feature` export above) via `behave`, `pytest-bdd`, Cucumber, SpecFlow, etc.
+
+### Sad Path
+
+Negative flow: invalid input, validation boundaries, external failures, race conditions, recovery. Same `**Scenario:**` block format — one scenario per failure mode. Keeping each failure in its own scenario preserves the triggering context and outcome and makes each independently testable.
 
 Cover, at minimum, whichever of these apply to the story:
 - **Invalid input** (expired, malformed, missing, too long, out of range)
@@ -111,6 +134,56 @@ Template:
 ```
 
 Not every story needs every FURPS+ category. Include only those that apply, but always consider each — a quick mental pass through the six is the main guard against shipping a feature that's fast and pretty but, say, logs plaintext credit-card numbers.
+
+## Anchoring (Context-Anchored Specifications)
+
+When the project uses the **Context-Anchored Specifications** framework — i.e., a `contexts.md` (or equivalent Contexts/Dictionary file) is present alongside the spec — every AC set you produce is anchored. See `docs/kb/context-anchored-specifications.md` for the full framework; the rules summarised below are what changes about your output.
+
+The `contexts-dictionaries` skill owns the Dictionary itself. This skill never edits Context blocks, but it *does* highlight defined terms inside Gherkin steps and the NFR checklist.
+
+### Transitive inheritance
+
+AC inherit **all** of their parent story's Contexts (Rule 4 of the framework) — no separate `[Contexts: …]` tag line on the AC themselves. The story's tag line is what sets scope; AC operate inside that scope.
+
+### Highlighting inside scenarios and NFR
+
+Wrap every defined term in backticks when it appears in its dictionary sense — inside `**Given**`, `**When**`, `**Then**`, `**And**` clauses, scenario titles, data tables, and NFR checklist text alike. Backticks are the framework's canonical highlight (Rule 1): they render as monospaced text everywhere, survive format conversion as literal characters, and are mechanically greppable for impact analysis.
+
+Because scenarios are written in plain markdown (no ` ```gherkin ` fence), backticks render as proper monospaced text — the framework's Rule 1 is honored visually, not just at the source level. If a `.feature` export is needed for Cucumber/`behave`/`pytest-bdd`, the backticks pass through as plain step text and step-matching is unaffected (see `.feature` export above).
+
+### Inline disambiguation
+
+If the parent story spans multiple Contexts and an AC uses a term defined differently in two of them, annotate that occurrence with the Context name inside the backticks: `` `term[Context]` ``. This is rare — most AC stay inside one Context's vocabulary. When it does happen, treat it as a "point of attention": the parent story may be doing too much, and the `user-stories` skill's split-or-keep rubric should be re-applied.
+
+### Iteration handoff
+
+If, while drafting AC, you encounter a term that should be in the Dictionary but isn't — or one whose definition needs adjustment — invoke the `contexts-dictionaries` skill to add or refine the entry, then return to finalise the AC. Iteration is mandatory (Rule 8); do not finalise AC whose anchoring has unresolved Dictionary gaps.
+
+### Missed highlights are spec bugs, not compliance failures
+
+You will sometimes miss a highlight, or backtick a word that isn't actually a Dictionary term. Treat these as ordinary spec bugs caught at review — fix them and move on. Don't reject an AC set just because the highlighting isn't perfect.
+
+### Worked anchoring example
+
+Assume a Billing Context defining `Customer`, `Invoice`, and `Account`.
+
+**Feature:** Invoice download
+
+**Background:**
+
+**Given** a `Customer` is logged in.
+
+**Scenario:** `Customer` downloads a past `Invoice`
+
+**Given** the `Customer` has at least one paid `Invoice` on their `Account`,
+**When** the `Customer` opens the invoice history page and clicks "Download" on a row,
+**Then** the corresponding `Invoice` PDF is delivered to the browser,
+    **And** the file name matches the `Invoice` number.
+
+NFR checklist with highlighting:
+
+- [ ] **Performance:** p95 time from "Download" click to first byte under 500 ms for `Invoice`s issued in the last 12 months.
+- [ ] **Functionality (Security):** `Invoice` PDFs are served only to the `Customer` whose `Account` issued them.
 
 ## Principles for good AC
 
@@ -161,7 +234,7 @@ Trust the story for everything else. You are not the user-stories skill; don't d
 
 ## Input flows
 
-The skill supports four entry points. Infer which one applies; ask if genuinely ambiguous.
+The skill supports two entry points. Infer which applies; ask if genuinely ambiguous. If the user names a specific platform (a backlog tool, a docs platform, an issue tracker), they supply the platform context in the prompt — fetch the source material with whatever tools are available, apply the rules below, and always show the user the proposed AC before writing back to that platform.
 
 ### From a user story (raw text)
 User pastes a Connextra story and asks for AC. Read the story, identify the user role, the goal, and the benefit. If anything about the system context (screens, data, thresholds, error states, auth) is missing, **ask before writing**. Do not invent.
@@ -173,13 +246,7 @@ User pastes existing AC — Gherkin, checklist, or free-form text. Your job:
 3. Rewrite into the canonical format.
 4. Under the rewritten AC, add a **`What Changed:`** block of 2–5 bullets explaining the edits and why. Do not bury the delta at the bottom — keep it adjacent to the AC it describes, as the user-stories skill does.
 
-### From a Confluence page
-User provides a Confluence URL or page ID. Read the page via the Atlassian MCP when available. Treat its content as either a user story, existing AC, or mixed material and apply the rules above. If the user asks you to write the improved AC back to the page, do so only after they've reviewed your draft.
-
-### From/to Jira
-User references a Jira issue. Read the Summary + Description + existing AC (typically in Description or a custom field). Produce the improved AC as response output. **Do not update Jira silently** — show the proposed AC first. On explicit user request you may update the issue, mapping AC to the Description (below the story narrative) or to a dedicated "Acceptance Criteria" field if one exists.
-
-When the story comes with both narrative and existing AC, apply the "reviewing/rewriting" flow to the AC; only touch the story itself if it exhibits a critical issue per the previous section.
+When the input contains both a story narrative and existing AC, apply the "reviewing/rewriting" flow to the AC; only touch the story itself if it exhibits a critical issue per the previous section.
 
 ## Worked example
 
@@ -197,53 +264,56 @@ Before I draft, a couple of quick questions — I don't want to invent threshold
 
 Below is a draft using the conservative assumptions; sections depending on answers are marked `??`.
 
-### Happy Path (Gherkin)
+### Happy Path
 
-```gherkin
-Background:
-  Given a learner account exists with email "lea@example.com"
+**Background:**
 
-Scenario: Learner requests a password reset and sets a new password
-  Given the learner is on the "Forgot password" page
-  When the learner submits the form with email "lea@example.com"
-  Then the learner sees a confirmation "If an account exists, a reset link has been sent."
-    And a reset email is delivered to "lea@example.com" within 1 minute
-    And the email contains a single-use link valid for 24 hours  # ?? confirm duration
+**Given** a learner account exists with email "lea@example.com".
 
-Scenario: Learner completes the reset from the emailed link
-  Given the learner has received a valid reset link
-  When the learner opens the link and submits a new password meeting the password policy
-  Then the password is updated
-    And the learner is redirected to the login page with a success message
-    And the reset link is invalidated for future use
-```
+**Scenario:** Learner requests a password reset and sets a new password
 
-### Sad Path (Gherkin)
+**Given** the learner is on the "Forgot password" page,
+**When** the learner submits the form with email "lea@example.com",
+**Then** the learner sees a confirmation "If an account exists, a reset link has been sent.",
+    **And** a reset email is delivered to "lea@example.com" within 1 minute,
+    **And** the email contains a single-use link valid for 24 hours. _?? confirm duration_
 
-```gherkin
-Scenario: Reset link has expired
-  Given the learner has a reset link issued more than 24 hours ago  # ?? confirm duration
-  When the learner opens the link
-  Then the learner sees error "This reset link has expired. Please request a new one."
-    And no password change is performed
+**Scenario:** Learner completes the reset from the emailed link
 
-Scenario: Reset link has already been used
-  Given the learner has a reset link that was used once to set a new password
-  When the learner opens the same link again
-  Then the learner sees error "This reset link is no longer valid."
+**Given** the learner has received a valid reset link,
+**When** the learner opens the link and submits a new password meeting the password policy,
+**Then** the password is updated,
+    **And** the learner is redirected to the login page with a success message,
+    **And** the reset link is invalidated for future use.
 
-Scenario: New password fails the password policy
-  Given the learner has opened a valid reset link
-  When the learner submits a new password that does not meet the password policy
-  Then the password is not changed
-    And the learner sees the policy violations listed
+### Sad Path
 
-Scenario: Unknown email submitted                                  # ?? behavior depends on Q3
-  Given no learner account exists with email "ghost@example.com"
-  When the learner submits the form with email "ghost@example.com"
-  Then the same neutral confirmation is shown
-    And no email is sent
-```
+**Scenario:** Reset link has expired
+
+**Given** the learner has a reset link issued more than 24 hours ago, _?? confirm duration_
+**When** the learner opens the link,
+**Then** the learner sees error "This reset link has expired. Please request a new one.",
+    **And** no password change is performed.
+
+**Scenario:** Reset link has already been used
+
+**Given** the learner has a reset link that was used once to set a new password,
+**When** the learner opens the same link again,
+**Then** the learner sees error "This reset link is no longer valid.".
+
+**Scenario:** New password fails the password policy
+
+**Given** the learner has opened a valid reset link,
+**When** the learner submits a new password that does not meet the password policy,
+**Then** the password is not changed,
+    **And** the learner sees the policy violations listed.
+
+**Scenario:** Unknown email submitted _?? behavior depends on Q3_
+
+**Given** no learner account exists with email "ghost@example.com",
+**When** the learner submits the form with email "ghost@example.com",
+**Then** the same neutral confirmation is shown,
+    **And** no email is sent.
 
 ### Non-Functional Requirements (Checklist)
 

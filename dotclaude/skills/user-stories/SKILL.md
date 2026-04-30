@@ -1,11 +1,11 @@
 ---
 name: user-stories
-description: Write, review, or rewrite user stories. Use this skill whenever the user (or a subagent you spawn) is asked to draft, improve, refine, split, rewrite, or review user stories, convert functional requirements into stories, groom a backlog, translate a Confluence requirements page into stories, or create/update stories in Jira — even if they don't explicitly mention "user stories". Applies anywhere stories are being produced, including prompts like "turn these requirements into tickets", "clean up this backlog", "help me rewrite this Jira issue", "draft some stories from this spec", "break this epic down", "story map this", "refine the backlog", or "write tickets for this PRD". Output is English, always Connextra-formatted ("As a... I can... so that...") with a Title, an INVEST quality check, and anti-pattern warnings when relevant. This skill does NOT produce Acceptance Criteria — for AC, use the `acceptance-criteria` skill instead.
+description: Write, review, or rewrite user stories. Use this skill whenever the user (or a subagent you spawn) is asked to draft, improve, refine, split, rewrite, or review user stories, convert functional requirements into stories, or groom a backlog — even if they don't explicitly mention "user stories". Applies anywhere stories are being produced, including prompts like "turn these requirements into tickets", "clean up this backlog", "draft some stories from this spec", "break this epic down", "story map this", "refine the backlog", or "write tickets for this PRD". Output is English, always Connextra-formatted ("As a... I can... so that...") with a Title, an INVEST quality check, and anti-pattern warnings when relevant. This skill does NOT produce Acceptance Criteria — for AC, use the `acceptance-criteria` skill instead.
 ---
 
 # User Stories
 
-This skill is the house style for user stories. Any time stories are being written, rewritten, improved, or reviewed — whether from scratch, from a Confluence page, or from Jira — follow this guide. If you're a subagent that was handed a story-writing task, this skill applies to you too.
+This skill is the house style for user stories. Any time stories are being written, rewritten, improved, or reviewed — whether from scratch or from existing drafts — follow this guide. If you're a subagent that was handed a story-writing task, this skill applies to you too.
 
 Stories are **always in English**, regardless of the source language of the input.
 
@@ -19,7 +19,7 @@ Stories are not tasks, work items, or implementation notes. If the work has no u
 
 ## Output format
 
-Every story you produce has two parts: a **Title** and a **Connextra narrative**. These map cleanly to Jira's Summary and Description fields.
+Every story you produce has two parts: a **Title** and a **Connextra narrative**.
 
 ```
 **Title:** <short, concrete phrase — the feature or outcome, not the implementation>
@@ -28,6 +28,12 @@ Every story you produce has two parts: a **Title** and a **Connextra narrative**
 **I can** <some goal>,
 **so that** <some reason>.
 ```
+
+This shape is **mandatory, not decorative**. The three rules:
+
+1. **One clause per line.** `As a …`, `I can …`, and `so that …` each occupy their own source line, separated by single newlines. Do **not** collapse the narrative into one prose sentence even though Markdown's soft-break behaviour would render it as such. The clause-per-line shape is the house style and matches the reference at `docs/specs/user-stories.md`.
+2. **Bold keywords.** `**As a**`, `**I can**`, `**so that**` are always bolded. The bolding is the visual cue that tells a reviewer at a glance that this block is a Connextra story, not loose prose.
+3. **No fence.** The narrative is plain markdown, not a code block. Do not wrap it in ` ``` ` — the bolding wouldn't render and the story would lose its visual weight.
 
 Title guidance:
 - Keep it under ~80 characters. It should read like a headline.
@@ -39,6 +45,8 @@ Narrative guidance:
 - `<type of user>` is a concrete role (e.g., "learner", "course admin", "content editor"). Avoid vague terms like "user" when a more specific role fits.
 - `<some goal>` is observable behavior from the user's side — something they can do, see, or get.
 - `<some reason>` is the benefit to the user or business. If you can't articulate the reason, the story is probably missing its value and needs a conversation before you write it. Ask the user; do not invent a benefit.
+
+When the project uses the **Context-Anchored Specifications** framework and a `contexts.md` is present, the format above is the *unanchored* baseline. Anchored stories prepend a `[Contexts: <list>]` tag line above the **Title** and wrap defined terms in backticks inside the narrative. See the **Anchoring** section below for the full rules.
 
 After each story, include a short quality-check block (details below). Don't skip this — it's the main defense against low-value stories slipping through.
 
@@ -107,6 +115,80 @@ A large business story was sliced so thin that a sub-story no longer carries any
 
 When in doubt, flag and explain. A false warning costs the user a few seconds of reading; a missed warning costs them a bad story in the sprint.
 
+## Anchoring (Context-Anchored Specifications)
+
+When the project uses the **Context-Anchored Specifications** framework — i.e., a `contexts.md` (or equivalent Contexts/Dictionary file) is present alongside the spec — every story you produce should be **anchored**. A story without a Context tag is *unanchored* and must be anchored before the next recurring spec review. See `docs/kb/context-anchored-specifications.md` for the full framework; the rules summarised below are what changes about your output.
+
+The `contexts-dictionaries` skill owns the Dictionary itself. This skill never edits Context blocks, but it *does* tag stories and highlight terms inside them.
+
+### When to apply
+
+Only when a `contexts.md` (or equivalent) is present alongside the spec. If no Dictionary exists yet, draft stories without anchoring and flag that the spec should go through the framework's dictionary phase first (`/spec dictionary` is the typical entry point).
+
+### Output extension
+
+Above the **Title**, add a tag line listing the story's Contexts:
+
+```
+[Contexts: <Context Title>, <another Context Title if applicable>]
+
+**Title:** <as before>
+
+**As a** <role>,
+**I can** <goal>,
+**so that** <reason>.
+```
+
+Inside the Connextra narrative, **wrap every defined term in backticks** when it is used in its dictionary sense — e.g., `` `Customer` ``, `` `Invoice` ``. Backticks are the framework's canonical highlight (Rule 1): they render as monospaced text everywhere, survive format conversion as literal characters, and are mechanically greppable for impact analysis. Do not backtick a word that isn't a Dictionary term, and do not skip a defined term used in its dictionary sense.
+
+### Multi-Context handling — split-or-keep rubric
+
+Most stories belong to exactly one Context. When a story genuinely spans multiple Contexts, decide whether to **split** or **keep** it using the framework's Rule 6 rubric. Default is to **split** if any of these apply:
+
+- **(a) Single-rephrase split** — the story can be cleanly stated using only one Context's vocabulary by removing or rephrasing one sentence.
+- **(b) Independent terms** — the cross-Context terms refer to independent entities; they happen to appear together but aren't structurally entangled.
+- **(c) Clean INVEST split** — splitting produces two stories that each pass INVEST.
+
+Otherwise, **keep** the story multi-Context, with all relevant Contexts in the tag line. Override the default (split when none apply, or keep when one applies) only with explicit reasoning recorded inline as a short note after the INVEST block.
+
+### Inline disambiguation
+
+When a multi-Context story uses a term defined differently in two of its Contexts, annotate that occurrence with the Context name inside the backticks: `` `term[Context]` ``. This is a "point of attention" for reviewers and is rare — most uses of plain `` `term` `` are unambiguous because only one of the story's Contexts defines that term in its dictionary sense.
+
+### Iteration handoff
+
+If, while drafting or rewriting a story, you encounter a term that should be in the Dictionary but isn't — or one whose definition needs adjustment — invoke the `contexts-dictionaries` skill to add or refine the entry, then return to finalise the story. Iteration is mandatory (Rule 8 of the framework); do not finalise a story whose anchoring has unresolved Dictionary gaps.
+
+### Missed highlights are spec bugs, not compliance failures
+
+You will sometimes miss a highlight, or backtick a word that isn't actually a Dictionary term. Treat these as ordinary spec bugs caught at review — fix them and move on. Don't reject a story just because the highlighting isn't perfect.
+
+### Worked anchoring example
+
+Single-Context, the common case:
+
+```
+[Contexts: Billing]
+
+**Title:** Download invoice PDF
+
+**As a** `Customer`,
+**I can** download a PDF of any past `Invoice` from my account history,
+**so that** I can keep a record of my purchase for tax purposes.
+```
+
+Multi-Context with inline disambiguation:
+
+```
+[Contexts: Billing, Account Management]
+
+**Title:** Update billing address from account profile
+
+**As a** `Customer`,
+**I can** update my `Billing` address using my `Account[Account Management]`,
+**so that** my future `Invoice`s are sent to the correct address.
+```
+
 ## Splitting large stories — SPIDR + extras
 
 If a story fails INVEST-**S**mall (see above), split it before returning it. Apply whichever axis fits the material. The canonical taxonomy is **SPIDR** (Mike Cohn); we keep two extras that are not strictly SPIDR but frequently useful.
@@ -128,7 +210,7 @@ When you split, return the set of resulting stories and a one-line note explaini
 
 ## Input flows
 
-The skill supports several entry points. Infer which one applies from the user's request; ask if genuinely ambiguous.
+The skill supports two entry points. Infer which applies from the user's request; ask if genuinely ambiguous. If the user names a specific platform (a backlog tool, a docs platform, an issue tracker), they supply the platform context in the prompt — fetch the source material with whatever tools are available, apply the rules below, and always show the user the proposed stories before writing back to that platform.
 
 ### From scratch — raw functional requirements
 The user pastes or describes unformatted requirements. Extract the distinct user-facing capabilities, identify the relevant user roles, and produce one story per capability. If requirements are vague (no clear user role, no clear benefit), ask targeted questions rather than inventing details.
@@ -139,17 +221,6 @@ The user pastes existing story drafts that need improvement. Preserve their inte
 **Explain the delta per story, inline.** Right after each rewritten story's INVEST block, add a short `**What Changed:**` section that lists the concrete edits you made to that draft and why — role change, solution-trap extraction, split rationale, etc. Keep it to 2–5 bullets. Don't collect everything into one trailing summary table at the bottom of the response: the reviewer is scanning story-by-story and the context is most useful sitting next to the story it describes. When a story was split, put the `**What Changed:**` block under the *first* split (or just above the group if you prefer) and explain the split axis there; the subsequent splits don't each need their own block unless something unusual happened to one of them.
 
 **Don't invent system components.** Only reference user roles, pages, endpoints, screens, integrations, or concepts that appear in the input. If a rewrite seems to need something the draft doesn't mention (e.g., "where does the learner do this from?"), do not fabricate it. Ask a clarifying question instead — one or two targeted questions at the top of the response is fine, and it is much cheaper for the user to answer them than to spot invented scope in a rewritten story. The same rule applies to raw requirements: if the source is genuinely ambiguous about who the user is or what system they're acting within, ask.
-
-### From a Confluence page
-When a Confluence page URL or page ID is provided, read the page with `mcp__claude_ai_Atlassian__getConfluencePage` (or locate it first with `mcp__claude_ai_Atlassian__searchConfluenceUsingCql`) and treat its content as either raw requirements or draft stories, per the rules above. If the page has both, treat each section appropriately. If the user asks you to write improved stories back to the page, do so only after they've reviewed your draft.
-
-### From/to Jira
-When existing Jira issues are referenced, read them with `mcp__claude_ai_Atlassian__getJiraIssue` (or locate them first with `mcp__claude_ai_Atlassian__searchJiraIssuesUsingJql`), treat their current Summary + Description as draft material, and produce improved versions. **Do not update Jira issues silently** — always show the user the proposed changes first. Creation of new Jira stories (`mcp__claude_ai_Atlassian__createJiraIssue`) or updates to existing ones (`mcp__claude_ai_Atlassian__editJiraIssue`) is a separate, explicit step the user will ask for; the skill's job ends once correctly formatted text is produced.
-
-When creating or updating Jira, map:
-- Title → Summary
-- Connextra narrative → Description
-- INVEST / anti-pattern notes → post as a comment (`mcp__claude_ai_Atlassian__addCommentToJiraIssue`) or leave in the description's review section; don't let them pollute the final Description once the user has accepted the story.
 
 ## Worked example
 

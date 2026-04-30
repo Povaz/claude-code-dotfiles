@@ -1,0 +1,50 @@
+{
+  "skill_name": "contexts-dictionaries",
+  "evals": [
+    {
+      "id": 0,
+      "name": "initial-draft-from-spec",
+      "prompt": "Here is a draft spec for our new returns flow. Can you draft an initial dictionary?\n\n---\nLearners can request a refund within the **return window**. The return window is 14 days for individual purchases and 30 days for B2B purchases, measured from the date of purchase. Refunds are processed against the original payment method. Some courses are flagged as **non-refundable** (typically live cohort programmes); these display a banner at checkout. Restocking fees do not apply. The refund eligibility decision is automated unless the learner contacts support, in which case a support agent makes a manual override.\n---",
+      "expected_output": "A single Context with a small Dictionary (3-5 terms) covering the cross-stakeholder-risky terms (Return Window, Non-Refundable Course, possibly Manual Override). Format follows the framework's `# Context: <Title>` + Relationships + Dictionary table layout. Ordinary words like 'refund' or 'banner' are not defined unless flagged as ambiguous. The skill should ask before fabricating definitions for terms whose meaning is implicit in the spec.",
+      "files": [],
+      "assertions": [
+        {"text": "Output contains exactly one `# Context: <Title>` block (single Context is appropriate for this spec)"},
+        {"text": "Each Context block has a short description, a Relationships section, and a Dictionary table"},
+        {"text": "Defines 'Return Window' with the 14-day individual / 30-day B2B distinction"},
+        {"text": "Defines 'Non-Refundable Course' (or near-equivalent term) and notes the cohort-programme exception"},
+        {"text": "Does NOT define ordinary words like 'banner', 'purchase', or 'support'"},
+        {"text": "Either asks a clarifying question about ambiguous terms (e.g., whether 'Refund' itself needs a definition) OR explicitly notes that the bare term was deliberately not added"},
+        {"text": "Does not add backticks around terms inside any User Story or AC artifact (this skill stays in its lane)"}
+      ]
+    },
+    {
+      "id": 1,
+      "name": "add-term-mid-story",
+      "prompt": "I'm drafting a user story that uses the term `NPS Score`, but it's not in our `contexts.md` yet. Can you add it? Here's the existing Survey Context:\n\n```markdown\n# Context: Survey\n\nThe Survey Context covers learner surveys, response collection, and satisfaction reporting.\n\n## Relationships\n\nNone yet — this is the first Context.\n\n## Dictionary\n\n| Term     | Definition |\n|----------|------------|\n| Survey   | A questionnaire issued to a Learner after course completion to capture feedback. Each Survey has at most one response per Learner per Course. |\n| Response | A submitted Survey, identified by a unique response ID. Once submitted, immutable. |\n```",
+      "expected_output": "An updated Survey Context with `NPS Score` added to the Dictionary. The definition is concise (1-2 sentences), domain-specific (mentions the standard 0-10 likelihood-to-recommend or Promoter/Detractor mechanic), and does not invent project-specific scoring rules without flagging them. The skill notes that since this is the first use of the term, no backward propagation is needed. The skill does NOT touch any User Story or AC text.",
+      "files": [],
+      "assertions": [
+        {"text": "Adds 'NPS Score' to the Survey Context's Dictionary table"},
+        {"text": "The definition is one or two sentences and grounded in the standard NPS mechanic (0-10 likelihood, Promoter/Detractor, or numeric range)"},
+        {"text": "Does NOT modify or add Story/AC text"},
+        {"text": "Mentions propagation: either confirms no existing Stories/AC reference the term yet, or flags any that do for re-review"},
+        {"text": "Returns the full updated Context block (or a clear diff against the input) — not just the bare row"}
+      ]
+    },
+    {
+      "id": 2,
+      "name": "pruning-at-review",
+      "prompt": "Sprint review time — please prune our Billing Context's Dictionary. I grepped citations by hand: Invoice 12, Customer 8, Dunning 0, Credit Note 1, Payment Term 1, Reconciliation Window 4. Current Dictionary:\n\n```markdown\n## Dictionary\n\n| Term                    | Definition |\n|-------------------------|------------|\n| Invoice                 | A formal request for payment. Once issued, immutable. |\n| Customer                | An entity with an active commercial relationship; identified by Customer ID. |\n| Dunning                 | The escalation process for overdue invoices. |\n| Credit Note             | An immutable supersede mechanism for an Invoice when amounts must change after issuance. |\n| Payment Term            | A 30-day net default unless otherwise negotiated. |\n| Reconciliation Window   | The monthly accounting close window during which Invoice/Payment matches are finalized. |\n```",
+      "expected_output": "A focused pruning recommendation: keep Invoice, Customer, Reconciliation Window outright; remove Dunning (zero citations); flag Credit Note and Payment Term as single-citation candidates with reasoning per term. The skill asks the user to confirm before deleting. No definitions are silently rewritten.",
+      "files": [],
+      "assertions": [
+        {"text": "Recommends KEEPING Invoice, Customer, and Reconciliation Window without further discussion (multi-citation terms)"},
+        {"text": "Recommends REMOVING Dunning (zero citations)"},
+        {"text": "Surfaces Credit Note and Payment Term as single-citation review candidates with explicit reasoning per term — does not silently remove them"},
+        {"text": "Asks the user to confirm before applying any deletion"},
+        {"text": "Does not silently modify any term's definition that wasn't asked about"},
+        {"text": "Mentions that automatic citation tracking is a future-enhancement gap (or otherwise acknowledges the counts came from the user, not the skill)"}
+      ]
+    }
+  ]
+}

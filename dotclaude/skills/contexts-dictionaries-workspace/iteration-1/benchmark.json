@@ -1,0 +1,362 @@
+{
+  "metadata": {
+    "skill_name": "contexts-dictionaries",
+    "skill_path": "/Users/erick-apprendere/PycharmProjects/claude-code-dotfiles/dotclaude/skills/contexts-dictionaries",
+    "executor_model": "<model-name>",
+    "analyzer_model": "<model-name>",
+    "timestamp": "2026-04-29T16:49:50Z",
+    "evals_run": [
+      0,
+      1,
+      2
+    ],
+    "runs_per_configuration": 3
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 50.8,
+        "tokens": 4192,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Output contains exactly one `# Context: <Title>` block (single Context is appropriate for this spec)",
+          "passed": true,
+          "evidence": "response.md contains exactly one block headed `# Context: Returns` (line 15). No other `# Context:` heading appears."
+        },
+        {
+          "text": "Each Context block has a short description, a Relationships section, and a Dictionary table",
+          "passed": true,
+          "evidence": "The Returns Context has a one-sentence description ('The Returns Context covers how learners request and receive refunds...'), a `## Relationships` section ('None yet \u2014 this is the first Context.'), and a `## Dictionary` table with Term/Definition columns and 8 entries."
+        },
+        {
+          "text": "Defines 'Return Window' with the 14-day individual / 30-day B2B distinction",
+          "passed": true,
+          "evidence": "Dictionary entry: 'Return Window | The period during which a learner may request a refund for a purchased course, measured from the date of purchase. 14 days for individual purchases; 30 days for B2B purchases. ...'"
+        },
+        {
+          "text": "Defines 'Non-Refundable Course' (or near-equivalent term) and notes the cohort-programme exception",
+          "passed": true,
+          "evidence": "Dictionary entry: 'Non-Refundable Course | A course explicitly flagged at the catalogue level as ineligible for refund \u2014 typically live cohort programmes. The flag must be visible to the learner via a banner at checkout. ...'"
+        },
+        {
+          "text": "Does NOT define ordinary words like 'banner', 'purchase', or 'support'",
+          "passed": true,
+          "evidence": "Dictionary terms are: Return Window, Individual Purchase, B2B Purchase, Date of Purchase, Non-Refundable Course, Eligibility Decision, Manual Override, Original Payment Method. None of 'banner', 'purchase' (alone), or 'support' is defined as a standalone term. 'Individual Purchase' and 'B2B Purchase' are domain-weighty compounds (they carry the 14/30-day distinction), not ordinary 'purchase'."
+        },
+        {
+          "text": "Either asks a clarifying question about ambiguous terms (e.g., whether 'Refund' itself needs a definition) OR explicitly notes that the bare term was deliberately not added",
+          "passed": true,
+          "evidence": "Both behaviours are present. Clarifying question 4: '`Refund` itself \u2014 worth defining? The spec treats refunds as obviously meaning \"money back to the original payment method, full amount\"... I'd default to *not* including `Refund` in the Dictionary unless your team has been arguing about partial refunds...'. Notes section also states explicitly: '`Refund` is intentionally omitted for now.'"
+        },
+        {
+          "text": "Does not add backticks around terms inside any User Story or AC artifact (this skill stays in its lane)",
+          "passed": true,
+          "evidence": "The response produces only a Dictionary draft and prose discussion \u2014 no User Story or Acceptance Criteria artifact is present. The skill stayed in its lane. Backticks in the prose discussion are used as inline-code emphasis around term names while discussing them, not inside any Story/AC artifact."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 54.6,
+        "tokens": 3743,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Adds 'NPS Score' to the Survey Context's Dictionary table",
+          "passed": true,
+          "evidence": "The updated Dictionary table in response.md (lines 22-26) contains a new row: '| NPS Score | The Net Promoter Score derived from the standard 0-10 likelihood-to-recommend question...' appended after the existing Survey and Response rows in the Survey Context."
+        },
+        {
+          "text": "The definition is one or two sentences and grounded in the standard NPS mechanic (0-10 likelihood, Promoter/Detractor, or numeric range)",
+          "passed": true,
+          "evidence": "The definition references all three NPS mechanics: 'standard 0-10 likelihood-to-recommend question', '% Promoters - % Detractors (Bain & Company canonical formula), where Promoters answer 9-10, Passives 7-8, and Detractors 0-6', and 'integer in [-100, +100]'. It runs slightly long (about 4 sentences including the pending-clarification aside), which is on the edge of the skill's 'one or two sentences' guideline, but it is unambiguously grounded in the standard NPS mechanic."
+        },
+        {
+          "text": "Does NOT modify or add Story/AC text",
+          "passed": true,
+          "evidence": "Response.md only modifies the Dictionary table inside the Survey Context block. Closing line: 'I haven't touched the Story text \u2014 that's the `user-stories` skill's job.' No Story or AC text is drafted, modified, or referenced beyond the propagation note."
+        },
+        {
+          "text": "Mentions propagation: either confirms no existing Stories/AC reference the term yet, or flags any that do for re-review",
+          "passed": true,
+          "evidence": "Dedicated 'Propagation note (Rule 9)' section: 'You said this is the first Story to use the term, so the affected set today is just the Story you're drafting \u2014 no re-review of existing artifacts needed.' Explicitly handles the propagation question."
+        },
+        {
+          "text": "Returns the full updated Context block (or a clear diff against the input) \u2014 not just the bare row",
+          "passed": true,
+          "evidence": "Response includes the full updated Context block (lines 11-27) with the '# Context: Survey' header, description, Relationships section, and the complete Dictionary table containing all three rows (Survey, Response, NPS Score), not just the new row."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 45.0,
+        "tokens": 3650,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Recommends KEEPING Invoice, Customer, and Reconciliation Window without further discussion (multi-citation terms)",
+          "passed": true,
+          "evidence": "Response explicitly marks each multi-citation term as KEEP: 'Invoice (12 citations) \u2014 KEEP', 'Customer (8 citations) \u2014 KEEP. Recurrent, domain-weighted, no obvious drift... No action.', 'Reconciliation Window (4 citations) \u2014 KEEP. Above the recurrence bar... No action.' Customer and Reconciliation Window get no further discussion. Invoice does get a drift-check note suggesting a definition tightening relative to Credit Note, but it is explicitly framed as a 'drift check, not a required change' \u2014 which aligns with the skill's policy to 're-check definitions for drift since last review' for two-plus citation terms. Treating this as a pass since the skill prescribes the drift re-check for multi-citation terms."
+        },
+        {
+          "text": "Recommends REMOVING Dunning (zero citations)",
+          "passed": true,
+          "evidence": "Response: 'Dunning (0 citations) \u2014 REMOVE recommended. Zero citations is the unambiguous \"remove\" case under Rule 7.' Caveat about parked terms is added but the recommendation is REMOVE."
+        },
+        {
+          "text": "Surfaces Credit Note and Payment Term as single-citation review candidates with explicit reasoning per term \u2014 does not silently remove them",
+          "passed": true,
+          "evidence": "Both terms are surfaced as single-citation review candidates with detailed reasoning: 'Credit Note (1 citation) \u2014 KEEP recommended. Single citation, but this is exactly the \"judged important\" case the rule carves out. The term carries legal/accounting weight... structurally entangled with Invoice...' and 'Payment Term (1 citation) \u2014 REMOVE recommended, with caveat. Single citation and the current definition... reads more like a business rule than a vocabulary entry...' Neither was silently removed."
+        },
+        {
+          "text": "Asks the user to confirm before applying any deletion",
+          "passed": true,
+          "evidence": "Multiple confirmation requests: opening states 'Nothing rewritten yet \u2014 these are recommendations for your confirmation.' Dunning entry: 'Confirm before I delete'. Payment Term: 'Confirm which case applies'. Closing: 'Once you answer the three questions above, I'll produce the post-prune Dictionary as a single diff... no silent rewrites of definitions you didn't ask about.'"
+        },
+        {
+          "text": "Does not silently modify any term's definition that wasn't asked about",
+          "passed": true,
+          "evidence": "No definitions were modified \u2014 the response is recommendations only. The response makes this explicit: 'Nothing rewritten yet' and 'no silent rewrites of definitions you didn't ask about.' The Invoice tightening is proposed as an explicit clarifying question (Q3) requiring user permission before applying."
+        },
+        {
+          "text": "Mentions that automatic citation tracking is a future-enhancement gap (or otherwise acknowledges the counts came from the user, not the skill)",
+          "passed": true,
+          "evidence": "Opening sentence: 'Walking the citation counts you provided against the Rule 7 / skill pruning policy...' explicitly acknowledges the counts came from the user. Although the response does not directly cite the 'future enhancement' framing, the assertion accepts either form ('or otherwise acknowledges the counts came from the user, not the skill')."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 0,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.57,
+        "passed": 4,
+        "failed": 3,
+        "total": 7,
+        "time_seconds": 42.2,
+        "tokens": 4189,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Output contains exactly one `# Context: <Title>` block (single Context is appropriate for this spec)",
+          "passed": false,
+          "evidence": "The response contains no `# Context: <Title>` block at all. The only heading in that style is `## Returns Flow \u2014 Dictionary (v0.1)`, which is a level-2 heading and does not use the `# Context:` prefix required by the Context-Anchored Specifications framework."
+        },
+        {
+          "text": "Each Context block has a short description, a Relationships section, and a Dictionary table",
+          "passed": false,
+          "evidence": "No Context block exists, and there is no `Relationships` section anywhere in the response. The response contains only a single dictionary table and an Open Questions list. No description of the Context, no Relationships heading, and no scoping per Context."
+        },
+        {
+          "text": "Defines 'Return Window' with the 14-day individual / 30-day B2B distinction",
+          "passed": true,
+          "evidence": "Row in the dictionary: 'Return Window | The time period during which a refund may be requested, measured from the date of purchase. | 14 days for individual purchases, 30 days for B2B purchases.'"
+        },
+        {
+          "text": "Defines 'Non-Refundable Course' (or near-equivalent term) and notes the cohort-programme exception",
+          "passed": true,
+          "evidence": "The dictionary includes 'Non-Refundable Flag' ('A boolean attribute on a course indicating it is excluded from the refund process regardless of return window.') and 'Live Cohort Programme' ('Spec says these are \"typically\" non-refundable \u2014 implying the non-refundable flag is set per course...'). Together these cover the non-refundable concept and the cohort-programme exception."
+        },
+        {
+          "text": "Does NOT define ordinary words like 'banner', 'purchase', or 'support'",
+          "passed": false,
+          "evidence": "The response defines 'Purchase' ('A completed transaction in which a learner (or B2B buyer) acquires access to one or more courses.') and 'Checkout Banner' ('A UI notice shown at checkout when the cart contains a non-refundable course...'). 'Purchase' is precisely the kind of ordinary domain word the assertion warns against, and 'Checkout Banner' adds a definition for the ordinary word 'banner'. Support is treated as 'Support Agent' which is a more specific role, but Purchase and Banner clearly violate the rule."
+        },
+        {
+          "text": "Either asks a clarifying question about ambiguous terms (e.g., whether 'Refund' itself needs a definition) OR explicitly notes that the bare term was deliberately not added",
+          "passed": true,
+          "evidence": "The response includes an 'Open questions worth resolving before the dictionary is final' section with multiple clarifying questions, including ambiguity around what makes a purchase B2B, date-of-purchase semantics, mixed-cart eligibility, override scope, partial refunds, and currency. These constitute clarifying questions about ambiguous terms in the dictionary."
+        },
+        {
+          "text": "Does not add backticks around terms inside any User Story or AC artifact (this skill stays in its lane)",
+          "passed": true,
+          "evidence": "The response produces only a dictionary; no User Story (`As a... I can... so that...`) or Acceptance Criteria (Given/When/Then) artifacts were generated, so no out-of-lane backtick tagging occurred."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8,
+        "passed": 4,
+        "failed": 1,
+        "total": 5,
+        "time_seconds": 20.5,
+        "tokens": 1849,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Adds 'NPS Score' to the Survey Context's Dictionary table",
+          "passed": true,
+          "evidence": "response.md line 18 adds a new row to the Dictionary table: '| NPS Score | Net Promoter Score derived from a Survey Response. ...' inside the Survey Context block."
+        },
+        {
+          "text": "The definition is one or two sentences and grounded in the standard NPS mechanic (0-10 likelihood, Promoter/Detractor, or numeric range)",
+          "passed": true,
+          "evidence": "Definition on line 18: 'Net Promoter Score derived from a Survey Response. Calculated on a 0\u201310 scale where respondents are classified as Promoters (9\u201310), Passives (7\u20138), or Detractors (0\u20136); the aggregate NPS Score is the percentage of Promoters minus the percentage of Detractors.' This is two sentences and explicitly grounds the term in the standard NPS mechanic (0\u201310 scale, Promoter/Passive/Detractor classification, %Promoters \u2212 %Detractors)."
+        },
+        {
+          "text": "Does NOT modify or add Story/AC text",
+          "passed": true,
+          "evidence": "The response only emits the updated Context block (Title, intro paragraph, Relationships, Dictionary). No user story (As a... I can... so that...) and no Acceptance Criteria (Given/When/Then) appear anywhere in response.md."
+        },
+        {
+          "text": "Mentions propagation: either confirms no existing Stories/AC reference the term yet, or flags any that do for re-review",
+          "passed": false,
+          "evidence": "The response includes follow-up notes about scale, per-Response vs. aggregate framing, and ownership in another Context, but it never addresses propagation back into existing user stories or AC. There is no statement confirming 'no existing Stories/AC reference NPS Score yet' nor any flag asking the user to re-review stories/AC that may already use the term. The user explicitly mentioned they are 'drafting a user story that uses the term', so propagation is directly in scope and was missed."
+        },
+        {
+          "text": "Returns the full updated Context block (or a clear diff against the input) \u2014 not just the bare row",
+          "passed": true,
+          "evidence": "Lines 3\u201319 of response.md reproduce the entire Context block: '# Context: Survey' heading, the intro paragraph, the Relationships section, and the full Dictionary table including the pre-existing Survey and Response rows alongside the new NPS Score row."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 34.1,
+        "tokens": 3686,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Recommends KEEPING Invoice, Customer, and Reconciliation Window without further discussion (multi-citation terms)",
+          "passed": true,
+          "evidence": "Citation summary table marks Invoice (12), Customer (8), and Reconciliation Window (4) as 'Keep'. Rationale per term gives one-line justifications: 'Invoice (12) \u2014 Core noun of the Billing Context. Keep.', 'Customer (8) \u2014 Heavily referenced; the actor side of most billing flows. Keep.', 'Reconciliation Window (4) \u2014 Solid usage and the definition encodes a non-obvious time-bound constraint that specs lean on. Keep.' These are concise and don't belabor the obvious."
+        },
+        {
+          "text": "Recommends REMOVING Dunning (zero citations)",
+          "passed": true,
+          "evidence": "Rationale states: 'Dunning (0) \u2014 Zero citations means no spec, story, or AC currently depends on this concept. **Drop it.**' Dunning is also absent from the recommended pruned Dictionary table."
+        },
+        {
+          "text": "Surfaces Credit Note and Payment Term as single-citation review candidates with explicit reasoning per term \u2014 does not silently remove them",
+          "passed": true,
+          "evidence": "Both terms get dedicated rationale paragraphs. Credit Note: 'Only one citation, but the term carries real semantic weight... Dropping it would leave that rule unwritten. **Keep**, and flag it for re-review next sprint'. Payment Term: 'Borderline. The current definition... is really a default value, not a term definition... I'd **drop it** unless an upcoming story explicitly needs to vary payment terms; in that case, rewrite the definition first... before keeping it.' Neither is silently removed \u2014 Credit Note is kept with a flag, Payment Term's drop is conditioned on an explicit caveat."
+        },
+        {
+          "text": "Asks the user to confirm before applying any deletion",
+          "passed": true,
+          "evidence": "Section 'Things to double-check before you delete' lists three pre-deletion checks (exhaustive grep, synonym check, trend check) and closes with conditional language: 'If items 1\u20133 all check out, ship the pruned table above.' The deletion is gated on user verification rather than presented as final, though the phrasing is more 'verify these things' than an explicit 'confirm with me'."
+        },
+        {
+          "text": "Does not silently modify any term's definition that wasn't asked about",
+          "passed": true,
+          "evidence": "The recommended pruned Dictionary table preserves the original definitions of Invoice, Customer, Credit Note, and Reconciliation Window verbatim, identical to the input. The suggested rewrite of Payment Term's definition ('The agreed schedule by which a Customer must settle an Invoice; defaults to net-30') appears only in the prose rationale as an explicit suggestion, not silently applied to the table."
+        },
+        {
+          "text": "Mentions that automatic citation tracking is a future-enhancement gap (or otherwise acknowledges the counts came from the user, not the skill)",
+          "passed": true,
+          "evidence": "Opening line acknowledges the source of the counts: 'Based on your citation counts, here's my recommendation.' The 'Things to double-check' section further reinforces user-ownership of the counts: 'Confirm the grep was exhaustive \u2014 did you search Stories, Acceptance Criteria, and any Relationships sections of neighboring Contexts?' This satisfies the 'otherwise acknowledges the counts came from the user' branch, though it does not explicitly call out automatic citation tracking as a future-enhancement gap."
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 50.1333,
+        "stddev": 4.8346,
+        "min": 45.0,
+        "max": 54.6
+      },
+      "tokens": {
+        "mean": 3861.6667,
+        "stddev": 289.8316,
+        "min": 3650,
+        "max": 4192
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.79,
+        "stddev": 0.2152,
+        "min": 0.57,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 32.2667,
+        "stddev": 10.9656,
+        "min": 20.5,
+        "max": 42.2
+      },
+      "tokens": {
+        "mean": 3241.3333,
+        "stddev": 1231.7452,
+        "min": 1849,
+        "max": 4189
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.21",
+      "time_seconds": "+17.9",
+      "tokens": "+620"
+    }
+  },
+  "notes": [
+    "**Pass-rate delta (+21pp)** is real but smaller than it looks: with-skill 18/18 (1.00), baseline 14/18 (0.78). The lift is concentrated almost entirely in eval-0 (+3 assertions). Eval-1 contributes +1, and eval-2 contributes 0 — the baseline scored 6/6 there.",
+    "**Eval-2 (pruning) is non-discriminating in iteration 1.** A competent baseline produces a recommendation that satisfies all 6 assertions without ever consulting the skill. Tighten or replace assertions for iteration 2 — e.g., require an explicit confirmation prompt (not just 'verify-then-ship' framing), require the multi-citation drift-check the skill prescribes, or reject silent definition rewrites (currently passes vacuously).",
+    "**Strongest discriminator is structural compliance (eval-0):** baseline produced a generic glossary with no `# Context: <Title>` heading and no Relationships section. The skill's canonical format is doing real work; this is where the skill earns its keep.",
+    "**Restraint is also a discriminator (eval-0 assertion 5):** baseline defined 17 terms including ordinary words like `Purchase` and `Checkout Banner`. With-skill defined 8 carefully chosen terms with `?? — pending clarification` placeholders for the rest. This restraint is the kind of behaviour a generic assistant won't produce by default.",
+    "**Coverage gap flagged repeatedly by graders:** no assertion directly tests the skill's signature 'Question, don't invent' behaviour. With-skill nails it (4 clarifying questions + 4 placeholders in eval-0; 3 questions + 1 placeholder in eval-1), but a sloppier model could pass current assertions while quietly fabricating definitions. Add an assertion in iteration 2 that requires either explicit clarifying questions OR `?? — pending clarification` placeholders for ambiguous terms.",
+    "**Eval-2 assertion 1 has internal tension:** 'Recommends KEEPING ... without further discussion' contradicts the skill's prescribed drift-check at the multi-citation band. The grader passed it on a charitable reading. Reword for iteration 2 — the goal is 'doesn't propose to remove or rewrite' not 'doesn't comment at all'.",
+    "**Cost tradeoff is non-trivial:** with-skill is ~18s slower and ~620 tokens heavier per run than the no-skill baseline. That's the cost of reading the skill body and producing a more thorough answer; it's the right tradeoff but worth tracking. If time budget tightens, the place to look is whether the skill body can be leaner or whether progressive disclosure (references/) could move some of the longer guidance off the always-loaded SKILL.md.",
+    "**Eval-1 single-FAIL was propagation note** — baseline answered the NPS Score question but never addressed whether existing Stories/AC referenced the term and needed re-review. With-skill produced a dedicated 'Propagation note (Rule 9)' section. This is exactly the artifact the framework's Rule 9 exists to enforce, so it's a meaningful win even if it's only one assertion."
+  ]
+}

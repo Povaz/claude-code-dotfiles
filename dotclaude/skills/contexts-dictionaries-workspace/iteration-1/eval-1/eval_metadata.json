@@ -1,0 +1,12 @@
+{
+  "eval_id": 1,
+  "eval_name": "add-term-mid-story",
+  "prompt": "I'm drafting a user story that uses the term `NPS Score`, but it's not in our `contexts.md` yet. Can you add it? Here's the existing Survey Context:\n\n```markdown\n# Context: Survey\n\nThe Survey Context covers learner surveys, response collection, and satisfaction reporting.\n\n## Relationships\n\nNone yet — this is the first Context.\n\n## Dictionary\n\n| Term     | Definition |\n|----------|------------|\n| Survey   | A questionnaire issued to a Learner after course completion to capture feedback. Each Survey has at most one response per Learner per Course. |\n| Response | A submitted Survey, identified by a unique response ID. Once submitted, immutable. |\n```",
+  "assertions": [
+    {"text": "Adds 'NPS Score' to the Survey Context's Dictionary table"},
+    {"text": "The definition is one or two sentences and grounded in the standard NPS mechanic (0-10 likelihood, Promoter/Detractor, or numeric range)"},
+    {"text": "Does NOT modify or add Story/AC text"},
+    {"text": "Mentions propagation: either confirms no existing Stories/AC reference the term yet, or flags any that do for re-review"},
+    {"text": "Returns the full updated Context block (or a clear diff against the input) — not just the bare row"}
+  ]
+}
