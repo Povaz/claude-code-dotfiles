@@ -56,50 +56,53 @@ Every AC set you produce has **three sections**, matching the Three Dimensions o
 - [ ] <measurable criterion mapped to a FURPS+ dimension>
 ```
 
-### Scenario format — bold-keyword markdown, no fence
+### Scenario format — fenced gherkin, with bold scenario label
 
-The house style for Happy Path and Sad Path scenarios is **plain markdown with bolded keywords**, *not* a fenced ` ```gherkin ` block. The shape is BDD-Gherkin (Given/When/Then/And); the rendering is markdown so backtick-highlighted Dictionary terms render as monospaced text per Rule 1 of the framework, and so the keywords themselves get the visual weight bold gives them. This matches the reference at `docs/specs/acceptance-criteria.md`.
+The house style for Happy Path and Sad Path scenarios is a **bold `**Scenario:**` label on its own line, immediately followed by the scenario body wrapped in a fenced ` ```gherkin ` code block**. Code fences preserve every newline exactly across all Markdown renderers (no soft-break collapsing), and most viewers — PyCharm/IntelliJ, GitHub web, VS Code, Obsidian — apply Gherkin syntax highlighting that distinguishes Given/When/Then visually. That readability win is worth the trade-off of literal-text rendering for backticks (see Highlighting note below).
 
 Required shape:
 
-```
+````
 **Scenario:** <short, outcome-focused name>
 
-**Given** <pre-condition>,
-    **And** <additional pre-condition>,
-**When** <single triggering action>,
-**Then** <observable outcome>,
-    **And** <additional outcome>.
+```gherkin
+Given <pre-condition>,
+    And <additional pre-condition>,
+When <single triggering action>,
+Then <observable outcome>,
+    And <additional outcome>
 ```
+````
 
 Rules:
 
-- **No fence.** Don't wrap the scenario in ` ``` ` or ` ```gherkin ` — the bolding wouldn't render and backtick-highlighted Dictionary terms would display as literal characters instead of monospaced highlights.
-- **Bold all keywords.** `**Scenario:**`, `**Background:**`, `**Given**`, `**When**`, `**Then**`, `**And**` are always bolded. Bolding is the visual cue that tells a reviewer this block is BDD, not loose prose.
-- **One clause per line.** Each `Given/When/Then/And` clause occupies its own source line.
-- **Indent `**And**` continuations with 4 spaces.** This visually attaches the continuation to the parent `Given` / `Then` clause it extends. Plain `Given/When/Then` lines have no leading indent.
-- **Trailing punctuation.** Use commas at the end of `Given`/`When`/intermediate `Then`/`And` lines, and a period on the final line of the scenario. This keeps the scenario readable as one English sentence broken across lines.
-- **Blank line between the `**Scenario:**` header and the body.** This makes the scenario header stand out and keeps rendering consistent across viewers.
+- **Use a `gherkin` fence for the body.** Fenced code blocks guarantee newline preservation in every renderer and unlock Gherkin syntax highlighting. The fence opener is exactly ` ```gherkin ` (lowercase, no space).
+- **`**Scenario:**` and `**Background:**` labels stay outside the fence**, as bold markdown labels. They are intentionally not part of the fenced body — keeping them outside lets the `/spec` Assembly subroutine promote them to `#### <Scenario Name> — Happy/Sad Path` headings when stitching the unified `spec.md`. If the Scenario keyword sat inside the fence it would render as literal text and lose its heading semantics in the assembled doc.
+- **No bold inside the fence.** `**Given**` etc. would render literally as `**Given**` inside a code block, since fences don't process Markdown. Inside the fence, keywords are plain `Given` / `When` / `Then` / `And`. The Gherkin syntax highlighter applies the visual weight.
+- **One clause per line.** Each `Given` / `When` / `Then` / `And` clause occupies its own source line inside the fence.
+- **`And` continuations indented with 4 spaces.** This visually attaches the continuation to the parent `Given` / `Then` clause it extends. Plain `Given` / `When` / `Then` lines have no leading indent.
+- **Trailing punctuation.** Comma at the end of every clause line *except the final one*. The final clause has **no trailing punctuation** (real `.feature` parsers don't expect it; this matches the format the user's reference docs use). The commas are a readability convention specific to our docs — they're stripped at `.feature` export time.
+- **Blank line between the `**Scenario:**` label and the opening fence.** Keeps rendering consistent across viewers.
 - **`When` must contain exactly one action.** If two things happen, write two scenarios.
-- Use **`**Background:**`** for pre-conditions shared across all scenarios in the story (e.g., "Given a registered customer is logged in"). The Background's body uses the same one-clause-per-line bold-keyword shape.
-- Use a **table-driven scenario** when the same scenario differs only by data: write one scenario whose `**Given**` references a table immediately after, and inline an Examples-style markdown table. Don't copy-paste when a data table would do it cleaner.
-- Optionally include a `**Feature:**` line at the top if the AC will end up in a `.feature` file (see `.feature` export below) — a 1–3 line narrative describing the capability.
+- Use a **`**Background:**`** label for pre-conditions shared across all scenarios in the story (e.g., "Given a registered customer is logged in"). The Background's body uses the same fenced-gherkin shape.
+- Use a **`Scenario Outline:` + `Examples:`** block (inside the fence) when the same scenario differs only by data. Don't copy-paste when a data table would do it cleaner.
+- Optionally include a `**Feature:**` label above the first Scenario if the AC will end up in a `.feature` file (see `.feature` export below) — a 1–3 line narrative describing the capability, also outside any fence.
 - Scenarios must describe **what** the system does, not **how**. No "the backend caches in Redis", no "the POST endpoint returns 200"; describe user-visible behavior.
 
 #### `.feature` export
 
-If a downstream Cucumber/`behave`/`pytest-bdd` run needs a real `.feature` file, the bold/indent decoration is purely presentational — strip it before handing to the parser:
+The fenced body is *already* close to a real `.feature` file. To export to one for Cucumber/`behave`/`pytest-bdd`:
 
-- Remove the `**` markers around keywords.
-- Replace 4-space `**And**` indents with the Gherkin-conventional 2-space indent.
-- Drop trailing commas on lines and the final period if your tooling is strict.
+- Strip the fence markers (` ```gherkin ` open, ` ``` ` close).
+- Strip the trailing commas if your tooling is strict.
+- Pull the bold labels (`**Scenario:**`, `**Background:**`, `**Feature:**`) out as bare `Scenario:` / `Background:` / `Feature:` lines.
 - Keep backticks around Dictionary terms — Cucumber-family parsers read them as plain step text and step-matching is unaffected.
 
-This is a tooling concern, not a content concern. The skill always emits the bold-keyword markdown form; format conversion happens at the integration boundary.
+This is a tooling concern, not a content concern. The skill always emits the fenced-gherkin form; format conversion happens at the integration boundary.
 
 ### Happy Path
 
-Positive flow: inputs valid, the system behaves as intended. Write each flow as a `**Scenario:**` block per the format above. The Given/When/Then shape preserves the BDD structure and stays directly executable once exported (see `.feature` export above) via `behave`, `pytest-bdd`, Cucumber, SpecFlow, etc.
+Positive flow: inputs valid, the system behaves as intended. Write each flow as a `**Scenario:**` block per the format above.
 
 ### Sad Path
 
@@ -147,9 +150,13 @@ AC inherit **all** of their parent story's Contexts (Rule 4 of the framework) �
 
 ### Highlighting inside scenarios and NFR
 
-Wrap every defined term in backticks when it appears in its dictionary sense — inside `**Given**`, `**When**`, `**Then**`, `**And**` clauses, scenario titles, data tables, and NFR checklist text alike. Backticks are the framework's canonical highlight (Rule 1): they render as monospaced text everywhere, survive format conversion as literal characters, and are mechanically greppable for impact analysis.
+Wrap every defined term in backticks when it appears in its dictionary sense — inside `Given` / `When` / `Then` / `And` clauses, scenario titles, data tables, and NFR checklist text alike. Backticks are the framework's canonical highlight (Rule 1): they survive format conversion as literal characters and are mechanically greppable for impact analysis.
 
-Because scenarios are written in plain markdown (no ` ```gherkin ` fence), backticks render as proper monospaced text — the framework's Rule 1 is honored visually, not just at the source level. If a `.feature` export is needed for Cucumber/`behave`/`pytest-bdd`, the backticks pass through as plain step text and step-matching is unaffected (see `.feature` export above).
+**Trade-off inside the fence.** Backticked Dictionary terms (`` `Customer` ``) render as **literal backticks** inside a ` ```gherkin ` fence — not as monospaced text. Markdown does not process inline syntax inside code blocks. This is a deliberate trade-off: in exchange, the fence guarantees newline preservation and Gherkin syntax highlighting. The framework's actual mechanical requirement (Rule 1) is *greppability* — a backtick around a defined term in source is what enables `grep` impact analysis when a definition changes — and that requirement is satisfied even when the rendering is literal.
+
+Where Dictionary-term highlighting still renders as monospaced: any place that sits *outside* the fence — the `**Scenario:**` / `**Background:**` / `**Feature:**` labels (which can include backticked terms in their text), prose around the AC block, and the **NFR checklist**. Use proper backtick highlighting in all those places per the framework's normal rules.
+
+If a `.feature` export is needed, backticks pass through as plain step text and step-matching is unaffected (see `.feature` export above).
 
 ### Inline disambiguation
 
@@ -171,19 +178,25 @@ Assume a Billing Context defining `Customer`, `Invoice`, and `Account`.
 
 **Background:**
 
-**Given** a `Customer` is logged in.
+```gherkin
+Given a `Customer` is logged in
+```
 
 **Scenario:** `Customer` downloads a past `Invoice`
 
-**Given** the `Customer` has at least one paid `Invoice` on their `Account`,
-**When** the `Customer` opens the invoice history page and clicks "Download" on a row,
-**Then** the corresponding `Invoice` PDF is delivered to the browser,
-    **And** the file name matches the `Invoice` number.
+```gherkin
+Given the `Customer` has at least one paid `Invoice` on their `Account`,
+When the `Customer` opens the invoice history page and clicks "Download" on a row,
+Then the corresponding `Invoice` PDF is delivered to the browser,
+    And the file name matches the `Invoice` number
+```
 
-NFR checklist with highlighting:
+NFR checklist with highlighting (outside any fence — terms render as monospaced):
 
 - [ ] **Performance:** p95 time from "Download" click to first byte under 500 ms for `Invoice`s issued in the last 12 months.
 - [ ] **Functionality (Security):** `Invoice` PDFs are served only to the `Customer` whose `Account` issued them.
+
+_Note: backticked terms inside the fence (`` `Customer` ``, `` `Invoice` ``, `` `Account` ``) render as literal text — the trade-off documented in the Highlighting note. The same terms inside the bold `**Scenario:**` label and in the NFR checklist render as proper monospaced highlights._
 
 ## Principles for good AC
 
@@ -268,52 +281,72 @@ Below is a draft using the conservative assumptions; sections depending on answe
 
 **Background:**
 
-**Given** a learner account exists with email "lea@example.com".
+```gherkin
+Given a learner account exists with email "lea@example.com"
+```
 
 **Scenario:** Learner requests a password reset and sets a new password
 
-**Given** the learner is on the "Forgot password" page,
-**When** the learner submits the form with email "lea@example.com",
-**Then** the learner sees a confirmation "If an account exists, a reset link has been sent.",
-    **And** a reset email is delivered to "lea@example.com" within 1 minute,
-    **And** the email contains a single-use link valid for 24 hours. _?? confirm duration_
+```gherkin
+Given the learner is on the "Forgot password" page,
+When the learner submits the form with email "lea@example.com",
+Then the learner sees a confirmation "If an account exists, a reset link has been sent.",
+    And a reset email is delivered to "lea@example.com" within 1 minute,
+    And the email contains a single-use link valid for 24 hours
+```
+
+_?? confirm 24h duration_
 
 **Scenario:** Learner completes the reset from the emailed link
 
-**Given** the learner has received a valid reset link,
-**When** the learner opens the link and submits a new password meeting the password policy,
-**Then** the password is updated,
-    **And** the learner is redirected to the login page with a success message,
-    **And** the reset link is invalidated for future use.
+```gherkin
+Given the learner has received a valid reset link,
+When the learner opens the link and submits a new password meeting the password policy,
+Then the password is updated,
+    And the learner is redirected to the login page with a success message,
+    And the reset link is invalidated for future use
+```
 
 ### Sad Path
 
 **Scenario:** Reset link has expired
 
-**Given** the learner has a reset link issued more than 24 hours ago, _?? confirm duration_
-**When** the learner opens the link,
-**Then** the learner sees error "This reset link has expired. Please request a new one.",
-    **And** no password change is performed.
+```gherkin
+Given the learner has a reset link issued more than 24 hours ago,
+When the learner opens the link,
+Then the learner sees error "This reset link has expired. Please request a new one.",
+    And no password change is performed
+```
+
+_?? confirm 24h duration_
 
 **Scenario:** Reset link has already been used
 
-**Given** the learner has a reset link that was used once to set a new password,
-**When** the learner opens the same link again,
-**Then** the learner sees error "This reset link is no longer valid.".
+```gherkin
+Given the learner has a reset link that was used once to set a new password,
+When the learner opens the same link again,
+Then the learner sees error "This reset link is no longer valid."
+```
 
 **Scenario:** New password fails the password policy
 
-**Given** the learner has opened a valid reset link,
-**When** the learner submits a new password that does not meet the password policy,
-**Then** the password is not changed,
-    **And** the learner sees the policy violations listed.
+```gherkin
+Given the learner has opened a valid reset link,
+When the learner submits a new password that does not meet the password policy,
+Then the password is not changed,
+    And the learner sees the policy violations listed
+```
 
-**Scenario:** Unknown email submitted _?? behavior depends on Q3_
+**Scenario:** Unknown email submitted
 
-**Given** no learner account exists with email "ghost@example.com",
-**When** the learner submits the form with email "ghost@example.com",
-**Then** the same neutral confirmation is shown,
-    **And** no email is sent.
+_?? behavior depends on Q3_
+
+```gherkin
+Given no learner account exists with email "ghost@example.com",
+When the learner submits the form with email "ghost@example.com",
+Then the same neutral confirmation is shown,
+    And no email is sent
+```
 
 ### Non-Functional Requirements (Checklist)
 
