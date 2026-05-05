@@ -60,10 +60,10 @@ Every AC set you produce has **three sections**, matching the Three Dimensions o
 
 The house style for Happy Path and Sad Path scenarios is a **bold `**Scenario:**` label on its own line, immediately followed by the scenario body wrapped in a fenced ` ```gherkin ` code block**. Code fences preserve every newline exactly across all Markdown renderers (no soft-break collapsing), and most viewers — PyCharm/IntelliJ, GitHub web, VS Code, Obsidian — apply Gherkin syntax highlighting that distinguishes Given/When/Then visually. That readability win is worth the trade-off of literal-text rendering for backticks (see Highlighting note below).
 
-Required shape:
+Required shape (Happy Path scenario shown — Sad Path uses the same shape with `— Sad Path` in place of `— Happy Path`):
 
 ````
-**Scenario:** <short, outcome-focused name>
+**Scenario:** <short, outcome-focused name> — Happy Path
 
 ```gherkin
 Given <pre-condition>,
@@ -77,7 +77,8 @@ Then <observable outcome>,
 Rules:
 
 - **Use a `gherkin` fence for the body.** Fenced code blocks guarantee newline preservation in every renderer and unlock Gherkin syntax highlighting. The fence opener is exactly ` ```gherkin ` (lowercase, no space).
-- **`**Scenario:**` and `**Background:**` labels stay outside the fence**, as bold markdown labels. They are intentionally not part of the fenced body — keeping them outside lets the `/spec` Assembly subroutine promote them to `#### <Scenario Name> — Happy/Sad Path` headings when stitching the unified `spec.md`. If the Scenario keyword sat inside the fence it would render as literal text and lose its heading semantics in the assembled doc.
+- **`**Scenario:**` and `**Background:**` labels stay outside the fence**, as bold markdown labels. They are intentionally not part of the fenced body — keeping them outside lets the `/spec` Assembly subroutine promote `**Scenario:**` labels into `#### <name> — Happy/Sad Path` headings when stitching the unified `anchored-specs.md`. If the Scenario keyword sat inside the fence it would render as literal text and lose its heading semantics in the assembled doc.
+- **Every `**Scenario:**` label ends with ` — Happy Path` or ` — Sad Path`.** The suffix tells the reader at a glance which path the scenario belongs to and is what the `/spec` Assembly subroutine promotes into per-scenario headings — the orchestrator does **not** infer the suffix from the parent `### Happy Path` / `### Sad Path` section. `**Background:**` keeps no suffix (it is shared pre-conditions, not a path-specific scenario). When you use a `Scenario Outline:` block (see below), the bold label preceding the Outline carries the same suffix.
 - **No bold inside the fence.** `**Given**` etc. would render literally as `**Given**` inside a code block, since fences don't process Markdown. Inside the fence, keywords are plain `Given` / `When` / `Then` / `And`. The Gherkin syntax highlighter applies the visual weight.
 - **One clause per line.** Each `Given` / `When` / `Then` / `And` clause occupies its own source line inside the fence.
 - **`And` continuations indented with 4 spaces.** This visually attaches the continuation to the parent `Given` / `Then` clause it extends. Plain `Given` / `When` / `Then` lines have no leading indent.
@@ -182,7 +183,7 @@ Assume a Billing Context defining `Customer`, `Invoice`, and `Account`.
 Given a `Customer` is logged in
 ```
 
-**Scenario:** `Customer` downloads a past `Invoice`
+**Scenario:** `Customer` downloads a past `Invoice` — Happy Path
 
 ```gherkin
 Given the `Customer` has at least one paid `Invoice` on their `Account`,
@@ -285,7 +286,7 @@ Below is a draft using the conservative assumptions; sections depending on answe
 Given a learner account exists with email "lea@example.com"
 ```
 
-**Scenario:** Learner requests a password reset and sets a new password
+**Scenario:** Learner requests a password reset and sets a new password — Happy Path
 
 ```gherkin
 Given the learner is on the "Forgot password" page,
@@ -297,7 +298,7 @@ Then the learner sees a confirmation "If an account exists, a reset link has bee
 
 _?? confirm 24h duration_
 
-**Scenario:** Learner completes the reset from the emailed link
+**Scenario:** Learner completes the reset from the emailed link — Happy Path
 
 ```gherkin
 Given the learner has received a valid reset link,
@@ -309,7 +310,7 @@ Then the password is updated,
 
 ### Sad Path
 
-**Scenario:** Reset link has expired
+**Scenario:** Reset link has expired — Sad Path
 
 ```gherkin
 Given the learner has a reset link issued more than 24 hours ago,
@@ -320,7 +321,7 @@ Then the learner sees error "This reset link has expired. Please request a new o
 
 _?? confirm 24h duration_
 
-**Scenario:** Reset link has already been used
+**Scenario:** Reset link has already been used — Sad Path
 
 ```gherkin
 Given the learner has a reset link that was used once to set a new password,
@@ -328,7 +329,7 @@ When the learner opens the same link again,
 Then the learner sees error "This reset link is no longer valid."
 ```
 
-**Scenario:** New password fails the password policy
+**Scenario:** New password fails the password policy — Sad Path
 
 ```gherkin
 Given the learner has opened a valid reset link,
@@ -337,7 +338,7 @@ Then the password is not changed,
     And the learner sees the policy violations listed
 ```
 
-**Scenario:** Unknown email submitted
+**Scenario:** Unknown email submitted — Sad Path
 
 _?? behavior depends on Q3_
 

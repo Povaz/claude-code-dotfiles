@@ -135,8 +135,8 @@ Above the **Title**, add a tag line listing the story's Contexts:
 
 **Title:** <as before>
 
-**As a** <role>,
-**I can** <goal>,
+**As a** <role>, \
+**I can** <goal>, \
 **so that** <reason>.
 ```
 
@@ -173,8 +173,8 @@ Single-Context, the common case:
 
 **Title:** Download invoice PDF
 
-**As a** `Customer`,
-**I can** download a PDF of any past `Invoice` from my account history,
+**As a** `Customer`, \
+**I can** download a PDF of any past `Invoice` from my account history, \
 **so that** I can keep a record of my purchase for tax purposes.
 ```
 
@@ -185,8 +185,8 @@ Multi-Context with inline disambiguation:
 
 **Title:** Update billing address from account profile
 
-**As a** `Customer`,
-**I can** update my `Billing` address using my `Account[Account Management]`,
+**As a** `Customer`, \
+**I can** update my `Billing` address using my `Account[Account Management]`, \
 **so that** my future `Invoice`s are sent to the correct address.
 ```
 
@@ -232,8 +232,8 @@ The user pastes existing story drafts that need improvement. Preserve their inte
 
 **Title:** Reset password via emailed link
 
-**As a** learner,
-**I can** request a password reset and receive a link by email to set a new password,
+**As a** learner, \
+**I can** request a password reset and receive a link by email to set a new password, \
 **so that** I can regain access to my account without contacting support.
 
 INVEST check:
@@ -255,8 +255,8 @@ _Note: the 24h link expiry is an acceptance-criterion concern, not a story conce
 
 **Title:** Test-DB reset script (flagged — not a user story)
 
-**As a** developer,
-**I can** reset the test database with a script,
+**As a** developer, \
+**I can** reset the test database with a script, \
 **so that** I can run tests faster.
 
 INVEST check:
@@ -278,8 +278,8 @@ INVEST check:
 
 **Title:** Monthly report loads without manual intervention (needs problem clarification)
 
-**As an** operator,
-**I can** open the monthly report and have it render without waiting on my own action,
+**As an** operator, \
+**I can** open the monthly report and have it render without waiting on my own action, \
 **so that** I can complete month-end review on time.
 
 INVEST check:
@@ -301,8 +301,8 @@ INVEST check:
 
 **Title:** Pay course fee with Klarna instalments (dependency-locked)
 
-**As a** learner,
-**I can** choose Klarna at checkout and split my course fee across instalments,
+**As a** learner, \
+**I can** choose Klarna at checkout and split my course fee across instalments, \
 **so that** I can enrol without paying the full amount up front.
 
 INVEST check:
@@ -324,8 +324,8 @@ INVEST check:
 
 **Title:** Log-in button click (flagged — micro-story)
 
-**As a** learner,
-**I can** click the "Log in" button,
+**As a** learner, \
+**I can** click the "Log in" button, \
 **so that** my click is recorded.
 
 INVEST check:
