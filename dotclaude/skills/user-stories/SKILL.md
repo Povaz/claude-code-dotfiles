@@ -22,7 +22,7 @@ Stories are not tasks, work items, or implementation notes. If the work has no u
 Every story you produce has two parts: a **Title** and a **Connextra narrative**.
 
 ```
-**Title:** <short, concrete phrase — the feature or outcome, not the implementation>
+**Title:** US-X — <short, concrete phrase — the feature or outcome, not the implementation>
 
 **As a** <type of user>, \
 **I can** <some goal>, \
@@ -46,6 +46,14 @@ Narrative guidance:
 - `<type of user>` is a concrete role (e.g., "learner", "course admin", "content editor"). Avoid vague terms like "user" when a more specific role fits.
 - `<some goal>` is observable behavior from the user's side — something they can do, see, or get.
 - `<some reason>` is the benefit to the user or business. If you can't articulate the reason, the story is probably missing its value and needs a conversation before you write it. Ask the user; do not invent a benefit.
+
+Code prefix (`US-X`):
+
+- **Every story carries an immutable identifier `US-X`** (X = positive integer), prefixed to the title with an em-dash separator: `**Title:** US-1 — Reset password via emailed link`.
+- **Monotonic.** Pick `max(existing US-X) + 1`. Scan `user-stories.md` (standalone) or the unified `anchored-specs.md` (when called via `/spec`). Start at 1 for a brand-new spec.
+- **Sticky.** Once assigned, never renumber. If a story is removed, **retire** its code — do not reuse the integer for a future story. Gaps in the sequence are expected and acceptable; they preserve the historical reference.
+- **Splits get fresh codes.** When a story is split (SPIDR or any axis), the original story's `US-X` is retired and each resulting split takes the next free integer at the time of the split. Note the retirement and the new codes in the `**What Changed:**` block.
+- **Standalone vs. orchestrated.** When called via `/spec`, the orchestrator passes the next free code in its handoff prompt. When called standalone, scan the existing artifact yourself; if no artifact exists yet, start at 1.
 
 When the project uses the **Context-Anchored Specifications** framework and a `contexts.md` is present, the format above is the *unanchored* baseline. Anchored stories prepend a `[Contexts: <list>]` tag line above the **Title** and wrap defined terms in backticks inside the narrative. See the **Anchoring** section below for the full rules.
 
@@ -133,7 +141,7 @@ Above the **Title**, add a tag line listing the story's Contexts:
 ```
 [Contexts: <Context Title>, <another Context Title if applicable>]
 
-**Title:** <as before>
+**Title:** US-X — <as before>
 
 **As a** <role>, \
 **I can** <goal>, \
@@ -171,7 +179,7 @@ Single-Context, the common case:
 ```
 [Contexts: Billing]
 
-**Title:** Download invoice PDF
+**Title:** US-1 — Download invoice PDF
 
 **As a** `Customer`, \
 **I can** download a PDF of any past `Invoice` from my account history, \
@@ -183,7 +191,7 @@ Multi-Context with inline disambiguation:
 ```
 [Contexts: Billing, Account Management]
 
-**Title:** Update billing address from account profile
+**Title:** US-2 — Update billing address from account profile
 
 **As a** `Customer`, \
 **I can** update my `Billing` address using my `Account[Account Management]`, \
@@ -207,7 +215,7 @@ If a story fails INVEST-**S**mall (see above), split it before returning it. App
 - **CRUD** — Create / Read / Update / Delete as separate stories when each carries its own user value.
 - **Happy path vs. edge cases** — deliver the core flow first, then error handling, validation, and recovery as follow-up stories.
 
-When you split, return the set of resulting stories and a one-line note explaining which axis you used, so the user can tell whether you picked the right one.
+When you split, return the set of resulting stories and a one-line note explaining which axis you used, so the user can tell whether you picked the right one. The original story's `US-X` is **retired** (do not reuse it); each resulting split takes the next free integer at the time of the split. Record the retirement and the new codes in the `**What Changed:**` block.
 
 ## Input flows
 
@@ -230,7 +238,7 @@ The user pastes existing story drafts that need improvement. Preserve their inte
 
 **Output:**
 
-**Title:** Reset password via emailed link
+**Title:** US-1 — Reset password via emailed link
 
 **As a** learner, \
 **I can** request a password reset and receive a link by email to set a new password, \
@@ -253,7 +261,7 @@ _Note: the 24h link expiry is an acceptance-criterion concern, not a story conce
 
 **Output:**
 
-**Title:** Test-DB reset script (flagged — not a user story)
+**Title:** US-2 — Test-DB reset script (flagged — not a user story)
 
 **As a** developer, \
 **I can** reset the test database with a script, \
@@ -276,7 +284,7 @@ INVEST check:
 
 **Output:**
 
-**Title:** Monthly report loads without manual intervention (needs problem clarification)
+**Title:** US-3 — Monthly report loads without manual intervention (needs problem clarification)
 
 **As an** operator, \
 **I can** open the monthly report and have it render without waiting on my own action, \
@@ -299,7 +307,7 @@ INVEST check:
 
 **Output:**
 
-**Title:** Pay course fee with Klarna instalments (dependency-locked)
+**Title:** US-4 — Pay course fee with Klarna instalments (dependency-locked)
 
 **As a** learner, \
 **I can** choose Klarna at checkout and split my course fee across instalments, \
@@ -322,7 +330,7 @@ INVEST check:
 
 **Output:**
 
-**Title:** Log-in button click (flagged — micro-story)
+**Title:** US-5 — Log-in button click (flagged — micro-story)
 
 **As a** learner, \
 **I can** click the "Log in" button, \

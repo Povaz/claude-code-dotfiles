@@ -75,9 +75,9 @@ Once `contexts.md` exists, the empty route does **not** regress to triage — th
 
 **`dictionary`** — hand off to the `contexts-dictionaries` skill. State your intent, name the source spec path you'll read (resolved per the rules above), and let the skill take over.
 
-**`stories`** — confirm `contexts.md` exists. If not, refuse and tell the user to run `/spec dictionary` first. Otherwise hand off to the `user-stories` skill, instructing it that the project is anchored (so it should apply the rules in its Anchoring section).
+**`stories`** — confirm `contexts.md` exists. If not, refuse and tell the user to run `/spec dictionary` first. Otherwise hand off to the `user-stories` skill, instructing it that the project is anchored (so it should apply the rules in its Anchoring section). Pass the next free `US-X` integer in the handoff prompt — compute as `max(existing US-X) + 1` across `user-stories.md` and `anchored-specs.md`; start at 1 if none exist. Codes are sticky, so gaps from prior deletions/splits are expected and must not be reused.
 
-**`ac`** — confirm anchored stories exist (look for `[Contexts:` tag lines in `user-stories.md`). If not, refuse and tell the user to run `/spec stories` first. Otherwise hand off to the `acceptance-criteria` skill, anchored.
+**`ac`** — confirm anchored stories exist (look for `[Contexts:` tag lines in `user-stories.md`). If not, refuse and tell the user to run `/spec stories` first. Otherwise hand off to the `acceptance-criteria` skill, anchored. Pass the parent story's `US-X` and the next free `Y` for that story — compute as `max(existing AC-X.Y for this X) + 1` across `acceptance-criteria.md` and `anchored-specs.md`; start at Y=1 if none exist for this X.
 
 **`review`** — see the Recurring review subroutine below.
 
@@ -170,15 +170,16 @@ Triage runs:
 2. For each term, ask the user for a citation count if you can't get it confidently from grepping `user-stories.md` and `acceptance-criteria.md` (a manual grep across those files for `` `<term>` `` and `` `<term>[*]` `` is acceptable but flag the count as best-effort — automatic citation tracking is a documented future enhancement of the framework).
 3. Hand off the pruning decision to the `contexts-dictionaries` skill with the citation counts.
 4. Walk `user-stories.md`. Confirm every story has a `[Contexts: …]` tag line; flag any that don't as **unanchored** and offer to anchor them via the `user-stories` skill.
-5. For multi-Context stories, prompt the user to re-check them against the split-or-keep rubric (the `user-stories` skill knows the rubric).
-6. Ask the user whether any term's definition changed since the last review. For each yes, run `/spec propagate <term>`.
+5. **Code health check.** Scan `user-stories.md` for duplicate `US-X` codes and `acceptance-criteria.md` for duplicate `AC-X.Y` codes. Flag duplicates as a real bug and ask the user which is canonical. Gaps in numbering are expected (codes are sticky after deletion or splits) and don't need attention.
+6. For multi-Context stories, prompt the user to re-check them against the split-or-keep rubric (the `user-stories` skill knows the rubric).
+7. Ask the user whether any term's definition changed since the last review. For each yes, run `/spec propagate <term>`.
 
 Stop after each step and confirm with the user before moving on. The review is a conversation, not a unilateral rewrite.
 
 ## Propagation subroutine (`/spec propagate <term>`)
 
 1. Grep `user-stories.md`, `acceptance-criteria.md`, **and** `anchored-specs.md` (the unified doc) for occurrences of `` `<term>` `` and `` `<term>[*]` `` (any inline-disambiguated form).
-2. Show the user the list of affected artifacts (story titles, AC scenarios) — do not modify anything yet.
+2. Show the user the list of affected artifacts using their codes (e.g. "affects US-3, AC-3.1, AC-3.4, US-7"). Codes are stable handles that survive renumbering and stay greppable, so they are the preferred citation form. Do not modify anything yet.
 3. Ask the user to confirm which of those need re-review. For each confirmed, hand off to `user-stories` or `acceptance-criteria` to update the artifact under the new definition.
 4. Do not silently rewrite artifacts. The user drives the propagation.
 5. Once the user has approved the updated artifacts, re-run the **Assembly** subroutine (below) so the unified `anchored-specs.md` reflects the new content.
@@ -205,8 +206,8 @@ The assembly is **invisible to the lane skills** — they continue to write to t
 ## Table of Contents
 - [Contexts & Dictionary](#contexts--dictionary)
 - [User Stories](#user-stories)
-  - [<US1 Title>](#<anchor>)
-  - [<US2 Title>](#<anchor>)
+  - [US-1 — <Title>](#<anchor>)
+  - [US-2 — <Title>](#<anchor>)
 - [Non-Functional Requirements](#non-functional-requirements)
 - [Unstructured Specs](#unstructured-specs)
 
@@ -232,11 +233,11 @@ The assembly is **invisible to the lane skills** — they continue to write to t
 
 ## User Stories
 
-### <US1 Title>
+### US-1 — <Title>
 
 [Contexts: <…>]
 
-**Title:** <as before>
+**Title:** US-1 — <Title>
 
 **As a** <role>, \
 **I can** <goal>, \
@@ -246,35 +247,28 @@ INVEST check:
 - **I**ndependent — <pass/fail>: <reason>.
 - … (full per-principle block as the user-stories skill emits it)
 
-#### <AC1 Scenario Name> — Happy/Sad Path
+#### AC-1.1 — <Scenario Name> — Happy/Sad Path
 
-**Background:** (if any)
+**Background:** (if any, shared across this story's scenarios; rendered with the AC skill's gherkin fence)
 
-**Given** <…>.
+<scenario body inside a ` ```gherkin ` fence per the AC skill format>
 
-**Scenario:** <name>
-
-**Given** <…>,
-**When** <…>,
-**Then** <…>,
-    **And** <…>.
-
-#### <AC2 Scenario Name> — Happy/Sad Path
+#### AC-1.2 — <Scenario Name> — Happy/Sad Path
 
 <…>
 
-### <US2 Title>
+### US-2 — <Title>
 
 <…>
 
 ## Non-Functional Requirements
 
-### From: <US1 Title>
+### From: US-1 — <Title>
 
 - [ ] **Performance:** <…>
 - [ ] **Functionality (Security):** <…>
 
-### From: <US2 Title>
+### From: US-2 — <Title>
 
 - [ ] <…>
 
@@ -292,9 +286,9 @@ INVEST check:
 The lane skills emit at a flat heading depth (`# Context: …`, `**Title:** …`, `### Happy Path`). When stitched into the unified doc, the orchestrator remaps depths so the document forms a single coherent outline:
 
 - **Contexts.** `# Context: <T>` → `### Context: <T>` (under `## Contexts & Dictionary`). The `## Relationships` and `## Dictionary` subheaders inside each Context become `#### Relationships` and `#### Dictionary` respectively.
-- **User Stories.** Each story gets a `### <Title>` heading (using the story's `**Title:**` value as the heading text). The `[Contexts: …]` tag, `**Title:**`, Connextra narrative, INVEST block, and any `What Changed:` block follow underneath, unchanged.
-- **Acceptance Criteria.** AC are nested under their parent story. The lane skill's `### Happy Path` and `### Sad Path` headings are dropped; each scenario's bold `**Scenario:** <name> — Happy/Sad Path` label is promoted directly to a `#### <name> — Happy/Sad Path` heading. The path suffix is part of the scenario name as the AC skill emits it — the orchestrator does not infer which path a scenario belongs to from its parent section. The `**Background:**` block, if any, sits under the first scenario's heading or as its own `#### Background` heading at the top of the AC group, the user's call.
-- **NFR.** NFR checklists from each story's AC are extracted out of the per-story AC section and grouped into a single `## Non-Functional Requirements` section at the bottom of the document, sub-grouped by parent story title (`### From: <US Title>`). **Do not dedupe automatically** — losing context on which story raised a given NFR is silent information loss; if the user wants dedupe, they ask for it explicitly.
+- **User Stories.** Each story gets a `### <Title>` heading (using the story's `**Title:**` value as the heading text — which already includes the `US-X — ` prefix per the user-stories skill's Output format, so the heading reads e.g. `### US-1 — Reset password via emailed link` without orchestrator-side surgery). The `[Contexts: …]` tag, `**Title:**`, Connextra narrative, INVEST block, and any `**What Changed:**` block follow underneath, unchanged.
+- **Acceptance Criteria.** AC are nested under their parent story. The lane skill's `### Happy Path` and `### Sad Path` headings are dropped; each scenario's bold `**Scenario:** AC-X.Y — <name> — Happy/Sad Path` label is promoted directly to a `#### AC-X.Y — <name> — Happy/Sad Path` heading. Both the `AC-X.Y` code prefix and the `— Happy Path` / `— Sad Path` suffix are part of the scenario label as the AC skill emits them — the orchestrator does not assign or infer either. The `**Background:**` block, if any, sits under the first scenario's heading or as its own `#### Background` heading at the top of the AC group, the user's call.
+- **NFR.** NFR checklists from each story's AC are extracted out of the per-story AC section and grouped into a single `## Non-Functional Requirements` section at the bottom of the document, sub-grouped by parent story (`### From: US-X — <Title>` — using the parent story's full `US-X — Title` as the subheading text for stable cross-linking). **Do not dedupe automatically** — losing context on which story raised a given NFR is silent information loss; if the user wants dedupe, they ask for it explicitly.
 - **Unstructured Specs.** The full body of the source spec (at the user-supplied path; the `**Source:**` line at the top of the unified doc records where it lives) is embedded verbatim under a final `## Unstructured Specs` H2 section, preserving the upstream prose the rest of the doc derives from. Because the unified doc already owns the document's H1 and the section's H2, **shift every heading in the source down by 2 levels** when embedding so the source's intra-document hierarchy stays intact but nests cleanly under the wrapper:
 
   | Source heading | Heading inside `## Unstructured Specs` |
@@ -313,8 +307,8 @@ The lane skills emit at a flat heading depth (`# Context: …`, `**Title:** …`
 1. **Read the source artifacts.** If the per-skill files exist, read them. If only the unified `anchored-specs.md` exists from a previous assembly, read that as the source of truth instead. If the user passed paths for foreign-source artifacts, read those.
 2. **Format normalization (enforce canonical lane-skill formats).** Source artifacts may not match the lane skills' canonical Output format specs — common when `assemble` is run on artifacts produced by a different framework, by hand, or by an older version of these skills. Before stitching, normalize each source artifact against the relevant lane skill's Output format spec:
    - **Contexts** — `# Context: <Title>` + Relationships + Dictionary table per the `contexts-dictionaries` skill.
-   - **Stories** — Connextra format (one clause per line, **trailing backslash `\` on every non-final clause line** for CommonMark hard-line-break, bold `**As a**` / `**I can**` / `**so that**` keywords, no fence), per-principle INVEST block, optional `[Contexts: …]` tag line + backtick-highlighted Dictionary terms when the project is anchored, per the `user-stories` skill.
-   - **AC** — `**Scenario:** <name> — Happy/Sad Path` / `**Background:**` / `**Feature:**` bold labels (outside any fence) followed by the body wrapped in a ` ```gherkin ` fenced code block, with one clause per line, 4-space indent on `And` continuations, trailing comma on every clause except the final one, and **no bold inside the fence** (bold doesn't render in code blocks). The `— Happy Path` / `— Sad Path` suffix on the Scenario label is mandatory and is what the Assembly subroutine uses to produce per-scenario headings without inference (see the heading-remap rules above). NFR as the FURPS+ checklist outside any fence, per the `acceptance-criteria` skill.
+   - **Stories** — Connextra format (one clause per line, **trailing backslash `\` on every non-final clause line** for CommonMark hard-line-break, bold `**As a**` / `**I can**` / `**so that**` keywords, no fence), per-principle INVEST block, optional `[Contexts: …]` tag line + backtick-highlighted Dictionary terms when the project is anchored, and a `US-X — ` code prefix on the `**Title:**` line, per the `user-stories` skill. If a foreign-source story has no `US-X` code, assign one using the next free integer (codes are sticky — never reuse retired numbers); show before writing.
+   - **AC** — `**Scenario:** AC-X.Y — <name> — Happy/Sad Path` / `**Background:**` / `**Feature:**` bold labels (outside any fence) followed by the body wrapped in a ` ```gherkin ` fenced code block, with one clause per line, 4-space indent on `And` continuations, trailing comma on every clause except the final one, and **no bold inside the fence** (bold doesn't render in code blocks). Both the `AC-X.Y` code prefix and the `— Happy Path` / `— Sad Path` suffix on the Scenario label are mandatory and are what the Assembly subroutine uses to produce per-scenario headings without inference (see the heading-remap rules above). If a foreign-source AC has no `AC-X.Y` code, inherit X from the parent story and assign Y as the next free integer for that story (codes are sticky); show before writing. NFR as the FURPS+ checklist outside any fence, per the `acceptance-criteria` skill.
    When divergence is detected (run-on Connextra missing trailing `\`, AC body not wrapped in a `gherkin` fence, AC keywords bolded inside the fence, missing tag line, etc.), surface the divergence to the user, show the proposed normalized form **before** rewriting, and never silently transform. This is the "always show before write" rule. If you can't normalize confidently (e.g., the source is in a wholly unfamiliar shape), ask the user how to interpret it rather than guessing.
 3. **Apply the remap rules above** — heading-level remap for Contexts/Stories/AC, NFR rollup, and the H1→H3 / H2→H4 / H3→H5 shift for the embedded source spec — to produce the new full content of `anchored-specs.md`.
 4. **Show the proposed document to the user before writing.** For incremental updates (e.g., one new story added), it is acceptable to show only the diff against the current `anchored-specs.md`, but make the full new content available on request.

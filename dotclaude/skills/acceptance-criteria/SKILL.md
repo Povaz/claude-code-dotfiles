@@ -63,7 +63,7 @@ The house style for Happy Path and Sad Path scenarios is a **bold `**Scenario:**
 Required shape (Happy Path scenario shown — Sad Path uses the same shape with `— Sad Path` in place of `— Happy Path`):
 
 ````
-**Scenario:** <short, outcome-focused name> — Happy Path
+**Scenario:** AC-X.Y — <short, outcome-focused name> — Happy Path
 
 ```gherkin
 Given <pre-condition>,
@@ -79,6 +79,7 @@ Rules:
 - **Use a `gherkin` fence for the body.** Fenced code blocks guarantee newline preservation in every renderer and unlock Gherkin syntax highlighting. The fence opener is exactly ` ```gherkin ` (lowercase, no space).
 - **`**Scenario:**` and `**Background:**` labels stay outside the fence**, as bold markdown labels. They are intentionally not part of the fenced body — keeping them outside lets the `/spec` Assembly subroutine promote `**Scenario:**` labels into `#### <name> — Happy/Sad Path` headings when stitching the unified `anchored-specs.md`. If the Scenario keyword sat inside the fence it would render as literal text and lose its heading semantics in the assembled doc.
 - **Every `**Scenario:**` label ends with ` — Happy Path` or ` — Sad Path`.** The suffix tells the reader at a glance which path the scenario belongs to and is what the `/spec` Assembly subroutine promotes into per-scenario headings — the orchestrator does **not** infer the suffix from the parent `### Happy Path` / `### Sad Path` section. `**Background:**` keeps no suffix (it is shared pre-conditions, not a path-specific scenario). When you use a `Scenario Outline:` block (see below), the bold label preceding the Outline carries the same suffix.
+- **Every `**Scenario:**` label is prefixed with `AC-X.Y — `.** X is the parent story's `US-X` integer (inherited from the story; AC do not pick their own X). Y is the per-story Acceptance Criterion ordinal, counted across both Happy and Sad sections in the order the scenarios appear (Y restarts at 1 inside each story). The full label reads e.g. `**Scenario:** AC-1.3 — Reset link has expired — Sad Path`. The `AC-X.Y` prefix is what the `/spec` Assembly subroutine promotes into per-scenario headings (`#### AC-X.Y — <name> — Happy/Sad Path`); the orchestrator does **not** assign or infer the code. `**Background:**` carries **no** code (it is shared pre-conditions, not an AC). A `Scenario Outline:` block counts as one AC code regardless of how many rows the Examples table produces.
 - **No bold inside the fence.** `**Given**` etc. would render literally as `**Given**` inside a code block, since fences don't process Markdown. Inside the fence, keywords are plain `Given` / `When` / `Then` / `And`. The Gherkin syntax highlighter applies the visual weight.
 - **One clause per line.** Each `Given` / `When` / `Then` / `And` clause occupies its own source line inside the fence.
 - **`And` continuations indented with 4 spaces.** This visually attaches the continuation to the parent `Given` / `Then` clause it extends. Plain `Given` / `When` / `Then` lines have no leading indent.
@@ -89,6 +90,14 @@ Rules:
 - Use a **`Scenario Outline:` + `Examples:`** block (inside the fence) when the same scenario differs only by data. Don't copy-paste when a data table would do it cleaner.
 - Optionally include a `**Feature:**` label above the first Scenario if the AC will end up in a `.feature` file (see `.feature` export below) — a 1–3 line narrative describing the capability, also outside any fence.
 - Scenarios must describe **what** the system does, not **how**. No "the backend caches in Redis", no "the POST endpoint returns 200"; describe user-visible behavior.
+
+Code stability and assignment (`AC-X.Y`):
+
+- **X = parent US.** AC inherit X from their parent story's `US-X`. Never invented; always inherited. If you don't know the parent's `US-X`, ask before writing.
+- **Y = per-story ordinal.** Y starts at 1 within each story and increments. Counts across both Happy and Sad sections in source order — no separate sub-sequences for Happy and Sad.
+- **Sticky.** Once assigned, an `AC-X.Y` never moves. Deleted AC retire their Y; new AC take `max(existing Y for this X) + 1`. Gaps in the Y sequence are expected and acceptable.
+- **Standalone vs. orchestrated.** When called via `/spec`, the orchestrator passes the next free `Y` for the parent story. When called standalone, scan `acceptance-criteria.md` for the highest existing Y under this X and pick the next; if no AC exists yet for this story, start at Y=1.
+- **NFR has no per-bullet codes.** The NFR checklist as a whole belongs to the parent story (`US-X`); individual NFR bullets are checklist items, not standalone testable artifacts, and do not get their own codes.
 
 #### `.feature` export
 
@@ -183,7 +192,7 @@ Assume a Billing Context defining `Customer`, `Invoice`, and `Account`.
 Given a `Customer` is logged in
 ```
 
-**Scenario:** `Customer` downloads a past `Invoice` — Happy Path
+**Scenario:** AC-1.1 — `Customer` downloads a past `Invoice` — Happy Path
 
 ```gherkin
 Given the `Customer` has at least one paid `Invoice` on their `Account`,
@@ -286,7 +295,7 @@ Below is a draft using the conservative assumptions; sections depending on answe
 Given a learner account exists with email "lea@example.com"
 ```
 
-**Scenario:** Learner requests a password reset and sets a new password — Happy Path
+**Scenario:** AC-1.1 — Learner requests a password reset and sets a new password — Happy Path
 
 ```gherkin
 Given the learner is on the "Forgot password" page,
@@ -298,7 +307,7 @@ Then the learner sees a confirmation "If an account exists, a reset link has bee
 
 _?? confirm 24h duration_
 
-**Scenario:** Learner completes the reset from the emailed link — Happy Path
+**Scenario:** AC-1.2 — Learner completes the reset from the emailed link — Happy Path
 
 ```gherkin
 Given the learner has received a valid reset link,
@@ -310,7 +319,7 @@ Then the password is updated,
 
 ### Sad Path
 
-**Scenario:** Reset link has expired — Sad Path
+**Scenario:** AC-1.3 — Reset link has expired — Sad Path
 
 ```gherkin
 Given the learner has a reset link issued more than 24 hours ago,
@@ -321,7 +330,7 @@ Then the learner sees error "This reset link has expired. Please request a new o
 
 _?? confirm 24h duration_
 
-**Scenario:** Reset link has already been used — Sad Path
+**Scenario:** AC-1.4 — Reset link has already been used — Sad Path
 
 ```gherkin
 Given the learner has a reset link that was used once to set a new password,
@@ -329,7 +338,7 @@ When the learner opens the same link again,
 Then the learner sees error "This reset link is no longer valid."
 ```
 
-**Scenario:** New password fails the password policy — Sad Path
+**Scenario:** AC-1.5 — New password fails the password policy — Sad Path
 
 ```gherkin
 Given the learner has opened a valid reset link,
@@ -338,7 +347,7 @@ Then the password is not changed,
     And the learner sees the policy violations listed
 ```
 
-**Scenario:** Unknown email submitted — Sad Path
+**Scenario:** AC-1.6 — Unknown email submitted — Sad Path
 
 _?? behavior depends on Q3_
 
