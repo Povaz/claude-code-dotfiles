@@ -50,10 +50,10 @@ Narrative guidance:
 Code prefix (`US-X`):
 
 - **Every story carries an immutable identifier `US-X`** (X = positive integer), prefixed to the title with an em-dash separator: `**Title:** US-1 — Reset password via emailed link`.
-- **Monotonic.** Pick `max(existing US-X) + 1`. Scan `user-stories.md` (standalone) or the unified `anchored-specs.md` (when called via `/spec`). Start at 1 for a brand-new spec.
+- **Monotonic.** Pick `max(existing US-X) + 1`. Scan `user-stories.md` (standalone) or the unified `anchored-specs.md` (when called via `/anchored-specs`). Start at 1 for a brand-new spec.
 - **Sticky.** Once assigned, never renumber. If a story is removed, **retire** its code — do not reuse the integer for a future story. Gaps in the sequence are expected and acceptable; they preserve the historical reference.
 - **Splits get fresh codes.** When a story is split (SPIDR or any axis), the original story's `US-X` is retired and each resulting split takes the next free integer at the time of the split. Note the retirement and the new codes in the `**What Changed:**` block.
-- **Standalone vs. orchestrated.** When called via `/spec`, the orchestrator passes the next free code in its handoff prompt. When called standalone, scan the existing artifact yourself; if no artifact exists yet, start at 1.
+- **Standalone vs. orchestrated.** When called via `/anchored-specs`, the orchestrator passes the next free code in its handoff prompt. When called standalone, scan the existing artifact yourself; if no artifact exists yet, start at 1.
 
 When the project uses the **Context-Anchored Specifications** framework and a `contexts.md` is present, the format above is the *unanchored* baseline. Anchored stories prepend a `[Contexts: <list>]` tag line above the **Title** and wrap defined terms in backticks inside the narrative. See the **Anchoring** section below for the full rules.
 
@@ -132,7 +132,7 @@ The `contexts-dictionaries` skill owns the Dictionary itself. This skill never e
 
 ### When to apply
 
-Only when a `contexts.md` (or equivalent) is present alongside the spec. If no Dictionary exists yet, draft stories without anchoring and flag that the spec should go through the framework's dictionary phase first (`/spec dictionary` is the typical entry point).
+Only when a `contexts.md` (or equivalent) is present alongside the spec. If no Dictionary exists yet, draft stories without anchoring and flag that the spec should go through the framework's dictionary phase first (`/anchored-specs dictionary` is the typical entry point).
 
 ### Output extension
 

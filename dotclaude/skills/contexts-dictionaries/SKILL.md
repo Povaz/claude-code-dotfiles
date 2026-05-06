@@ -57,7 +57,7 @@ Each Context is presented as a single Markdown block. Use this exact shape (the 
 | <term> | <definition> |
 ```
 
-When multiple Contexts coexist, write each as its own `# Context: <Title>` block in the same file, separated by a blank line. The default storage path is `docs/specs/contexts.md` (single file, one block per Context). Override the path by user request only.
+When multiple Contexts coexist, write each as its own `# Context: <Title>` block in the same file, separated by a blank line. The default storage path is `docs/anchored-specss/contexts.md` (single file, one block per Context). Override the path by user request only.
 
 ### Worked example — single Context
 
@@ -183,7 +183,7 @@ The skill supports two entry points, plus a generic platform pass-through.
 
 The typical first call. The Spec File is unstructured prose; your job is to draft an initial Dictionary that captures the cross-stakeholder-risky terms.
 
-1. Read the source spec file at the path the user supplied (the orchestrator passes it explicitly when this skill is invoked via `/spec`; for standalone-skill use, ask the user for the path).
+1. Read the source spec file at the path the user supplied (the orchestrator passes it explicitly when this skill is invoked via `/anchored-specs`; for standalone-skill use, ask the user for the path).
 2. Identify candidate terms using the inclusion criteria. Skip ordinary words.
 3. Decide whether one Context or several is appropriate. If the Spec File covers obviously distinct vocabularies, draft multiple Contexts.
 4. Write a short description and a Relationships section for each Context (use "None yet — this is the first Context" if applicable).

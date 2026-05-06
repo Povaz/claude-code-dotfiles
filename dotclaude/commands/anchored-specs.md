@@ -3,7 +3,7 @@ description: Drive the Context-Anchored Specifications pipeline (Triage → Dict
 argument-hint: "[triage | dictionary | stories | ac | review | propagate <term> | assemble] [optional source spec path]"
 ---
 
-# /spec — Context-Anchored Specifications orchestrator
+# /anchored-specs — Context-Anchored Specifications orchestrator
 
 You are driving the **Context-Anchored Specifications** pipeline (`docs/kb/context-anchored-specifications.md`). The framework prevents silent semantic drift by inserting a **Dictionary** (within named **Contexts**) between the unstructured source spec and the User Stories, and *anchors* Stories/AC to that Dictionary via Context tags and backtick-highlighted terms.
 
@@ -25,7 +25,7 @@ This command's job is **orchestration only**: figure out where the project is in
 - `stories` — focused story phase (assumes `contexts.md` exists; produces anchored stories).
 - `ac` — focused AC phase (assumes anchored stories exist).
 - `review` — recurring spec review: prune the Dictionary, confirm anchoring on all stories, re-check multi-Context stories, ask about definitions changed since last review.
-- `assemble` — pure Assembly trigger: rebuild `docs/specs/anchored-specs.md` from the current source artifacts. No review, no prune, no other side effects on the lane skills. Three motivators:
+- `assemble` — pure Assembly trigger: rebuild `docs/anchored-specss/anchored-specs.md` from the current source artifacts. No review, no prune, no other side effects on the lane skills. Three motivators:
   - **First-run** — `anchored-specs.md` doesn't exist yet and you want to materialise it without driving a phase.
   - **Regenerate-after-manual-edits** — you edited `contexts.md` / `user-stories.md` / `acceptance-criteria.md` / the source spec by hand and want the unified doc refreshed.
   - **Foreign-source** — Contexts / Stories / AC originated outside this pipeline (different framework, different tool, manually authored elsewhere). `assemble` will normalize them to the canonical lane-skill formats before stitching.
@@ -34,8 +34,8 @@ This command's job is **orchestration only**: figure out where the project is in
 
 The source spec file is **user-supplied** — there is no fixed default. Resolution order on every invocation:
 
-1. If the user passes a path as the second token (e.g. `/spec triage docs/specs/checkout.md`), use it.
-2. Otherwise, read the `**Source:** <path>` line from the top of `docs/specs/anchored-specs.md` (see the Assembly subroutine for where this line is written).
+1. If the user passes a path as the second token (e.g. `/anchored-specs triage docs/anchored-specss/checkout.md`), use it.
+2. Otherwise, read the `**Source:** <path>` line from the top of `docs/anchored-specss/anchored-specs.md` (see the Assembly subroutine for where this line is written).
 3. Otherwise, ask the user for the path before proceeding.
 
 Once known, the path is recorded as the `**Source:** <path>` line in `anchored-specs.md` on the next Assembly run, so subsequent invocations can resolve it without re-asking.
@@ -46,12 +46,12 @@ Once known, the path is recorded as the `**Source:** <path>` line in `anchored-s
 
 Look at the relevant files (don't fail if they don't exist — that's part of the state):
 
-- The **unified spec doc** `docs/specs/anchored-specs.md` if present (assembled by this command across phases — see the Assembly subroutine below). When present, its top-of-file `**Source:** <path>` line tells you where the source spec lives.
+- The **unified spec doc** `docs/anchored-specss/anchored-specs.md` if present (assembled by this command across phases — see the Assembly subroutine below). When present, its top-of-file `**Source:** <path>` line tells you where the source spec lives.
 - The source spec file at the path resolved per the rules above. Read it after `anchored-specs.md` so the source path is already known.
-- `docs/specs/triage.md` if present — its presence is the orchestrator's signal that the triage phase has been completed at least once.
-- `docs/specs/contexts.md` if present.
-- `docs/specs/user-stories.md` if present.
-- `docs/specs/acceptance-criteria.md` if present.
+- `docs/anchored-specss/triage.md` if present — its presence is the orchestrator's signal that the triage phase has been completed at least once.
+- `docs/anchored-specss/contexts.md` if present.
+- `docs/anchored-specss/user-stories.md` if present.
+- `docs/anchored-specss/acceptance-criteria.md` if present.
 
 Briefly summarise the state in one or two lines: which artifacts exist, whether triage has run, whether stories are anchored (search for `[Contexts:` tag lines), whether AC use backticked terms.
 
@@ -67,17 +67,17 @@ Briefly summarise the state in one or two lines: which artifacts exist, whether 
 | `triage.md` exists, no `contexts.md` | Run dictionary phase: hand off to the `contexts-dictionaries` skill against the source spec. |
 | `contexts.md` exists, stories not anchored | Run stories phase: hand off to the `user-stories` skill, applying anchoring. |
 | Stories anchored, AC missing | Run AC phase: hand off to the `acceptance-criteria` skill. |
-| All three exist and look healthy | Suggest `/spec review` and stop. |
+| All three exist and look healthy | Suggest `/anchored-specs review` and stop. |
 
-Once `contexts.md` exists, the empty route does **not** regress to triage — the user has moved past it. They can always re-invoke `/spec triage` explicitly when they want a fresh ambiguity pass on the source spec.
+Once `contexts.md` exists, the empty route does **not** regress to triage — the user has moved past it. They can always re-invoke `/anchored-specs triage` explicitly when they want a fresh ambiguity pass on the source spec.
 
 **`triage`** — see the Triage subroutine below. Always re-runs (the user invoked it explicitly, so respect that), even if `triage.md` already exists.
 
 **`dictionary`** — hand off to the `contexts-dictionaries` skill. State your intent, name the source spec path you'll read (resolved per the rules above), and let the skill take over.
 
-**`stories`** — confirm `contexts.md` exists. If not, refuse and tell the user to run `/spec dictionary` first. Otherwise hand off to the `user-stories` skill, instructing it that the project is anchored (so it should apply the rules in its Anchoring section). Pass the next free `US-X` integer in the handoff prompt — compute as `max(existing US-X) + 1` across `user-stories.md` and `anchored-specs.md`; start at 1 if none exist. Codes are sticky, so gaps from prior deletions/splits are expected and must not be reused.
+**`stories`** — confirm `contexts.md` exists. If not, refuse and tell the user to run `/anchored-specs dictionary` first. Otherwise hand off to the `user-stories` skill, instructing it that the project is anchored (so it should apply the rules in its Anchoring section). Pass the next free `US-X` integer in the handoff prompt — compute as `max(existing US-X) + 1` across `user-stories.md` and `anchored-specs.md`; start at 1 if none exist. Codes are sticky, so gaps from prior deletions/splits are expected and must not be reused.
 
-**`ac`** — confirm anchored stories exist (look for `[Contexts:` tag lines in `user-stories.md`). If not, refuse and tell the user to run `/spec stories` first. Otherwise hand off to the `acceptance-criteria` skill, anchored. Pass the parent story's `US-X` and the next free `Y` for that story — compute as `max(existing AC-X.Y for this X) + 1` across `acceptance-criteria.md` and `anchored-specs.md`; start at Y=1 if none exist for this X.
+**`ac`** — confirm anchored stories exist (look for `[Contexts:` tag lines in `user-stories.md`). If not, refuse and tell the user to run `/anchored-specs stories` first. Otherwise hand off to the `acceptance-criteria` skill, anchored. Pass the parent story's `US-X` and the next free `Y` for that story — compute as `max(existing AC-X.Y for this X) + 1` across `acceptance-criteria.md` and `anchored-specs.md`; start at Y=1 if none exist for this X.
 
 **`review`** — see the Recurring review subroutine below.
 
@@ -95,16 +95,16 @@ Always show the user proposed changes before writing them to a file. The lane sk
 
 ### 5. Run the Assembly subroutine after every phase
 
-Once a phase finishes (and any iteration loop closes), run the **Assembly subroutine** below to refresh the cohesive document at `docs/specs/anchored-specs.md`. This is what makes `/spec` more than a sum of its lane skills — the unified doc is the deliverable a human reviewer reads. Do not skip it.
+Once a phase finishes (and any iteration loop closes), run the **Assembly subroutine** below to refresh the cohesive document at `docs/anchored-specss/anchored-specs.md`. This is what makes `/anchored-specs` more than a sum of its lane skills — the unified doc is the deliverable a human reviewer reads. Do not skip it.
 
-## Triage subroutine (`/spec triage`)
+## Triage subroutine (`/anchored-specs triage`)
 
 Triage is a **pre-dictionary spec health pass**. Its purpose is to surface internal inconsistency, ambiguity, and gaps in the source spec *before* the lane skills start mining it for vocabulary, stories, and AC. Lane skills are good at structuring what's already clear; they cannot rescue a spec that is genuinely under-specified. Triage catches that early and gives the user a focused list of things to clarify.
 
 Triage runs:
 
-- Automatically on empty `/spec` invocation when neither `triage.md` nor `contexts.md` exists.
-- On explicit `/spec triage`, always — re-runnable for a freshened ambiguity check after the source spec has been edited.
+- Automatically on empty `/anchored-specs` invocation when neither `triage.md` nor `contexts.md` exists.
+- On explicit `/anchored-specs triage`, always — re-runnable for a freshened ambiguity check after the source spec has been edited.
 
 ### Procedure
 
@@ -116,12 +116,12 @@ Triage runs:
    - **Missing details** — concrete gaps the lane skills will hit later (no error model, no thresholds, undefined user roles, no described failure mode for X, etc.). One bullet per gap.
    - **Clarifying questions** — grouped by topic (Roles / Data / Thresholds / Failure modes / etc.). Numbered within each topic. Phrase each question so the user can answer in one or two sentences; avoid open-ended "tell me about X".
 4. **Wait for the user's answers.** Do not auto-fill. Capture answers under a **Captured answers** section in `triage.md`, mirroring the question numbering. The user may also choose to update the source spec inline — encourage this when the answer is short and stable; keep it in `triage.md` when it's a working note or still being negotiated.
-5. **Write `docs/specs/triage.md`** once the user has answered (or explicitly chosen to defer some questions). The file is durable evidence the phase ran and is the orchestrator's signal in the empty-args routing table that triage is done.
+5. **Write `docs/anchored-specss/triage.md`** once the user has answered (or explicitly chosen to defer some questions). The file is durable evidence the phase ran and is the orchestrator's signal in the empty-args routing table that triage is done.
 6. **Hand off to dictionary** when the user signals readiness, or stop if they want to absorb answers into the source spec first.
 
 ### Output file shape
 
-`docs/specs/triage.md`:
+`docs/anchored-specss/triage.md`:
 
 ```markdown
 # Spec Triage
@@ -164,7 +164,7 @@ Triage runs:
 - It does not silently rewrite the source spec. If the user wants edits applied, they apply them or ask explicitly.
 - It does not block the pipeline if the user judges the spec good enough. They can answer "deferred" on questions and proceed; triage records the deferral and moves on.
 
-## Recurring review subroutine (`/spec review`)
+## Recurring review subroutine (`/anchored-specs review`)
 
 1. Read `contexts.md` and list the terms by Context.
 2. For each term, ask the user for a citation count if you can't get it confidently from grepping `user-stories.md` and `acceptance-criteria.md` (a manual grep across those files for `` `<term>` `` and `` `<term>[*]` `` is acceptable but flag the count as best-effort — automatic citation tracking is a documented future enhancement of the framework).
@@ -172,11 +172,11 @@ Triage runs:
 4. Walk `user-stories.md`. Confirm every story has a `[Contexts: …]` tag line; flag any that don't as **unanchored** and offer to anchor them via the `user-stories` skill.
 5. **Code health check.** Scan `user-stories.md` for duplicate `US-X` codes and `acceptance-criteria.md` for duplicate `AC-X.Y` codes. Flag duplicates as a real bug and ask the user which is canonical. Gaps in numbering are expected (codes are sticky after deletion or splits) and don't need attention.
 6. For multi-Context stories, prompt the user to re-check them against the split-or-keep rubric (the `user-stories` skill knows the rubric).
-7. Ask the user whether any term's definition changed since the last review. For each yes, run `/spec propagate <term>`.
+7. Ask the user whether any term's definition changed since the last review. For each yes, run `/anchored-specs propagate <term>`.
 
 Stop after each step and confirm with the user before moving on. The review is a conversation, not a unilateral rewrite.
 
-## Propagation subroutine (`/spec propagate <term>`)
+## Propagation subroutine (`/anchored-specs propagate <term>`)
 
 1. Grep `user-stories.md`, `acceptance-criteria.md`, **and** `anchored-specs.md` (the unified doc) for occurrences of `` `<term>` `` and `` `<term>[*]` `` (any inline-disambiguated form).
 2. Show the user the list of affected artifacts using their codes (e.g. "affects US-3, AC-3.1, AC-3.4, US-7"). Codes are stable handles that survive renumbering and stay greppable, so they are the preferred citation form. Do not modify anything yet.
@@ -192,7 +192,7 @@ The assembly is **invisible to the lane skills** — they continue to write to t
 
 ### Output path
 
-`docs/specs/anchored-specs.md` (distinct from the **source spec** at the user-supplied path).
+`docs/anchored-specss/anchored-specs.md` (distinct from the **source spec** at the user-supplied path).
 
 ### Document structure
 
@@ -322,20 +322,20 @@ Run Assembly:
 - After the dictionary phase completes (initial draft of `contexts.md` written and approved).
 - After the stories phase completes (any new or revised story).
 - After the AC phase completes (any new or revised AC set).
-- After a `/spec review` pass that resulted in any artifact change.
-- After a `/spec propagate <term>` pass that resulted in any artifact change.
-- **Always when invoked via `/spec assemble`**, regardless of whether anything changed — this is the explicit entry point for foreign-source assembly, regenerate-after-manual-edits, and first-run materialization.
+- After a `/anchored-specs review` pass that resulted in any artifact change.
+- After a `/anchored-specs propagate <term>` pass that resulted in any artifact change.
+- **Always when invoked via `/anchored-specs assemble`**, regardless of whether anything changed — this is the explicit entry point for foreign-source assembly, regenerate-after-manual-edits, and first-run materialization.
 
 For phase-completion and review/propagate cases, skip Assembly when nothing changed *and* `anchored-specs.md` already exists. If `anchored-specs.md` is missing, run Assembly to materialise it on first contact, even if no artifact changed.
 
 ## Default file paths
 
 - **Source spec (input): user-supplied** — recorded as `**Source:** <path>` at the top of `anchored-specs.md` once known. No default; resolved per the rules in the Arguments section.
-- Triage report: `docs/specs/triage.md`.
-- Contexts/Dictionaries (per-skill): `docs/specs/contexts.md`.
-- Stories (per-skill): `docs/specs/user-stories.md`.
-- AC (per-skill): `docs/specs/acceptance-criteria.md`.
-- **Cohesive output (assembled by this command): `docs/specs/anchored-specs.md`**.
+- Triage report: `docs/anchored-specss/triage.md`.
+- Contexts/Dictionaries (per-skill): `docs/anchored-specss/contexts.md`.
+- Stories (per-skill): `docs/anchored-specss/user-stories.md`.
+- AC (per-skill): `docs/anchored-specss/acceptance-criteria.md`.
+- **Cohesive output (assembled by this command): `docs/anchored-specss/anchored-specs.md`**.
 
 If the user has the project laid out differently, accept the override they pass and use those paths consistently for the rest of the run.
 
