@@ -53,7 +53,7 @@ Each Context is presented as a single Markdown block. Use this exact shape (the 
 | <term> | <definition> |
 ```
 
-When multiple Contexts coexist, write each as its own `# Context: <Title>` block in the same file, separated by a blank line. The default storage path is `docs/anchored-specss/contexts.md` (single file, one block per Context). Override the path by user request only.
+When multiple Contexts coexist, present each as its own `# Context: <Title>` block in the response, separated by a blank line. **This skill never writes to disk by default** — produce the Context blocks in your response and let the caller decide where to put them. If the caller passes a target file path in the handoff, write there after showing.
 
 ### Worked example — single Context
 
@@ -115,7 +115,7 @@ Shares the term `Account` with the Billing Context — different concept entirel
 
 If the Spec File is genuinely ambiguous about what a term means, ask the user 1–3 targeted questions at the top of your response and produce a draft only for the terms you're confident about. Leave ambiguous entries with a placeholder like `?? — pending clarification` and call them out explicitly. When asking, be specific: state which term, why it's ambiguous, and the candidate interpretations.
 
-A fabricated definition reads authoritative. A reviewer skimming `contexts.md` will assume each entry was negotiated — when in fact you guessed. That definition then becomes the silent source of bugs at acceptance time. One minute of the user's time answering a question is worth far more than a confident hallucination.
+A fabricated definition reads authoritative. A reviewer skimming the Dictionary will assume each entry was negotiated — when in fact you guessed. That definition then becomes the silent source of bugs at acceptance time. One minute of the user's time answering a question is worth far more than a confident hallucination.
 
 Things you must ask about if not explicit in the Spec File:
 
@@ -169,9 +169,9 @@ Spec → Dictionary checklist:
 - [ ] Draft per Output format using the inclusion criteria; one Context per coherent vocabulary, multiple Contexts when distinct vocabularies coexist.
 - [ ] Show the user the draft; flag any term you weren't sure about and any definition where you guessed.
 
-### From an existing `contexts.md`
+### From an existing Contexts artifact
 
-Refining or pruning. Read the file, decide what's being asked (add a term / update a definition / remove a term / split a Context / reword Relationships), and produce a focused diff. Do not silently rewrite definitions the user didn't ask about.
+Refining or pruning. The caller passes the source — a `contexts.md` file, a section of a unified spec doc, or pasted text. Read it, decide what's being asked (add a term / update a definition / remove a term / split a Context / reword Relationships), and produce a focused diff in your response. Do not silently rewrite definitions the user didn't ask about, and do not write to disk unless the caller passes a target path.
 
 ### Platform pass-through
 

@@ -41,10 +41,10 @@ Narrative:
 ### Code prefix `US-X`
 
 - **Every story carries an immutable `US-X`** (X = positive integer), prefixed to the title with an em-dash: `**Title:** US-1 — Reset password via emailed link`.
-- **Monotonic.** Pick `max(existing US-X) + 1` by scanning `user-stories.md` (or the unified spec doc the host process passed you). Start at 1 for a brand-new spec.
+- **Monotonic.** Pick `max(existing US-X) + 1` by scanning whatever artifact the caller points you at (a unified spec doc, a backlog file, pasted text). If the caller didn't pass a scan target and there's no obvious source, ask, or start at 1 for a brand-new spec.
 - **Sticky.** Once assigned, never renumber. If a story is removed, **retire** its code — don't reuse the integer. Gaps are expected and preserve historical reference.
 - **Splits get fresh codes.** The original story's `US-X` is retired; each resulting split takes the next free integer at split time. Note the retirement and new codes in the **What Changed** block.
-- If a host process supplies the next free code in its prompt, use it.
+- If a host process (the `/anchored-specs` orchestrator, another skill, a human caller) supplies the next free code in its prompt, use it as-is.
 
 If the project uses **Context-Anchored Specifications** (a `contexts.md` is present), see **Anchoring** below for the additional `[Contexts: ...]` tag and backtick rules.
 
@@ -187,7 +187,7 @@ Return the resulting set with a one-line note on which axis you used. The origin
 
 ## Input flows
 
-Two entry points; infer from the request, ask if genuinely ambiguous. If the user names a specific platform (backlog tool, docs platform, issue tracker), they supply platform context in the prompt — fetch the source with available tools, apply the rules below, and always show proposed stories before writing back to the platform.
+Two entry points; infer from the request, ask if genuinely ambiguous. **Default output is the response itself — this skill does not write to disk.** If the caller passes a target (a file path, a backlog tool, a docs platform, an issue tracker), use whatever tools are available to fetch sources from there, apply the rules below, and always show the proposed stories in your response *before* writing back to that target.
 
 **From scratch — raw functional requirements.** Extract the distinct user-facing capabilities, identify the relevant user roles, and produce one story per capability. If the requirements are vague (no clear role, no clear benefit), ask targeted questions rather than inventing details.
 

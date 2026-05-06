@@ -93,7 +93,7 @@ The `AC-X.Y` prefix on every `**Scenario:**` label is what a downstream assemble
 - **X = parent story's `US-X`.** Always inherited; never invented. If you don't know the parent's `US-X`, ask before writing.
 - **Y = per-story ordinal**, starting at 1, counting across both Happy and Sad sections in source order — no separate sub-sequences.
 - **Sticky.** Once assigned, an `AC-X.Y` never moves. Deleted AC retire their Y; new AC take `max(existing Y for this X) + 1`. Gaps are expected and acceptable.
-- **Standalone vs. host-process.** If a host process supplies the next free Y, use it. Otherwise scan the AC file for the highest existing Y under this X; if none exists yet, start at Y=1.
+- **Caller-supplied vs. self-scan.** If a host process (the `/anchored-specs` orchestrator, another skill, a human caller) supplies the next free Y in its prompt, use it as-is. Otherwise scan whatever artifact the caller points you at for the highest existing Y under this X; if no scan target was passed and there's no obvious source, ask, or start at Y=1 for a brand-new spec.
 - **A `Scenario Outline:`** counts as one AC code regardless of Examples-table length.
 - **`**Background:**`** carries no code.
 - **NFR has no per-bullet codes.** The whole NFR checklist belongs to the parent `US-X`; bullets are checklist items, not standalone testable artifacts.
@@ -209,7 +209,7 @@ Trust the story for everything else. You are not the user-stories skill; don't d
 
 ## Input flows
 
-The skill supports two entry points. Infer which applies; ask if genuinely ambiguous. If the user names a specific platform (backlog tool, docs platform, issue tracker), they supply the platform context — fetch the source material with whatever tools are available, apply the rules below, and **always show the user the proposed AC before writing back to that platform**.
+The skill supports two entry points. Infer which applies; ask if genuinely ambiguous. **Default output is the response itself — this skill does not write to disk.** If the caller passes a target (a file path, a backlog tool, a docs platform, an issue tracker), fetch sources from there with whatever tools are available, apply the rules below, and **always show the proposed AC in your response *before* writing back to that target**.
 
 ### From a user story (raw text)
 
