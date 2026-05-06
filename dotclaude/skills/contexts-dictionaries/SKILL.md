@@ -1,11 +1,11 @@
 ---
 name: contexts-dictionaries
-description: Draft, refine, prune, split, or rewrite Contexts and Dictionaries for the Context-Anchored Specifications framework. Use this skill whenever the user (or a subagent you spawn) is asked to define a Context, draft an initial Dictionary from a Spec File, add or refine a term and its definition, prune the Dictionary at a recurring spec review, document Relationships between Contexts, or split a Context — even if they don't explicitly mention "Context" or "Dictionary". Applies anywhere project vocabulary is being established or maintained, including prompts like "what does X mean in this project", "this term is ambiguous, define it", "two teams use this word differently", "draft the bounded contexts", "what's our shared vocabulary here", "the glossary needs an entry for X", or "prune the dictionary". Output is English, in the framework's `# Context: <Title>` + Relationships + Dictionary table format. This skill does NOT add backticks or Context tags inside User Stories or Acceptance Criteria — for that, use the `user-stories` or `acceptance-criteria` skills respectively.
+description: Draft, refine, prune, split, or rewrite Contexts and Dictionaries for the Context-Anchored Specifications framework. Use this skill whenever the user (or a subagent you spawn) is asked to define a Context, draft an initial Dictionary from a Spec File, add or refine a term and its definition, prune the Dictionary at a recurring spec review, document Relationships between Contexts, or split a Context — even if they don't explicitly mention "Context" or "Dictionary". Applies anywhere project vocabulary is being established or maintained, including prompts like "what does X mean in this project", "this term is ambiguous, define it", "two teams use this word differently", "draft the bounded contexts", "what's our shared vocabulary here", "the glossary needs an entry for X", or "prune the dictionary". Output is English, in the framework's `# Context: <Title>` + Relationships + Dictionary table format. This skill does NOT add backticks or Context tags inside User Stories or Acceptance Criteria — for that, use the `user-stories` or `acceptance-criteria` skills respectively. Usable standalone, or as a step of the `/anchored-specs` pipeline.
 ---
 
 # Contexts and Dictionaries
 
-This skill is the house style for **Contexts** and **Dictionaries** in the Context-Anchored Specifications framework (see `docs/kb/context-anchored-specifications.md`). Any time a Context or Dictionary is being drafted, refined, pruned, split, or reviewed — whether from scratch off a Spec File or against an existing `contexts.md` — follow this guide. If you're a subagent that was handed a vocabulary task, this skill applies to you too.
+This skill is the house style for **Contexts** and **Dictionaries** in the Context-Anchored Specifications framework (see the framework doc at `~/.claude/kb/context-anchored-specifications.md`, the synced default — or at `docs/kb/context-anchored-specifications.md` if the current project pins a local copy). Any time a Context or Dictionary is being drafted, refined, pruned, split, or reviewed — whether from scratch off a Spec File or against an existing `contexts.md` — follow this guide. If you're a subagent that was handed a vocabulary task, this skill applies to you too.
 
 This skill owns Contexts and the Dictionary entries inside them. It does **not** add backtick highlights or Context tags inside User Stories or Acceptance Criteria — those are the `user-stories` and `acceptance-criteria` skills' jobs respectively.
 
@@ -151,7 +151,7 @@ At the team's regular review cadence (typically sprint review), walk the Diction
 - Terms with **one citation** → keep only if the team judges them important. *Important* is intentionally undefined; favour lean.
 - Terms with **two or more citations** → keep, but re-check definitions for drift since last review.
 
-**Citation tracking is judgement-based today.** An automatic citation index is a documented future enhancement (see `docs/kb/context-anchored-specifications.md` § Future Enhancements). When pruning, ask the user about citation counts you cannot verify, or skim the Stories/AC manually. Don't pretend to know counts you didn't check.
+**Citation tracking is judgement-based today.** An automatic citation index is a documented future enhancement (see the framework doc § Future Enhancements — at `~/.claude/kb/context-anchored-specifications.md`, or `docs/kb/context-anchored-specifications.md` if the project pins a local copy). When pruning, ask the user about citation counts you cannot verify, or skim the Stories/AC manually. Don't pretend to know counts you didn't check.
 
 The framework deliberately does not define a "freeze" or "snapshot" event. Stable-state moments (releases, customer handoffs) are sales/management artifacts and live outside the framework.
 
@@ -183,7 +183,7 @@ The skill supports two entry points, plus a generic platform pass-through.
 
 The typical first call. The Spec File is unstructured prose; your job is to draft an initial Dictionary that captures the cross-stakeholder-risky terms.
 
-1. Read the source spec file at the path the user supplied (the orchestrator passes it explicitly when this skill is invoked via `/anchored-specs`; for standalone-skill use, ask the user for the path).
+1. Read the source spec file at the path the user supplied. If a host process passed you the path, use it; otherwise ask the user for the path.
 2. Identify candidate terms using the inclusion criteria. Skip ordinary words.
 3. Decide whether one Context or several is appropriate. If the Spec File covers obviously distinct vocabularies, draft multiple Contexts.
 4. Write a short description and a Relationships section for each Context (use "None yet — this is the first Context" if applicable).

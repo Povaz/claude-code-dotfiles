@@ -1,6 +1,6 @@
 ---
 name: user-stories
-description: Write, review, or rewrite user stories. Use this skill whenever the user (or a subagent you spawn) is asked to draft, improve, refine, split, rewrite, or review user stories, convert functional requirements into stories, or groom a backlog — even if they don't explicitly mention "user stories". Applies anywhere stories are being produced, including prompts like "turn these requirements into tickets", "clean up this backlog", "draft some stories from this spec", "break this epic down", "story map this", "refine the backlog", or "write tickets for this PRD". Output is English, always Connextra-formatted ("As a... I can... so that...") with a Title, an INVEST quality check, and anti-pattern warnings when relevant. This skill does NOT produce Acceptance Criteria — for AC, use the `acceptance-criteria` skill instead.
+description: Write, review, or rewrite user stories. Use this skill whenever the user (or a subagent you spawn) is asked to draft, improve, refine, split, rewrite, or review user stories, convert functional requirements into stories, or groom a backlog — even if they don't explicitly mention "user stories". Applies anywhere stories are being produced, including prompts like "turn these requirements into tickets", "clean up this backlog", "draft some stories from this spec", "break this epic down", "story map this", "refine the backlog", or "write tickets for this PRD". Output is English, always Connextra-formatted ("As a... I can... so that...") with a Title, an INVEST quality check, and anti-pattern warnings when relevant. This skill does NOT produce Acceptance Criteria — for AC, use the `acceptance-criteria` skill instead. Usable standalone, or as a step of the `/anchored-specs` pipeline.
 ---
 
 # User Stories
@@ -50,10 +50,10 @@ Narrative guidance:
 Code prefix (`US-X`):
 
 - **Every story carries an immutable identifier `US-X`** (X = positive integer), prefixed to the title with an em-dash separator: `**Title:** US-1 — Reset password via emailed link`.
-- **Monotonic.** Pick `max(existing US-X) + 1`. Scan `user-stories.md` (standalone) or the unified `anchored-specs.md` (when called via `/anchored-specs`). Start at 1 for a brand-new spec.
+- **Monotonic.** Pick `max(existing US-X) + 1`. Scan `user-stories.md`, or the unified spec doc if a host process passed you one. Start at 1 for a brand-new spec.
 - **Sticky.** Once assigned, never renumber. If a story is removed, **retire** its code — do not reuse the integer for a future story. Gaps in the sequence are expected and acceptable; they preserve the historical reference.
 - **Splits get fresh codes.** When a story is split (SPIDR or any axis), the original story's `US-X` is retired and each resulting split takes the next free integer at the time of the split. Note the retirement and the new codes in the `**What Changed:**` block.
-- **Standalone vs. orchestrated.** When called via `/anchored-specs`, the orchestrator passes the next free code in its handoff prompt. When called standalone, scan the existing artifact yourself; if no artifact exists yet, start at 1.
+- **Standalone vs. host-process.** If a host process supplies the next free code in its handoff prompt, use it. Otherwise scan the existing artifact yourself; if no artifact exists yet, start at 1.
 
 When the project uses the **Context-Anchored Specifications** framework and a `contexts.md` is present, the format above is the *unanchored* baseline. Anchored stories prepend a `[Contexts: <list>]` tag line above the **Title** and wrap defined terms in backticks inside the narrative. See the **Anchoring** section below for the full rules.
 
@@ -126,13 +126,13 @@ When in doubt, flag and explain. A false warning costs the user a few seconds of
 
 ## Anchoring (Context-Anchored Specifications)
 
-When the project uses the **Context-Anchored Specifications** framework — i.e., a `contexts.md` (or equivalent Contexts/Dictionary file) is present alongside the spec — every story you produce should be **anchored**. A story without a Context tag is *unanchored* and must be anchored before the next recurring spec review. See `docs/kb/context-anchored-specifications.md` for the full framework; the rules summarised below are what changes about your output.
+When the project uses the **Context-Anchored Specifications** framework — i.e., a `contexts.md` (or equivalent Contexts/Dictionary file) is present alongside the spec — every story you produce should be **anchored**. A story without a Context tag is *unanchored* and must be anchored before the next recurring spec review. See the framework doc at `~/.claude/kb/context-anchored-specifications.md` (the synced default), or `docs/kb/context-anchored-specifications.md` if the project pins a local copy; the rules summarised below are what changes about your output.
 
 The `contexts-dictionaries` skill owns the Dictionary itself. This skill never edits Context blocks, but it *does* tag stories and highlight terms inside them.
 
 ### When to apply
 
-Only when a `contexts.md` (or equivalent) is present alongside the spec. If no Dictionary exists yet, draft stories without anchoring and flag that the spec should go through the framework's dictionary phase first (`/anchored-specs dictionary` is the typical entry point).
+Only when a `contexts.md` (or equivalent) is present alongside the spec. If no Dictionary exists yet, draft stories without anchoring and flag that the spec should go through the framework's dictionary phase first (run it via your usual entry point — e.g., the `contexts-dictionaries` skill, or a host pipeline that drives it).
 
 ### Output extension
 
