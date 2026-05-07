@@ -3,11 +3,9 @@
 Portable Claude Code configuration — sync agents, commands, settings & skills across machines.
 
 ```bash
-./setup.sh                                # install symlinks into ~/.claude/
-./status.sh                               # check symlink state
-./teardown.sh                             # uninstall, leaving local copies
-~/.claude/scripts/spawn-agent/launch.sh   # spawn a Claude agent in a git worktree
-~/.claude/scripts/spawn-agent/cleanup.py  # prune agent worktrees
+./setup.sh    # install symlinks into ~/.claude/
+./status.sh   # check symlink state
+./teardown.sh # uninstall, leaving local copies
 ```
 
 ## Contents
@@ -21,7 +19,6 @@ Portable Claude Code configuration — sync agents, commands, settings & skills 
   - [Syncing Between Machines](#syncing-between-machines)
   - [Uninstalling](#uninstalling)
   - [What Gets Synced](#what-gets-synced)
-- [Spawning agents in worktrees](#spawning-agents-in-worktrees)
 - [Setting up your own fork](#setting-up-your-own-fork)
 
 ## How It Works
@@ -48,12 +45,7 @@ claude-code-dotfiles/
     ├── statusline.sh  # Status bar script invoked by Claude Code
     ├── commands/      # Custom slash commands
     ├── agents/        # Custom agent definitions
-    ├── skills/        # Custom skills
-    └── scripts/       # Helper scripts synced into ~/.claude/scripts/
-        └── spawn-agent/   # Interactive agent-in-worktree launcher
-            ├── launch.py
-            ├── launch.sh
-            └── cleanup.py
+    └── skills/        # Custom skills
 ```
 
 `dotclaude/` **is** the sync manifest. `setup.sh` doesn't maintain an ignore list — it links every entry under `dotclaude/` and nothing else. Anything outside `dotclaude/` is repo plumbing (scripts, docs, the project-level `CLAUDE.md` / `.claude/` used when Claude Code runs inside this repo) and is never synced. Add a new file or directory under `dotclaude/`, re-run `setup.sh`, and it gets linked automatically.
@@ -70,8 +62,7 @@ The naming convention `<username>/main` is a hint, not a requirement — any bra
 
 ## Prerequisites
 
-- **bash** — the setup/teardown/status scripts and the [worktree launcher](#spawning-agents-in-worktrees) under `dotclaude/scripts/` declare `#!/usr/bin/env bash`. Run them as `./script.sh` so the shebang is honored; don't invoke them through `zsh` or `sh`.
-- **Python 3.14** — required by the [worktree launcher](#spawning-agents-in-worktrees) scripts under `dotclaude/scripts/spawn-agent/`.
+- **bash** — the setup/teardown/status scripts declare `#!/usr/bin/env bash`. Run them as `./script.sh` so the shebang is honored; don't invoke them through `zsh` or `sh`.
 
 ## Quick Start
 
@@ -124,24 +115,6 @@ This removes every symlink in `~/.claude/` that points into this repo and replac
 | Any file/dir you add under `dotclaude/` | |
 
 Anything **outside** `dotclaude/` — including the scripts, the repo-root `CLAUDE.md`, and the repo-root `.claude/` — is repo plumbing and is never synced into `~/.claude/`. Credentials and machine-local state are never touched by `setup.sh` or `teardown.sh`.
-
-## Spawning agents in worktrees
-
-`dotclaude/scripts/spawn-agent/` lets you launch a Claude Code session in a dedicated git worktree, so multiple agents can work the same repo on different branches in parallel without fighting over `HEAD`. The scripts are synced globally through the same `dotclaude/` pipeline — they live at `~/.claude/scripts/spawn-agent/` after `setup.sh` and operate on whichever repo you invoke them from (discovered via `git rev-parse --show-toplevel` in the caller's cwd).
-
-### Setup
-
-- **Already installed by `setup.sh`** — no extra step. The scripts are symlinked into `~/.claude/scripts/spawn-agent/`.
-- **Shell invocation** — from any project root:
-
-  ```bash
-  ~/.claude/scripts/spawn-agent/launch.sh
-  ```
-
-  Prompts for agent name, branch name, and base branch, then `cd`s into the worktree and `exec`s `claude`. Agent names are any string matching `^[A-Za-z0-9][A-Za-z0-9._-]*$` — digits alone are fine if you prefer the integer convention.
-- **Optional: cleanup Run Configuration** for `cleanup.py`. Type: Python; interpreter: system `python3` (3.14+); Working directory: `$ProjectFileDir$`.
-
-For internals — the worktree/agent model, argument handling, and cleanup flow — see [`dotclaude/scripts/README.md`](dotclaude/scripts/README.md).
 
 ## Setting up your own fork
 
