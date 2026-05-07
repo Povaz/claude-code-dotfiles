@@ -1,0 +1,13 @@
+{
+  "eval_id": 2,
+  "eval_name": "anti-pattern-detection",
+  "prompt": "Here are some tickets our team wants to add to the next sprint. Can you format them as user stories?\n\n- As an ops engineer, I want database query optimization on the reporting service so that monthly reports run faster.\n- As a content editor, I want the new video encoding from VendorX integrated so that I can upload 4K videos to courses.\n- As a learner, I want to receive a push notification when my enrolled course has a new lesson so that I don't miss content.",
+  "assertions": [
+    {"text": "Flags the query-optimization ticket as Misleading Story / Solution Trap (prescribing a solution instead of stating the underlying problem)"},
+    {"text": "Flags the VendorX video-encoding ticket as Dependency-Locked (deliverable depends on an external vendor)"},
+    {"text": "Treats the push-notification ticket as a clean, passing story (no anti-pattern warnings for ticket 3)"},
+    {"text": "Uses 'I can' phrasing throughout; no 'I want' remaining in the final narratives"},
+    {"text": "Every story has a Title separate from the narrative"},
+    {"text": "Includes an INVEST quality check for each story"}
+  ]
+}

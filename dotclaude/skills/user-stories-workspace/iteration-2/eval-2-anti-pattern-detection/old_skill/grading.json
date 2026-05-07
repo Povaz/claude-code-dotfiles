@@ -1,0 +1,50 @@
+{
+  "expectations": [
+    {
+      "text": "Flags query-optimization ticket as Misleading Story / Solution Trap",
+      "passed": true,
+      "evidence": "Story 1: '⚠ **Misleading Story (Solution Trap)** — the original goal (\"database query optimization\") reads as a prescribed technical solution rather than a user need.'"
+    },
+    {
+      "text": "Flags VendorX ticket as Dependency-Locked",
+      "passed": true,
+      "evidence": "Story 2: '⚠ **Dependency-locked** — deliverable requires the new VendorX video encoding integration, which sits outside the team's Zone of Control.'"
+    },
+    {
+      "text": "Treats push-notification ticket as clean (no anti-pattern warnings)",
+      "passed": true,
+      "evidence": "Story 3: '✓ INVEST: all criteria met.' No anti-pattern flag. Closing note: 'Story 3 was already well-shaped — I only adjusted the phrasing to match the \"I can\" house style...'"
+    },
+    {
+      "text": "Uses 'I can' throughout; no 'I want' remaining",
+      "passed": true,
+      "evidence": "All three narratives use 'I can' ('I can run the monthly reports...', 'I can upload 4K videos...', 'I can receive a push notification...'). No 'I want' appears."
+    },
+    {
+      "text": "Every story has a Title",
+      "passed": true,
+      "evidence": "All three stories start with '**Title:**' lines."
+    },
+    {
+      "text": "Every story's INVEST check lists each of the six principles (I, N, V, E, S, T) individually with its own verdict — no compact 'all criteria met' one-liner, applied consistently to all three stories",
+      "passed": false,
+      "evidence": "Story 3 uses the compact form '✓ INVEST: all criteria met.' Stories 1 and 2 have no INVEST block at all — only the anti-pattern flag paragraph. No story itemises I, N, V, E, S, T individually. The rule is not applied consistently to any story, let alone all three."
+    },
+    {
+      "text": "Does not add Acceptance Criteria (no AC section or bullet list of measurable requirements) — ACs are out of scope",
+      "passed": true,
+      "evidence": "No AC section or bulleted AC list. Story 3 briefly references 'Acceptance criteria (notification content, opt-out, delivery channel specifics, handling of learners who disabled notifications) should be captured separately when the story is groomed.' — this is an allowed brief note that AC will be written later."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 1,
+    "total": 7,
+    "pass_rate": 0.86
+  },
+  "timing": {
+    "total_tokens": 20790,
+    "duration_ms": 26793,
+    "total_duration_seconds": 26.8
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "expectations": [
+    {"text": "Output uses the three canonical section headings (Happy Path, Sad Path, NFR/Non-Functional Requirements).", "passed": true, "evidence": "Response contains '## Acceptance Criteria' with '### Happy Path (Gherkin)', '### Sad Path (Gherkin)', and '### Non-Functional Requirements (Checklist)' subheadings."},
+    {"text": "Happy Path and Sad Path are both expressed as Gherkin scenario blocks (Given/When/Then present).", "passed": true, "evidence": "Both sections use ```gherkin fenced blocks with Scenario: and Given/When/Then keywords (e.g., 'Scenario: Customer applies a valid active promo code')."},
+    {"text": "At least one Sad Path scenario covers an expired promo code.", "passed": true, "evidence": "'Scenario: Code exists but is expired' with WINTER15."},
+    {"text": "At least one Sad Path scenario covers stacking a second code against the max-one-per-order constraint.", "passed": true, "evidence": "'Scenario: Customer attempts to apply a second code on the same order' asserts the first code remains and the second is rejected."},
+    {"text": "NFRs are written as a measurable checklist (bullet/checkbox items), not as Gherkin scenarios.", "passed": true, "evidence": "NFR section is a list of '- [ ]' checkbox bullets."},
+    {"text": "NFR items use FURPS+ labels (at least 2 of: Functionality, Usability, Reliability, Performance, Supportability, Constraint).", "passed": true, "evidence": "Items explicitly labelled Performance, Functionality (Security), Functionality (Business rule), Usability (Cross-browser), Usability (Accessibility), Reliability, Supportability, + Constraint (Financial accuracy)."},
+    {"text": "Every NFR item is quantified (contains numbers, percentiles, standards, or pass/fail checks) — no vague adjectives like 'fast' or 'secure' standing alone.", "passed": true, "evidence": "Each bullet includes a quantified threshold or standard: 'p95 under 500 ms', 'WCAG 2.1 Level AA', '44x44pt hit target' (implied via Safari/Android), rate-limit threshold explicitly left as ?? with a request to confirm."},
+    {"text": "Response does NOT leak implementation details (no mention of specific DB, cache, framework, or third-party libs invented by the model).", "passed": true, "evidence": "Scenarios describe user-visible behavior only; no Redis/Elasticsearch/etc. Browser names (Safari iOS, Chrome Android) are from the PO context, not invented."}
+  ],
+  "summary": {"passed": 8, "failed": 0, "total": 8, "pass_rate": 1.0},
+  "timing": {"total_duration_seconds": 128.4}
+}

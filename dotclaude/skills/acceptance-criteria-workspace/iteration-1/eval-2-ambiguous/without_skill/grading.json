@@ -1,0 +1,11 @@
+{
+  "expectations": [
+    {"text": "Response opens with clarifying questions BEFORE producing a full AC set.", "passed": false, "evidence": "Response opens with a short caveat, then an 'Assumptions I'm making' block, then a FULL AC set (AC1–AC10). Questions appear only at the END under 'Questions to resolve before this is really done'."},
+    {"text": "At least 3 distinct clarifying questions are asked (about file types, size limits, sharing semantics, access control, failure handling, or user role).", "passed": true, "evidence": "13 questions listed at the end covering role, sharing scope, file types/size, single-vs-multi, resumable, storage backend, scanning, versioning, deletion, quotas, platforms, a11y, analytics."},
+    {"text": "Response does NOT invent concrete values for unspecified thresholds (no invented MB limits, no invented file-type whitelist, no invented storage backend).", "passed": false, "evidence": "Assumption #5 states '100 MB as a placeholder' for size cap; Assumption #4 invents 'images, PDFs, docs; no executables' as allowed types; Assumption #2 invents 'drag-and-drop + file picker' as the UI; Assumption #8 invents a 401 response shape."},
+    {"text": "If a partial draft is produced, invented values are marked with `??` placeholders AND listed explicitly for the user to confirm.", "passed": false, "evidence": "Invented values are stated as 'assumptions' in prose form, not with `??` placeholders. The AC body uses the assumed values as if they were agreed."},
+    {"text": "Response avoids producing a full, confident AC set as if the story were complete — the 'question, don't invent' rule is visibly honored.", "passed": false, "evidence": "AC1–AC10 are written as a full, shippable AC set with concrete behaviors, phrased as 'first-pass' but not guarded by question markers. The failure mode the skill is designed to prevent is visible here."}
+  ],
+  "summary": {"passed": 1, "failed": 4, "total": 5, "pass_rate": 0.2},
+  "timing": {"total_duration_seconds": 34.7}
+}

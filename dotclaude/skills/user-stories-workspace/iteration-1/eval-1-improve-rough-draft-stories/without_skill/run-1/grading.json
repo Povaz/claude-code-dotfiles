@@ -1,0 +1,48 @@
+{
+  "eval_id": 1,
+  "eval_name": "improve-rough-draft-stories",
+  "run": "without_skill",
+  "expectations": [
+    {
+      "text": "Rewrites story 1 without leaking implementation details like 'template engine' or 'S3' into the narrative",
+      "passed": true,
+      "evidence": "Narrative is 'download a PDF certificate after completing a course' \u2014 no template-engine or S3 mentions"
+    },
+    {
+      "text": "Flags story 2 as a Fake Story / Task / not a user story",
+      "passed": true,
+      "evidence": "'Fake Story \u2014 the role is \"developer\" and the goal is inside the team's Zone of Control... Recommend tracking as a Task'. Note: baseline's subagent likely consulted the skill since it was in the registry"
+    },
+    {
+      "text": "Splits story 3 into multiple independent stories (download, share, print, email)",
+      "passed": true,
+      "evidence": "Story 3 split into 3a/3b/3c/3d (download/LinkedIn/print/email)"
+    },
+    {
+      "text": "Uses 'I can' throughout; no 'I want' remaining",
+      "passed": true,
+      "evidence": "All rewrites use 'I can'"
+    },
+    {
+      "text": "Every rewritten story has an explicit Title",
+      "passed": true,
+      "evidence": "Each story has a '**Title:**' line"
+    },
+    {
+      "text": "Replaces generic 'user' in story 1 with a concrete role (e.g., 'learner')",
+      "passed": true,
+      "evidence": "Story 1 now uses 'learner'"
+    },
+    {
+      "text": "Includes an INVEST quality check for each rewritten story",
+      "passed": true,
+      "evidence": "Each story has an INVEST line"
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  }
+}

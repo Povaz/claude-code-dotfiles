@@ -1,0 +1,15 @@
+{
+  "eval_id": 1,
+  "eval_name": "well-specified-story-produces-full-ac",
+  "prompt": "Write acceptance criteria for this story:\n\n**Title:** Apply a promo code at checkout\n**As a** registered customer, **I can** apply a promo code at checkout, **so that** I pay less on my order.\n\nContext from the PO (already agreed):\n- Promo codes are percentage-based, currently in the 5–50% range.\n- Codes can be active or expired; expired codes are still visible in the admin panel but cannot be applied.\n- Each customer can stack at most one code per order.\n- We display the discount label inline as `<CODE> (-<percent>%)`.\n- Checkout page must remain usable on Safari iOS and Chrome Android.",
+  "assertions": [
+    "Output uses the three canonical section headings (Happy Path, Sad Path, NFR/Non-Functional Requirements).",
+    "Happy Path and Sad Path are both expressed as Gherkin scenario blocks (Given/When/Then present).",
+    "At least one Sad Path scenario covers an expired promo code.",
+    "At least one Sad Path scenario covers stacking a second code against the max-one-per-order constraint.",
+    "NFRs are written as a measurable checklist (bullet/checkbox items), not as Gherkin scenarios.",
+    "NFR items use FURPS+ labels (at least 2 of: Functionality, Usability, Reliability, Performance, Supportability, Constraint).",
+    "Every NFR item is quantified (contains numbers, percentiles, standards, or pass/fail checks) — no vague adjectives like 'fast' or 'secure' standing alone.",
+    "Response does NOT leak implementation details (no mention of specific DB, cache, framework, or third-party libs invented by the model)."
+  ]
+}

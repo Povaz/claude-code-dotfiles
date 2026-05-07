@@ -1,0 +1,65 @@
+{
+  "skill_name": "acceptance-criteria",
+  "evals": [
+    {
+      "id": 1,
+      "name": "well-specified-story-produces-full-ac",
+      "prompt": "Write acceptance criteria for this story:\n\n**Title:** Apply a promo code at checkout\n**As a** registered customer, **I can** apply a promo code at checkout, **so that** I pay less on my order.\n\nContext from the PO (already agreed):\n- Promo codes are percentage-based, currently in the 5–50% range.\n- Codes can be active or expired; expired codes are still visible in the admin panel but cannot be applied.\n- Each customer can stack at most one code per order.\n- We display the discount label inline as `<CODE> (-<percent>%)`.\n- Checkout page must remain usable on Safari iOS and Chrome Android.",
+      "expected_output": "AC set with Happy Path Gherkin scenarios (valid code, maybe Background + Scenario Outline for percentages), Sad Path Gherkin (expired code, second code attempted, unknown code), and a FURPS+ NFR checklist with measurable thresholds. Minimal or no questions because the story is well-specified. No implementation details leaking into the scenarios.",
+      "assertions": [
+        "Output uses the three canonical section headings (Happy Path, Sad Path, NFR/Non-Functional Requirements).",
+        "Happy Path and Sad Path are both expressed as Gherkin scenario blocks (Given/When/Then present).",
+        "At least one Sad Path scenario covers an expired promo code.",
+        "At least one Sad Path scenario covers stacking a second code against the max-one-per-order constraint.",
+        "NFRs are written as a measurable checklist (bullet/checkbox items), not as Gherkin scenarios.",
+        "NFR items use FURPS+ labels (at least 2 of: Functionality, Usability, Reliability, Performance, Supportability, Constraint).",
+        "Every NFR item is quantified (contains numbers, percentiles, standards, or pass/fail checks) — no vague adjectives like 'fast' or 'secure' standing alone.",
+        "Response does NOT leak implementation details (no mention of specific DB, cache, framework, or third-party libs invented by the model)."
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "ambiguous-story-triggers-questions",
+      "prompt": "Write acceptance criteria for this story:\n\n**Title:** Let users upload files\n**As a** user, **I can** upload files, **so that** I can share them.\n\nThat's all I have so far.",
+      "expected_output": "The skill should NOT invent file types, size limits, storage backends, sharing semantics, user roles, or concurrency constraints. It should open with 3–5 targeted questions (what file types? size cap? who shares with whom? public or access-controlled? what happens on upload failure?). A partial draft may follow, but any invented values must be marked `??` and explicitly called out. A response that confidently produces full AC without asking is a FAIL.",
+      "assertions": [
+        "Response opens with clarifying questions BEFORE producing a full AC set.",
+        "At least 3 distinct clarifying questions are asked (about file types, size limits, sharing semantics, access control, failure handling, or user role).",
+        "Response does NOT invent concrete values for unspecified thresholds (no invented MB limits, no invented file-type whitelist, no invented storage backend).",
+        "If a partial draft is produced, invented values are marked with `??` placeholders AND listed explicitly for the user to confirm.",
+        "Response avoids producing a full, confident AC set as if the story were complete — the 'question, don't invent' rule is visibly honored."
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "review-and-rewrite-bad-ac",
+      "prompt": "Review and rewrite the acceptance criteria for this story. Flag anti-patterns and explain the edits inline.\n\n**Story:** As a learner, I can search the course catalogue by keyword, so that I can find relevant courses.\n\n**Existing AC:**\n1. The backend hits Elasticsearch and caches the result in Redis for 60 seconds.\n2. Search should be fast.\n3. When the user types a keyword and hits Enter AND the filter panel is open, the results update and the filter panel closes.\n4. Code is peer-reviewed and deployed to staging before merging.\n5. The page is user-friendly.",
+      "expected_output": "Rewrite in the canonical three-section format. Flag: #1 prescribes implementation (push 'Elasticsearch' and 'Redis' out, keep an observable-behavior equivalent); #2 is unmeasurable (ask or set a concrete threshold); #3 is a multi-trigger When (split into two scenarios); #4 is a DoD item, not AC (remove); #5 is unmeasurable. A `What Changed:` block of 2–5 bullets must sit under the rewritten AC explaining each edit.",
+      "assertions": [
+        "AC #1 is flagged as implementation-prescribing (mentions Elasticsearch/Redis leak or equivalent wording).",
+        "AC #2 ('Search should be fast') is flagged as unmeasurable and is either replaced with a concrete threshold or marked as needing one.",
+        "AC #3 is flagged as a multi-trigger When clause and is split into two separate scenarios.",
+        "AC #4 ('Code is peer-reviewed and deployed to staging') is flagged as a Definition of Done item and removed from the AC set.",
+        "AC #5 ('user-friendly') is flagged as unmeasurable.",
+        "Rewrite uses the three canonical sections (Happy Path / Sad Path / NFR).",
+        "Response includes a `What Changed:` (or equivalently titled) block of 2–5 bullets explaining the edits adjacent to the rewritten AC."
+      ],
+      "files": []
+    },
+    {
+      "id": 4,
+      "name": "fake-story-refused-and-flagged",
+      "prompt": "Write acceptance criteria for this story:\n\n**Title:** Automated test-database reset\n**As a** QA engineer, **I can** have the test database reset automatically between test runs, **so that** I can run the end-to-end suite faster without manual cleanup steps.",
+      "expected_output": "This is a Fake Story — the 'need' lives entirely in the team's Zone of Control (internal tooling, no end-user outcome). The skill must REFUSE to produce AC and flag the issue in a short note recommending the story itself be reviewed (pointing at the user-stories skill). A response that dutifully produces Gherkin scenarios for this input is a FAIL, because it lets a non-story slip through.",
+      "assertions": [
+        "Response refuses or declines to produce a full, normal AC set for this story.",
+        "Response identifies the input as a Fake Story (or explicitly calls out that the need sits inside the team's Zone of Control / is internal tooling).",
+        "Response recommends addressing the story itself before writing AC (e.g., refers to the user-stories skill, or suggests tracking as a Task/Improvement item).",
+        "Response does NOT contain a full canonical three-section AC set with Happy Path + Sad Path + NFR as if this were a valid user story."
+      ],
+      "files": []
+    }
+  ]
+}

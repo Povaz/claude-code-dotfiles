@@ -1,0 +1,43 @@
+{
+  "eval_id": 2,
+  "eval_name": "anti-pattern-detection",
+  "run": "without_skill",
+  "expectations": [
+    {
+      "text": "Flags query-optimization ticket as Misleading Story / Solution Trap",
+      "passed": false,
+      "evidence": "Baseline presents the ticket as-written with acceptance criteria; no anti-pattern analysis or Solution Trap flag"
+    },
+    {
+      "text": "Flags VendorX ticket as Dependency-Locked",
+      "passed": false,
+      "evidence": "Baseline accepts the vendor dependency uncritically; no Dependency-Locked flag"
+    },
+    {
+      "text": "Treats push-notification ticket as clean (no anti-pattern warnings)",
+      "passed": true,
+      "evidence": "No warnings on ticket 3 (but also none on tickets 1 and 2, so this is incidental)"
+    },
+    {
+      "text": "Uses 'I can' throughout; no 'I want' remaining",
+      "passed": false,
+      "evidence": "All three stories use 'I want' \u2014 baseline did not apply house style"
+    },
+    {
+      "text": "Every story has a Title",
+      "passed": true,
+      "evidence": "Each story has a heading title like 'Story 1: Database Query Optimization for Reporting Service'"
+    },
+    {
+      "text": "Includes INVEST quality check for each story",
+      "passed": false,
+      "evidence": "No INVEST check; the baseline included Acceptance Criteria instead"
+    }
+  ],
+  "summary": {
+    "passed": 2,
+    "failed": 4,
+    "total": 6,
+    "pass_rate": 0.3333
+  }
+}

@@ -1,0 +1,378 @@
+{
+  "metadata": {
+    "skill_name": "user-stories",
+    "skill_path": "<path/to/skill>",
+    "executor_model": "claude-opus-4-6",
+    "analyzer_model": "<model-name>",
+    "timestamp": "2026-04-15T17:24:57Z",
+    "evals_run": [
+      0,
+      1,
+      2
+    ],
+    "runs_per_configuration": 3
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 49.3,
+        "tokens": 14954,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Produces at least 3 distinct user stories",
+          "passed": true,
+          "evidence": "5 stories: submit rating, edit within 24h, delete within 24h, aggregated admin view, hide comment"
+        },
+        {
+          "text": "Uses the 'I can' phrasing (not 'I want' or 'I need')",
+          "passed": true,
+          "evidence": "Every narrative uses 'I can'; no occurrences of 'I want' in any story body"
+        },
+        {
+          "text": "Every story has an explicit Title field separate from the Connextra narrative",
+          "passed": true,
+          "evidence": "Each story begins with '**Title:** <phrase>' on its own line above the narrative"
+        },
+        {
+          "text": "Uses Connextra format: every story contains 'As a', 'I can', and 'so that'",
+          "passed": true,
+          "evidence": "All 5 stories follow the As a / I can / so that pattern"
+        },
+        {
+          "text": "Includes an INVEST quality check for each story",
+          "passed": true,
+          "evidence": "Each story has an 'INVEST: all criteria met' line with a brief justification"
+        },
+        {
+          "text": "Names concrete roles (learner, admin) \u2014 does not use generic 'user'",
+          "passed": true,
+          "evidence": "Uses 'learner' and 'course admin' throughout; no unqualified 'user'"
+        },
+        {
+          "text": "Handles the web-first/mobile-later platform constraint explicitly",
+          "passed": true,
+          "evidence": "Additional notes section: 'Mobile is out of scope for this iteration. The PM explicitly deferred mobile.'"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 100.7,
+        "tokens": 18166,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Rewrites story 1 without leaking implementation details like 'template engine' or 'S3' into the narrative",
+          "passed": true,
+          "evidence": "Story 1 narrative is 'download a PDF certificate from my course-completion page' \u2014 no template-engine or S3 mentions"
+        },
+        {
+          "text": "Flags story 2 as a Fake Story / Task / not a user story",
+          "passed": true,
+          "evidence": "'\u26a0 Fake Story \u2014 the named role is \"developer\" and the need is inside the team's Zone of Control... Recommend tracking as a Task'"
+        },
+        {
+          "text": "Splits story 3 into multiple independent stories (download, share, print, email)",
+          "passed": true,
+          "evidence": "Story 3 split into 3a download, 3b LinkedIn share, 3c print, 3d email \u2014 four separate stories"
+        },
+        {
+          "text": "Uses 'I can' throughout; no 'I want' remaining",
+          "passed": true,
+          "evidence": "All rewrites use 'I can'; original 'I want' phrasing gone"
+        },
+        {
+          "text": "Every rewritten story has an explicit Title",
+          "passed": true,
+          "evidence": "Every story has a '**Title:**' line"
+        },
+        {
+          "text": "Replaces generic 'user' in story 1 with a concrete role (e.g., 'learner')",
+          "passed": true,
+          "evidence": "Story 1 now uses 'learner'"
+        },
+        {
+          "text": "Includes an INVEST quality check for each rewritten story",
+          "passed": true,
+          "evidence": "Each story has '\u2713 INVEST: all criteria met' with brief justification"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 49.7,
+        "tokens": 14905,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Flags query-optimization ticket as Misleading Story / Solution Trap",
+          "passed": true,
+          "evidence": "'\u26a0 Misleading Story (Solution Trap) \u2014 the original draft asks for \"database query optimization,\" which is a prescribed technical solution, not a user need'"
+        },
+        {
+          "text": "Flags VendorX ticket as Dependency-Locked",
+          "passed": true,
+          "evidence": "'\u26a0 Dependency-Locked \u2014 deliverable requires VendorX's encoding integration, which sits outside the team's Zone of Control'"
+        },
+        {
+          "text": "Treats push-notification ticket as clean (no anti-pattern warnings)",
+          "passed": true,
+          "evidence": "Story 3 has only '\u2713 INVEST: all criteria met' \u2014 no warnings"
+        },
+        {
+          "text": "Uses 'I can' throughout; no 'I want' remaining",
+          "passed": true,
+          "evidence": "All three narratives use 'I can'"
+        },
+        {
+          "text": "Every story has a Title",
+          "passed": true,
+          "evidence": "Each story has '**Title:**' field"
+        },
+        {
+          "text": "Includes INVEST quality check for each story",
+          "passed": true,
+          "evidence": "Stories 1, 2, 3 all have INVEST checks (Story 2 has per-criterion breakdown)"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 0,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.5714,
+        "passed": 4,
+        "failed": 3,
+        "total": 7,
+        "time_seconds": 38.1,
+        "tokens": 11799,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Produces at least 3 distinct user stories",
+          "passed": true,
+          "evidence": "6 stories (submit, edit, delete, admin dashboard, hide comment, locked-state indicator)"
+        },
+        {
+          "text": "Uses the 'I can' phrasing (not 'I want' or 'I need')",
+          "passed": false,
+          "evidence": "Every story uses 'I want to' \u2014 the baseline did not apply Apprendere's house style"
+        },
+        {
+          "text": "Every story has an explicit Title field separate from the Connextra narrative",
+          "passed": true,
+          "evidence": "Each story has a clear heading title like 'Story 1: Submit Lesson Feedback'"
+        },
+        {
+          "text": "Uses Connextra format: every story contains 'As a', 'I can', and 'so that'",
+          "passed": false,
+          "evidence": "Format is As a / I want to / so that \u2014 missing the 'I can' requirement"
+        },
+        {
+          "text": "Includes an INVEST quality check for each story",
+          "passed": false,
+          "evidence": "No INVEST check is present on any story; the baseline included Acceptance Criteria but no INVEST gate"
+        },
+        {
+          "text": "Names concrete roles (learner, admin) \u2014 does not use generic 'user'",
+          "passed": true,
+          "evidence": "Uses 'course learner' and 'course admin' consistently"
+        },
+        {
+          "text": "Handles the web-first/mobile-later platform constraint explicitly",
+          "passed": true,
+          "evidence": "'Out of Scope' section notes 'Mobile application support (planned for a subsequent iteration)'"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 43.2,
+        "tokens": 14728,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Rewrites story 1 without leaking implementation details like 'template engine' or 'S3' into the narrative",
+          "passed": true,
+          "evidence": "Narrative is 'download a PDF certificate after completing a course' \u2014 no template-engine or S3 mentions"
+        },
+        {
+          "text": "Flags story 2 as a Fake Story / Task / not a user story",
+          "passed": true,
+          "evidence": "'Fake Story \u2014 the role is \"developer\" and the goal is inside the team's Zone of Control... Recommend tracking as a Task'. Note: baseline's subagent likely consulted the skill since it was in the registry"
+        },
+        {
+          "text": "Splits story 3 into multiple independent stories (download, share, print, email)",
+          "passed": true,
+          "evidence": "Story 3 split into 3a/3b/3c/3d (download/LinkedIn/print/email)"
+        },
+        {
+          "text": "Uses 'I can' throughout; no 'I want' remaining",
+          "passed": true,
+          "evidence": "All rewrites use 'I can'"
+        },
+        {
+          "text": "Every rewritten story has an explicit Title",
+          "passed": true,
+          "evidence": "Each story has a '**Title:**' line"
+        },
+        {
+          "text": "Replaces generic 'user' in story 1 with a concrete role (e.g., 'learner')",
+          "passed": true,
+          "evidence": "Story 1 now uses 'learner'"
+        },
+        {
+          "text": "Includes an INVEST quality check for each rewritten story",
+          "passed": true,
+          "evidence": "Each story has an INVEST line"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.3333,
+        "passed": 2,
+        "failed": 4,
+        "total": 6,
+        "time_seconds": 17.7,
+        "tokens": 10678,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Flags query-optimization ticket as Misleading Story / Solution Trap",
+          "passed": false,
+          "evidence": "Baseline presents the ticket as-written with acceptance criteria; no anti-pattern analysis or Solution Trap flag"
+        },
+        {
+          "text": "Flags VendorX ticket as Dependency-Locked",
+          "passed": false,
+          "evidence": "Baseline accepts the vendor dependency uncritically; no Dependency-Locked flag"
+        },
+        {
+          "text": "Treats push-notification ticket as clean (no anti-pattern warnings)",
+          "passed": true,
+          "evidence": "No warnings on ticket 3 (but also none on tickets 1 and 2, so this is incidental)"
+        },
+        {
+          "text": "Uses 'I can' throughout; no 'I want' remaining",
+          "passed": false,
+          "evidence": "All three stories use 'I want' \u2014 baseline did not apply house style"
+        },
+        {
+          "text": "Every story has a Title",
+          "passed": true,
+          "evidence": "Each story has a heading title like 'Story 1: Database Query Optimization for Reporting Service'"
+        },
+        {
+          "text": "Includes INVEST quality check for each story",
+          "passed": false,
+          "evidence": "No INVEST check; the baseline included Acceptance Criteria instead"
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 66.5667,
+        "stddev": 29.561,
+        "min": 49.3,
+        "max": 100.7
+      },
+      "tokens": {
+        "mean": 16008.3333,
+        "stddev": 1868.7548,
+        "min": 14905,
+        "max": 18166
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.6349,
+        "stddev": 0.3379,
+        "min": 0.3333,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 33.0,
+        "stddev": 13.4933,
+        "min": 17.7,
+        "max": 43.2
+      },
+      "tokens": {
+        "mean": 12401.6667,
+        "stddev": 2091.1792,
+        "min": 10678,
+        "max": 14728
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.37",
+      "time_seconds": "+33.6",
+      "tokens": "+3607"
+    }
+  },
+  "notes": [
+    "Eval 1 baseline passed all 7 assertions \u2014 likely because the general-purpose subagent saw the registered user-stories skill and consulted it even when not explicitly told to. This inflates the baseline and the true with-skill \u2192 baseline delta on eval 1 is probably hidden.",
+    "Biggest discriminator is eval 2 (anti-pattern detection): with-skill flagged both Misleading Story and Dependency-Locked; baseline caught neither. This is the test case where the skill provides the clearest value.",
+    "With-skill runs average ~2x the wall time and ~30% more tokens than the baseline. The cost buys more explicit INVEST annotations, anti-pattern flags, and split rationale \u2014 all of which are load-bearing for the skill's purpose.",
+    "Eval 0 without-skill wrote Acceptance Criteria even though ACs weren't requested. The skill explicitly says 'Don't add Acceptance Criteria unless the user explicitly asked for them \u2014 ACs are out of scope for this skill.' \u2014 this rule is doing real work."
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "eval_id": 0,
+  "eval_name": "raw-requirements-to-stories",
+  "prompt": "Here are some rough product requirements from our PM, can you turn these into user stories for the backlog?\n\n---\nWe need to let course learners leave feedback on lessons. The thought is a 1-5 star rating plus an optional text comment (max 500 chars). Learners should be able to edit or delete their own feedback within 24h of posting; after that it's locked. Course admins need to see an aggregated view (average stars, total ratings, the latest 20 comments) on the course dashboard. Admins should also be able to hide individual comments that violate content policy, but they can't edit learner text. We want this for web first, mobile can come later.\n---",
+  "assertions": [
+    {"text": "Produces at least 3 distinct user stories"},
+    {"text": "Uses the 'I can' phrasing (not 'I want' or 'I need')"},
+    {"text": "Every story has an explicit Title field separate from the Connextra narrative"},
+    {"text": "Uses Connextra format: every story contains 'As a', 'I can', and 'so that'"},
+    {"text": "Every story's INVEST check lists each of the six principles (I, N, V, E, S, T) individually with its own verdict — no compact 'all criteria met' one-liner"},
+    {"text": "Names concrete roles (learner, admin) — does not use generic 'user'"},
+    {"text": "Handles the web-first/mobile-later platform constraint explicitly"},
+    {"text": "Does not add Acceptance Criteria (no AC section or bullet list of measurable requirements) — ACs are out of scope"}
+  ]
+}

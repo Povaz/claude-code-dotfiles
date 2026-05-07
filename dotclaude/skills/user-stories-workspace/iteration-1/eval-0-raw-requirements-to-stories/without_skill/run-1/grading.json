@@ -1,0 +1,48 @@
+{
+  "eval_id": 0,
+  "eval_name": "raw-requirements-to-stories",
+  "run": "without_skill",
+  "expectations": [
+    {
+      "text": "Produces at least 3 distinct user stories",
+      "passed": true,
+      "evidence": "6 stories (submit, edit, delete, admin dashboard, hide comment, locked-state indicator)"
+    },
+    {
+      "text": "Uses the 'I can' phrasing (not 'I want' or 'I need')",
+      "passed": false,
+      "evidence": "Every story uses 'I want to' \u2014 the baseline did not apply Apprendere's house style"
+    },
+    {
+      "text": "Every story has an explicit Title field separate from the Connextra narrative",
+      "passed": true,
+      "evidence": "Each story has a clear heading title like 'Story 1: Submit Lesson Feedback'"
+    },
+    {
+      "text": "Uses Connextra format: every story contains 'As a', 'I can', and 'so that'",
+      "passed": false,
+      "evidence": "Format is As a / I want to / so that \u2014 missing the 'I can' requirement"
+    },
+    {
+      "text": "Includes an INVEST quality check for each story",
+      "passed": false,
+      "evidence": "No INVEST check is present on any story; the baseline included Acceptance Criteria but no INVEST gate"
+    },
+    {
+      "text": "Names concrete roles (learner, admin) \u2014 does not use generic 'user'",
+      "passed": true,
+      "evidence": "Uses 'course learner' and 'course admin' consistently"
+    },
+    {
+      "text": "Handles the web-first/mobile-later platform constraint explicitly",
+      "passed": true,
+      "evidence": "'Out of Scope' section notes 'Mobile application support (planned for a subsequent iteration)'"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 3,
+    "total": 7,
+    "pass_rate": 0.5714
+  }
+}

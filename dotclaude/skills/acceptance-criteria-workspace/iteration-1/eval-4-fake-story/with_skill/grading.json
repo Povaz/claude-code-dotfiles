@@ -1,0 +1,10 @@
+{
+  "expectations": [
+    {"text": "Response refuses or declines to produce a full, normal AC set for this story.", "passed": true, "evidence": "'This reads as a Fake Story. AC won't help here. Recommend reviewing the story itself first.' No AC is produced."},
+    {"text": "Response identifies the input as a Fake Story (or explicitly calls out that the need sits inside the team's Zone of Control / is internal tooling).", "passed": true, "evidence": "Explicitly labels it a 'Fake Story' AND: 'The need... sits entirely inside the team's Zone of Control — no external user experiences a change in product behavior.'"},
+    {"text": "Response recommends addressing the story itself before writing AC (e.g., refers to the user-stories skill, or suggests tracking as a Task/Improvement item).", "passed": true, "evidence": "'see the `user-stories` skill'; suggests 're-file as a Task', 'find the real user story behind it', or 'task-level DoD checklist'."},
+    {"text": "Response does NOT contain a full canonical three-section AC set with Happy Path + Sad Path + NFR as if this were a valid user story.", "passed": true, "evidence": "No Happy Path, Sad Path, or NFR sections — no AC output at all beyond the refusal note."}
+  ],
+  "summary": {"passed": 4, "failed": 0, "total": 4, "pass_rate": 1.0},
+  "timing": {"total_duration_seconds": 121.2}
+}

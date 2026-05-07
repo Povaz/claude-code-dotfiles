@@ -1,0 +1,14 @@
+{
+  "expectations": [
+    {"text": "Output uses the three canonical section headings (Happy Path, Sad Path, NFR/Non-Functional Requirements).", "passed": false, "evidence": "Response uses 14 numbered sub-sections ('1. Applying...', '2. Rejecting...'), not the canonical Happy Path / Sad Path / NFR structure. The trailing 'Non-functional / out-of-scope notes' is a meta note, not a formatted NFR section."},
+    {"text": "Happy Path and Sad Path are both expressed as Gherkin scenario blocks (Given/When/Then present).", "passed": true, "evidence": "Each numbered AC uses **Given** / **When** / **Then** keywords in bold markdown form. Not inside fenced ```gherkin blocks but the keywords are present."},
+    {"text": "At least one Sad Path scenario covers an expired promo code.", "passed": true, "evidence": "Section '2. Rejecting an expired promo code'."},
+    {"text": "At least one Sad Path scenario covers stacking a second code against the max-one-per-order constraint.", "passed": true, "evidence": "Section '4. Only one promo code can be stacked per order'."},
+    {"text": "NFRs are written as a measurable checklist (bullet/checkbox items), not as Gherkin scenarios.", "passed": false, "evidence": "No dedicated NFR checklist. 'Non-functional / out-of-scope notes' is a bullet list of *caveats* (e.g., 'Analytics / fraud limits not mentioned'), not a checklist of measurable NFRs."},
+    {"text": "NFR items use FURPS+ labels (at least 2 of: Functionality, Usability, Reliability, Performance, Supportability, Constraint).", "passed": false, "evidence": "No FURPS+ labels anywhere in the response."},
+    {"text": "Every NFR item is quantified (contains numbers, percentiles, standards, or pass/fail checks) — no vague adjectives like 'fast' or 'secure' standing alone.", "passed": false, "evidence": "The NFR-ish notes don't include measurable thresholds (no latency number, no WCAG standard, no rate limits)."},
+    {"text": "Response does NOT leak implementation details (no mention of specific DB, cache, framework, or third-party libs invented by the model).", "passed": true, "evidence": "No invented implementation details. Browser-specific UX items (44x44pt, 48x48dp hit targets) are UX standards, not implementation leaks."}
+  ],
+  "summary": {"passed": 4, "failed": 4, "total": 8, "pass_rate": 0.5},
+  "timing": {"total_duration_seconds": 39.8}
+}

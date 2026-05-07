@@ -1,0 +1,52 @@
+{
+  "skill_name": "user-stories",
+  "evals": [
+    {
+      "id": 0,
+      "name": "raw-requirements-to-stories",
+      "prompt": "Here are some rough product requirements from our PM, can you turn these into user stories for the backlog?\n\n---\nWe need to let course learners leave feedback on lessons. The thought is a 1-5 star rating plus an optional text comment (max 500 chars). Learners should be able to edit or delete their own feedback within 24h of posting; after that it's locked. Course admins need to see an aggregated view (average stars, total ratings, the latest 20 comments) on the course dashboard. Admins should also be able to hide individual comments that violate content policy, but they can't edit learner text. We want this for web first, mobile can come later.\n---",
+      "expected_output": "A set of ~4-6 well-formed user stories in Connextra format with Titles, INVEST checks, and any relevant anti-pattern warnings. Should split the large requirement into independent stories and explicitly handle the web-first platform split.",
+      "files": [],
+      "assertions": [
+        {"text": "Produces at least 3 distinct user stories"},
+        {"text": "Uses the 'I can' phrasing (not 'I want' or 'I need')"},
+        {"text": "Every story has an explicit Title field separate from the Connextra narrative"},
+        {"text": "Uses Connextra format: every story contains 'As a', 'I can', and 'so that'"},
+        {"text": "Includes an INVEST quality check for each story"},
+        {"text": "Names concrete roles (learner, admin) — does not use generic 'user'"},
+        {"text": "Handles the web-first/mobile-later platform constraint explicitly"}
+      ]
+    },
+    {
+      "id": 1,
+      "name": "improve-rough-draft-stories",
+      "prompt": "I wrote some draft stories for our new certificate-download feature. Can you review and rewrite them so they follow our house style?\n\n1. As a user, I want the system to generate a PDF certificate using the new template engine and make it available via a signed S3 URL so that learners can download it.\n\n2. As a developer, I want to add a button to the completion page that calls the /certificate endpoint.\n\n3. As a learner, I want to be able to download certificates, share them on LinkedIn, print them, and email them to my HR department so that I can demonstrate my achievements.",
+      "expected_output": "Story 1 rewritten to strip implementation details. Story 2 flagged as a Fake Story. Story 3 split into multiple independent stories. All use 'I can'.",
+      "files": [],
+      "assertions": [
+        {"text": "Rewrites story 1 without leaking implementation details like 'template engine' or 'S3' into the narrative"},
+        {"text": "Flags story 2 as a Fake Story / Task / not a user story"},
+        {"text": "Splits story 3 into multiple independent stories (download, share, print, email)"},
+        {"text": "Uses 'I can' throughout; no 'I want' remaining"},
+        {"text": "Every rewritten story has an explicit Title"},
+        {"text": "Replaces generic 'user' in story 1 with a concrete role (e.g., 'learner')"},
+        {"text": "Includes an INVEST quality check for each rewritten story"}
+      ]
+    },
+    {
+      "id": 2,
+      "name": "anti-pattern-detection",
+      "prompt": "Here are some tickets our team wants to add to the next sprint. Can you format them as user stories?\n\n- As an ops engineer, I want database query optimization on the reporting service so that monthly reports run faster.\n- As a content editor, I want the new video encoding from VendorX integrated so that I can upload 4K videos to courses.\n- As a learner, I want to receive a push notification when my enrolled course has a new lesson so that I don't miss content.",
+      "expected_output": "Ticket 1 flagged as Misleading Story. Ticket 2 flagged as Dependency-Locked. Ticket 3 clean.",
+      "files": [],
+      "assertions": [
+        {"text": "Flags query-optimization ticket as Misleading Story / Solution Trap"},
+        {"text": "Flags VendorX ticket as Dependency-Locked"},
+        {"text": "Treats push-notification ticket as clean (no anti-pattern warnings)"},
+        {"text": "Uses 'I can' throughout; no 'I want' remaining"},
+        {"text": "Every story has a Title"},
+        {"text": "Includes INVEST quality check for each story"}
+      ]
+    }
+  ]
+}

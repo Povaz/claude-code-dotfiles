@@ -1,0 +1,94 @@
+{
+  "expectations": [
+    {
+      "text": "Adds 'NPS Score' to the Survey Context's Dictionary table",
+      "passed": true,
+      "evidence": "response.md line 18 adds a new row to the Dictionary table: '| NPS Score | Net Promoter Score derived from a Survey Response. ...' inside the Survey Context block."
+    },
+    {
+      "text": "The definition is one or two sentences and grounded in the standard NPS mechanic (0-10 likelihood, Promoter/Detractor, or numeric range)",
+      "passed": true,
+      "evidence": "Definition on line 18: 'Net Promoter Score derived from a Survey Response. Calculated on a 0–10 scale where respondents are classified as Promoters (9–10), Passives (7–8), or Detractors (0–6); the aggregate NPS Score is the percentage of Promoters minus the percentage of Detractors.' This is two sentences and explicitly grounds the term in the standard NPS mechanic (0–10 scale, Promoter/Passive/Detractor classification, %Promoters − %Detractors)."
+    },
+    {
+      "text": "Does NOT modify or add Story/AC text",
+      "passed": true,
+      "evidence": "The response only emits the updated Context block (Title, intro paragraph, Relationships, Dictionary). No user story (As a... I can... so that...) and no Acceptance Criteria (Given/When/Then) appear anywhere in response.md."
+    },
+    {
+      "text": "Mentions propagation: either confirms no existing Stories/AC reference the term yet, or flags any that do for re-review",
+      "passed": false,
+      "evidence": "The response includes follow-up notes about scale, per-Response vs. aggregate framing, and ownership in another Context, but it never addresses propagation back into existing user stories or AC. There is no statement confirming 'no existing Stories/AC reference NPS Score yet' nor any flag asking the user to re-review stories/AC that may already use the term. The user explicitly mentioned they are 'drafting a user story that uses the term', so propagation is directly in scope and was missed."
+    },
+    {
+      "text": "Returns the full updated Context block (or a clear diff against the input) — not just the bare row",
+      "passed": true,
+      "evidence": "Lines 3–19 of response.md reproduce the entire Context block: '# Context: Survey' heading, the intro paragraph, the Relationships section, and the full Dictionary table including the pre-existing Survey and Response rows alongside the new NPS Score row."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 1,
+    "total": 5,
+    "pass_rate": 0.8
+  },
+  "execution_metrics": {
+    "tool_calls": {},
+    "total_tool_calls": 0,
+    "total_steps": 1,
+    "errors_encountered": 0,
+    "output_chars": 1849,
+    "transcript_chars": 0
+  },
+  "timing": {
+    "executor_duration_seconds": 20.5,
+    "total_duration_seconds": 20.5
+  },
+  "claims": [
+    {
+      "claim": "NPS uses a 0–10 scale with Promoters (9–10), Passives (7–8), Detractors (0–6), and aggregate = %Promoters − %Detractors",
+      "type": "factual",
+      "verified": true,
+      "evidence": "This matches the standard Net Promoter Score definition (Reichheld / Bain). Cutoffs and arithmetic are correct."
+    },
+    {
+      "claim": "The user's project might want to split 'NPS Rating' (per-Response) from 'NPS Score' (aggregate)",
+      "type": "quality",
+      "verified": true,
+      "evidence": "This is a reasonable disambiguation observation — the single definition does conflate the per-respondent answer with the aggregate metric, which is a real source of dictionary ambiguity worth surfacing."
+    },
+    {
+      "claim": "NPS is sometimes owned by a separate Reporting/Analytics Context",
+      "type": "quality",
+      "verified": true,
+      "evidence": "Plausible domain observation; not contradicted by inputs. Surfacing it as a question rather than an assertion is appropriate given the user supplied only the Survey Context."
+    },
+    {
+      "claim": "The output preserves prior Dictionary rows verbatim",
+      "type": "factual",
+      "verified": true,
+      "evidence": "The Survey and Response rows on lines 16–17 match the input rows the user provided in the prompt; only a column-width spacing change in the table separator was made."
+    }
+  ],
+  "user_notes_summary": {
+    "uncertainties": [],
+    "needs_review": [],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "assertion": "Does NOT modify or add Story/AC text",
+        "reason": "This passes trivially because the executor only ever emits a Context block. A model that simply ignores the user's mention of a 'user story' would still pass. Consider strengthening to also require that the response acknowledges the in-flight story (e.g., 'tells the user the term is now safe to use in their draft story') so the assertion discriminates between 'didn't touch stories' and 'didn't engage with the story context at all'."
+      },
+      {
+        "assertion": "The definition is one or two sentences and grounded in the standard NPS mechanic",
+        "reason": "Sentence count is checked but factual correctness of the NPS cutoffs (9–10 / 7–8 / 0–6) is not. A definition that says 'Promoters are 8–10' would still satisfy the current wording. Consider asserting on the specific Promoter/Detractor cutoffs or the %Promoters − %Detractors formula."
+      },
+      {
+        "reason": "No assertion checks that the prior Dictionary rows (Survey, Response) are preserved verbatim. A response that rewrote or dropped existing terms while adding NPS Score would still pass all five current assertions. Worth adding an explicit 'existing rows unchanged' check."
+      }
+    ],
+    "overall": "Assertions cover the main mechanics but several are easy to satisfy by accident. The propagation assertion (#4) is the strongest discriminator — and is the one this baseline failed, which is encouraging signal that it's doing real work."
+  }
+}

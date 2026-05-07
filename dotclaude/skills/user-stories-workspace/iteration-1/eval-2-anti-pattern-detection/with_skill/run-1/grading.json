@@ -1,0 +1,43 @@
+{
+  "eval_id": 2,
+  "eval_name": "anti-pattern-detection",
+  "run": "with_skill",
+  "expectations": [
+    {
+      "text": "Flags query-optimization ticket as Misleading Story / Solution Trap",
+      "passed": true,
+      "evidence": "'\u26a0 Misleading Story (Solution Trap) \u2014 the original draft asks for \"database query optimization,\" which is a prescribed technical solution, not a user need'"
+    },
+    {
+      "text": "Flags VendorX ticket as Dependency-Locked",
+      "passed": true,
+      "evidence": "'\u26a0 Dependency-Locked \u2014 deliverable requires VendorX's encoding integration, which sits outside the team's Zone of Control'"
+    },
+    {
+      "text": "Treats push-notification ticket as clean (no anti-pattern warnings)",
+      "passed": true,
+      "evidence": "Story 3 has only '\u2713 INVEST: all criteria met' \u2014 no warnings"
+    },
+    {
+      "text": "Uses 'I can' throughout; no 'I want' remaining",
+      "passed": true,
+      "evidence": "All three narratives use 'I can'"
+    },
+    {
+      "text": "Every story has a Title",
+      "passed": true,
+      "evidence": "Each story has '**Title:**' field"
+    },
+    {
+      "text": "Includes INVEST quality check for each story",
+      "passed": true,
+      "evidence": "Stories 1, 2, 3 all have INVEST checks (Story 2 has per-criterion breakdown)"
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

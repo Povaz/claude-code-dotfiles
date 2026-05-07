@@ -1,0 +1,14 @@
+{
+  "eval_id": 3,
+  "eval_name": "review-and-rewrite-bad-ac",
+  "prompt": "Review and rewrite the acceptance criteria for this story. Flag anti-patterns and explain the edits inline.\n\n**Story:** As a learner, I can search the course catalogue by keyword, so that I can find relevant courses.\n\n**Existing AC:**\n1. The backend hits Elasticsearch and caches the result in Redis for 60 seconds.\n2. Search should be fast.\n3. When the user types a keyword and hits Enter AND the filter panel is open, the results update and the filter panel closes.\n4. Code is peer-reviewed and deployed to staging before merging.\n5. The page is user-friendly.",
+  "assertions": [
+    "AC #1 is flagged as implementation-prescribing (mentions Elasticsearch/Redis leak or equivalent wording).",
+    "AC #2 ('Search should be fast') is flagged as unmeasurable and is either replaced with a concrete threshold or marked as needing one.",
+    "AC #3 is flagged as a multi-trigger When clause and is split into two separate scenarios.",
+    "AC #4 ('Code is peer-reviewed and deployed to staging') is flagged as a Definition of Done item and removed from the AC set.",
+    "AC #5 ('user-friendly') is flagged as unmeasurable.",
+    "Rewrite uses the three canonical sections (Happy Path / Sad Path / NFR).",
+    "Response includes a `What Changed:` (or equivalently titled) block of 2–5 bullets explaining the edits adjacent to the rewritten AC."
+  ]
+}

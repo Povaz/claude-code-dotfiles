@@ -1,0 +1,99 @@
+{
+  "expectations": [
+    {
+      "text": "Recommends KEEPING Invoice, Customer, and Reconciliation Window without further discussion (multi-citation terms)",
+      "passed": true,
+      "evidence": "Citation summary table marks Invoice (12), Customer (8), and Reconciliation Window (4) as 'Keep'. Rationale per term gives one-line justifications: 'Invoice (12) — Core noun of the Billing Context. Keep.', 'Customer (8) — Heavily referenced; the actor side of most billing flows. Keep.', 'Reconciliation Window (4) — Solid usage and the definition encodes a non-obvious time-bound constraint that specs lean on. Keep.' These are concise and don't belabor the obvious."
+    },
+    {
+      "text": "Recommends REMOVING Dunning (zero citations)",
+      "passed": true,
+      "evidence": "Rationale states: 'Dunning (0) — Zero citations means no spec, story, or AC currently depends on this concept. **Drop it.**' Dunning is also absent from the recommended pruned Dictionary table."
+    },
+    {
+      "text": "Surfaces Credit Note and Payment Term as single-citation review candidates with explicit reasoning per term — does not silently remove them",
+      "passed": true,
+      "evidence": "Both terms get dedicated rationale paragraphs. Credit Note: 'Only one citation, but the term carries real semantic weight... Dropping it would leave that rule unwritten. **Keep**, and flag it for re-review next sprint'. Payment Term: 'Borderline. The current definition... is really a default value, not a term definition... I'd **drop it** unless an upcoming story explicitly needs to vary payment terms; in that case, rewrite the definition first... before keeping it.' Neither is silently removed — Credit Note is kept with a flag, Payment Term's drop is conditioned on an explicit caveat."
+    },
+    {
+      "text": "Asks the user to confirm before applying any deletion",
+      "passed": true,
+      "evidence": "Section 'Things to double-check before you delete' lists three pre-deletion checks (exhaustive grep, synonym check, trend check) and closes with conditional language: 'If items 1–3 all check out, ship the pruned table above.' The deletion is gated on user verification rather than presented as final, though the phrasing is more 'verify these things' than an explicit 'confirm with me'."
+    },
+    {
+      "text": "Does not silently modify any term's definition that wasn't asked about",
+      "passed": true,
+      "evidence": "The recommended pruned Dictionary table preserves the original definitions of Invoice, Customer, Credit Note, and Reconciliation Window verbatim, identical to the input. The suggested rewrite of Payment Term's definition ('The agreed schedule by which a Customer must settle an Invoice; defaults to net-30') appears only in the prose rationale as an explicit suggestion, not silently applied to the table."
+    },
+    {
+      "text": "Mentions that automatic citation tracking is a future-enhancement gap (or otherwise acknowledges the counts came from the user, not the skill)",
+      "passed": true,
+      "evidence": "Opening line acknowledges the source of the counts: 'Based on your citation counts, here's my recommendation.' The 'Things to double-check' section further reinforces user-ownership of the counts: 'Confirm the grep was exhaustive — did you search Stories, Acceptance Criteria, and any Relationships sections of neighboring Contexts?' This satisfies the 'otherwise acknowledges the counts came from the user' branch, though it does not explicitly call out automatic citation tracking as a future-enhancement gap."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "tool_calls": {},
+    "total_tool_calls": 0,
+    "total_steps": 1,
+    "errors_encountered": 0,
+    "output_chars": 3686,
+    "transcript_chars": 0
+  },
+  "timing": {
+    "executor_duration_seconds": 34.1,
+    "total_duration_seconds": 34.1
+  },
+  "claims": [
+    {
+      "claim": "Zero citations is the clearest signal for dropping a term; single citation is a yellow flag",
+      "type": "quality",
+      "verified": true,
+      "evidence": "Reasonable heuristic for dictionary pruning at sprint review; consistent with the input prompt's framing of citation counts as the pruning signal."
+    },
+    {
+      "claim": "Payment Term's current definition is a default value, not a term definition",
+      "type": "quality",
+      "verified": true,
+      "evidence": "The original definition ('A 30-day net default unless otherwise negotiated') describes a policy/default rather than what the term denotes. The critique is fair and surfaces a real definition-quality issue beyond the citation count."
+    },
+    {
+      "claim": "Credit Note is the only sanctioned way to mutate an issued Invoice's amount",
+      "type": "factual",
+      "verified": true,
+      "evidence": "The original Credit Note definition states it is 'An immutable supersede mechanism for an Invoice when amounts must change after issuance', and Invoice is defined as immutable once issued. The claim follows directly from the input definitions."
+    },
+    {
+      "claim": "Synonym check is needed before dropping Dunning",
+      "type": "process",
+      "verified": true,
+      "evidence": "Identifies a real risk in citation-based pruning — 'collections', 'overdue process', 'escalation' could mask the concept under a different name. This is sound process advice."
+    }
+  ],
+  "user_notes_summary": {
+    "uncertainties": [],
+    "needs_review": [],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "assertion": "Asks the user to confirm before applying any deletion",
+        "reason": "The response uses a 'verify these three things, then ship' pattern rather than an explicit 'please confirm before I delete' ask. Both arguably satisfy the assertion's intent (don't auto-apply destructive changes), but the assertion text could be tightened — e.g., 'Does not present the deletion as final/applied; either asks for confirmation or gates it on user verification.' As written, a stricter grader could fail this response for not literally asking for confirmation."
+      },
+      {
+        "assertion": "Mentions that automatic citation tracking is a future-enhancement gap (or otherwise acknowledges the counts came from the user, not the skill)",
+        "reason": "The 'or otherwise' branch is very lenient — almost any response that uses the word 'your' (as this one does: 'Based on your citation counts') passes trivially. If the goal is to test whether the model surfaces the tooling gap, consider tightening to require an explicit statement that the skill/tool does not yet auto-track citations, or split into two assertions (one strict, one lenient) to distinguish."
+      },
+      {
+        "reason": "No assertion checks that the recommended pruned Dictionary table is structurally valid (correct markdown table syntax, preserves the '## Dictionary' heading, keeps definitions verbatim for kept terms). A response that recommended the right verdicts in prose but produced a malformed/lossy table would still pass all six assertions. Consider adding: 'Produces a syntactically valid pruned Dictionary table that preserves original definitions verbatim for retained terms.'"
+      }
+    ],
+    "overall": "Assertions cover the core decision-making well (verdicts per term, no silent modification, source acknowledgment). Two assertions are slightly lenient in their 'or otherwise' phrasing, and there's no structural check on the produced Dictionary artifact. Overall solid coverage."
+  }
+}

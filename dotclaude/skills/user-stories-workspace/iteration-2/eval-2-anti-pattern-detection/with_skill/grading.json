@@ -1,0 +1,50 @@
+{
+  "expectations": [
+    {
+      "text": "Flags query-optimization ticket as Misleading Story / Solution Trap",
+      "passed": true,
+      "evidence": "Story 1 carries the explicit flag: '⚠ **Misleading Story (Solution Trap)** — \"database query optimization\" is a prescribed implementation, not a user need.' What-Changed also calls it 'a classic Solution Trap.'"
+    },
+    {
+      "text": "Flags VendorX ticket as Dependency-Locked",
+      "passed": true,
+      "evidence": "Story 2 carries: '⚠ **Dependency-Locked Story** — the deliverable requires VendorX's encoding integration, which sits outside the team's Zone of Control. Recommend splitting: keep \"Upload 4K videos to courses\" as the user-facing story, and track \"Integrate VendorX encoding pipeline\" separately...'"
+    },
+    {
+      "text": "Treats push-notification ticket as clean (no anti-pattern warnings)",
+      "passed": true,
+      "evidence": "Story 3: 'This is the cleanest of the three — no anti-pattern warning.' Summary also confirms: 'Story 3 (push notifications): Clean.'"
+    },
+    {
+      "text": "Uses 'I can' throughout; no 'I want' remaining",
+      "passed": true,
+      "evidence": "Every narrative uses 'I can' ('I can run the monthly reports...', 'I can upload 4K videos...', 'I can receive a push notification...'). No 'I want' appears."
+    },
+    {
+      "text": "Every story has a Title",
+      "passed": true,
+      "evidence": "Each story starts with '**Title:**' (e.g., '**Title:** Faster monthly reports from the reporting service', '**Title:** Upload 4K videos to courses', '**Title:** Notify me when my enrolled course has a new lesson')."
+    },
+    {
+      "text": "Every story's INVEST check lists each of the six principles (I, N, V, E, S, T) individually with its own verdict — no compact 'all criteria met' one-liner, applied consistently to all three stories",
+      "passed": true,
+      "evidence": "All three stories list each of I, N, V, E, S, T individually with a verdict. Story 1 has varied verdicts (N-fail, E-fail, T-fail, S-unknown); Story 2 has I-fail, E-partial, S-unknown; Story 3 is all pass — each principle enumerated separately in every story."
+    },
+    {
+      "text": "Does not add Acceptance Criteria (no AC section or bullet list of measurable requirements) — ACs are out of scope",
+      "passed": true,
+      "evidence": "No AC section or AC bullet list. The only AC reference is a brief forward-looking note on Story 3 ('push is the only channel... both are natural follow-ups but not needed in the story itself'), which is allowed."
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  },
+  "timing": {
+    "total_tokens": 22728,
+    "duration_ms": 47172,
+    "total_duration_seconds": 47.2
+  }
+}

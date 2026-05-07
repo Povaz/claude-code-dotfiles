@@ -1,0 +1,99 @@
+{
+  "expectations": [
+    {
+      "text": "Adds 'NPS Score' to the Survey Context's Dictionary table",
+      "passed": true,
+      "evidence": "The updated Dictionary table in response.md (lines 22-26) contains a new row: '| NPS Score | The Net Promoter Score derived from the standard 0-10 likelihood-to-recommend question...' appended after the existing Survey and Response rows in the Survey Context."
+    },
+    {
+      "text": "The definition is one or two sentences and grounded in the standard NPS mechanic (0-10 likelihood, Promoter/Detractor, or numeric range)",
+      "passed": true,
+      "evidence": "The definition references all three NPS mechanics: 'standard 0-10 likelihood-to-recommend question', '% Promoters - % Detractors (Bain & Company canonical formula), where Promoters answer 9-10, Passives 7-8, and Detractors 0-6', and 'integer in [-100, +100]'. It runs slightly long (about 4 sentences including the pending-clarification aside), which is on the edge of the skill's 'one or two sentences' guideline, but it is unambiguously grounded in the standard NPS mechanic."
+    },
+    {
+      "text": "Does NOT modify or add Story/AC text",
+      "passed": true,
+      "evidence": "Response.md only modifies the Dictionary table inside the Survey Context block. Closing line: 'I haven't touched the Story text — that's the `user-stories` skill's job.' No Story or AC text is drafted, modified, or referenced beyond the propagation note."
+    },
+    {
+      "text": "Mentions propagation: either confirms no existing Stories/AC reference the term yet, or flags any that do for re-review",
+      "passed": true,
+      "evidence": "Dedicated 'Propagation note (Rule 9)' section: 'You said this is the first Story to use the term, so the affected set today is just the Story you're drafting — no re-review of existing artifacts needed.' Explicitly handles the propagation question."
+    },
+    {
+      "text": "Returns the full updated Context block (or a clear diff against the input) — not just the bare row",
+      "passed": true,
+      "evidence": "Response includes the full updated Context block (lines 11-27) with the '# Context: Survey' header, description, Relationships section, and the complete Dictionary table containing all three rows (Survey, Response, NPS Score), not just the new row."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "tool_calls": {},
+    "total_tool_calls": 0,
+    "total_steps": 0,
+    "errors_encountered": 0,
+    "output_chars": 3743,
+    "transcript_chars": 3743
+  },
+  "timing": {
+    "executor_duration_seconds": 54.6,
+    "total_duration_seconds": 54.6
+  },
+  "claims": [
+    {
+      "claim": "NPS Score belongs in the Survey Context because it's computed from Response data",
+      "type": "quality",
+      "verified": true,
+      "evidence": "Reasonable placement given the input's Survey Context already houses Survey and Response; the response also flags openness to relocating it ('Flag if you'd rather it lives in its own (e.g. Reporting / Satisfaction) Context')."
+    },
+    {
+      "claim": "The canonical Bain & Company NPS formula is % Promoters - % Detractors with cuts at 9-10 / 7-8 / 0-6, expressed as an integer in [-100, +100]",
+      "type": "factual",
+      "verified": true,
+      "evidence": "This matches the well-established Bain/Reichheld NPS definition."
+    },
+    {
+      "claim": "This is the first Story to use the term 'NPS Score', so no existing artifacts need re-review",
+      "type": "factual",
+      "verified": true,
+      "evidence": "The eval prompt says the user is 'drafting a user story that uses the term NPS Score, but it's not in our contexts.md yet', which the executor correctly interpreted as a first-use scenario. The input contexts.md snippet contains no other references to NPS Score."
+    },
+    {
+      "claim": "The description and Relationships sections were untouched",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Comparing the input Survey Context to the output: description and Relationships are byte-identical; only the Dictionary table grew by one row."
+    },
+    {
+      "claim": "Aggregation unit is ambiguous and should be flagged with a placeholder rather than guessed",
+      "type": "quality",
+      "verified": true,
+      "evidence": "Per the skill's 'Question, don't invent' principle, the executor correctly used '?? — pending clarification' for the aggregation unit rather than fabricating a level (per-Survey vs per-Course vs cohort)."
+    }
+  ],
+  "user_notes_summary": {
+    "uncertainties": [],
+    "needs_review": [],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "assertion": "The definition is one or two sentences and grounded in the standard NPS mechanic (0-10 likelihood, Promoter/Detractor, or numeric range)",
+        "reason": "The 'one or two sentences' part of this assertion is not actually checked — the response's definition runs to roughly four sentences (including the embedded aggregation-unit aside) and still passes because the grader latches onto the NPS-mechanic half. If the skill genuinely cares about the brevity guideline (it does — the SKILL.md explicitly calls out 'Definition longer than two sentences' as a smell), split this into two assertions or word it as 'definition is concise (no longer than ~2 sentences)' so the brevity bar is testable."
+      },
+      {
+        "reason": "No assertion checks the skill's 'Question, don't invent' behaviour, which is arguably the most important contextual signal here. NPS Score has multiple legitimate interpretations (raw 0-10 vs aggregated -100..+100, per-survey vs per-cohort), and a good response asks rather than guesses. Consider adding: 'Surfaces at least one clarifying question or pending-clarification placeholder rather than silently picking one interpretation of NPS Score.' A response that just confidently picked the canonical formula without flagging the ambiguity would pass all current assertions but miss the skill's defining behaviour."
+      },
+      {
+        "reason": "No assertion checks that the response asks about (or at least acknowledges) the placement decision — i.e., whether NPS Score should live in the Survey Context or its own Reporting / Analytics Context. The current response handles this gracefully ('Flag if you'd rather it lives in its own ... Context'), but a response that silently dropped it into Survey would also pass all current assertions."
+      }
+    ],
+    "overall": "Assertions are reasonable and discriminating on the structural shape (table row added, full block returned, no Story text touched, propagation called out). The two gaps are: brevity of the definition isn't actually graded despite being a stated skill rule, and the 'Question, don't invent' behaviour — the skill's most important contextual habit — is not tested at all."
+  }
+}

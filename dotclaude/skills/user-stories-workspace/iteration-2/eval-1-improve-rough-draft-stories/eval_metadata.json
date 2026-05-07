@@ -1,0 +1,16 @@
+{
+  "eval_id": 1,
+  "eval_name": "improve-rough-draft-stories",
+  "prompt": "I wrote some draft stories for our new certificate-download feature. Can you review and rewrite them so they follow our house style?\n\n1. As a user, I want the system to generate a PDF certificate using the new template engine and make it available via a signed S3 URL so that learners can download it.\n\n2. As a developer, I want to add a button to the completion page that calls the /certificate endpoint.\n\n3. As a learner, I want to be able to download certificates, share them on LinkedIn, print them, and email them to my HR department so that I can demonstrate my achievements.",
+  "assertions": [
+    {"text": "Rewrites story 1 without leaking implementation details like 'template engine' or 'S3' into the narrative"},
+    {"text": "Flags story 2 as a Fake Story / Task / not a user story"},
+    {"text": "Splits story 3 into multiple independent stories (download, share, print, email)"},
+    {"text": "Uses 'I can' throughout; no 'I want' remaining"},
+    {"text": "Every rewritten story has an explicit Title"},
+    {"text": "Replaces generic 'user' in story 1 with a concrete role (e.g., 'learner')"},
+    {"text": "Every story's INVEST check lists each of the six principles (I, N, V, E, S, T) individually with its own verdict — no compact 'all criteria met' one-liner"},
+    {"text": "Each rewritten story has an inline 'What Changed' block (or similar per-story change note) directly following its INVEST check — not a single trailing summary table covering all stories"},
+    {"text": "Does not reference system components, pages, endpoints, or concepts absent from the input drafts (e.g., no invented 'course-completion page', 'completion dashboard', or other named surfaces the user didn't write)"}
+  ]
+}

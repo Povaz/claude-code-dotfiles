@@ -1,0 +1,197 @@
+{
+  "metadata": {
+    "skill_name": "user-stories",
+    "skill_path": "/Users/erick-apprendere/PycharmProjects/claude-code-dotfiles/dotclaude/skills/user-stories",
+    "executor_model": "claude-opus-4-7",
+    "analyzer_model": "claude-opus-4-7",
+    "timestamp": "2026-04-17T11:05:00Z",
+    "evals_run": [0, 1, 2],
+    "runs_per_configuration": 1,
+    "configurations": ["with_skill", "old_skill"],
+    "baseline_description": "old_skill = iteration-1 snapshot at user-stories-workspace/skill-snapshot-iteration-1/"
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "eval_name": "raw-requirements-to-stories",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 46.2,
+        "tokens": 23115,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Produces at least 3 distinct user stories", "passed": true, "evidence": "Produces 5 distinct stories: rate/comment, edit, delete, admin dashboard, hide comment."},
+        {"text": "Uses the 'I can' phrasing (not 'I want' or 'I need')", "passed": true, "evidence": "Every story uses 'I can'; no 'I want' or 'I need'."},
+        {"text": "Every story has an explicit Title field separate from the Connextra narrative", "passed": true, "evidence": "Each story begins with a bolded **Title:** line."},
+        {"text": "Uses Connextra format: every story contains 'As a', 'I can', and 'so that'", "passed": true, "evidence": "All five stories use the tri-part Connextra format."},
+        {"text": "Every story's INVEST check lists each of the six principles (I, N, V, E, S, T) individually with its own verdict — no compact 'all criteria met' one-liner", "passed": true, "evidence": "Each story lists all six principles individually with per-story verdicts."},
+        {"text": "Names concrete roles (learner, admin) — does not use generic 'user'", "passed": true, "evidence": "Uses 'course learner' and 'course admin'. No generic 'user'."},
+        {"text": "Handles the web-first/mobile-later platform constraint explicitly", "passed": true, "evidence": "Preamble scopes to web only per the PM's 'web first' note; closing note flags how to add mobile later."},
+        {"text": "Does not add Acceptance Criteria (no AC section or bullet list of measurable requirements) — ACs are out of scope", "passed": true, "evidence": "No AC section; AC mentioned only to explain what was deliberately kept out."}
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "raw-requirements-to-stories",
+      "configuration": "old_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.88,
+        "passed": 7,
+        "failed": 1,
+        "total": 8,
+        "time_seconds": 36.2,
+        "tokens": 21481,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Produces at least 3 distinct user stories", "passed": true, "evidence": "5 distinct stories."},
+        {"text": "Uses the 'I can' phrasing (not 'I want' or 'I need')", "passed": true, "evidence": "All stories use 'I can'."},
+        {"text": "Every story has an explicit Title field separate from the Connextra narrative", "passed": true, "evidence": "Each story starts with **Title:**."},
+        {"text": "Uses Connextra format: every story contains 'As a', 'I can', and 'so that'", "passed": true, "evidence": "All five stories have the triad."},
+        {"text": "Every story's INVEST check lists each of the six principles (I, N, V, E, S, T) individually with its own verdict — no compact 'all criteria met' one-liner", "passed": false, "evidence": "Every story uses the compact '\u2713 INVEST: all criteria met.' line instead of per-principle verdicts."},
+        {"text": "Names concrete roles (learner, admin) — does not use generic 'user'", "passed": true, "evidence": "Uses 'learner' and 'course admin'."},
+        {"text": "Handles the web-first/mobile-later platform constraint explicitly", "passed": true, "evidence": "Explicitly defers mobile per the PM."},
+        {"text": "Does not add Acceptance Criteria (no AC section or bullet list of measurable requirements) — ACs are out of scope", "passed": true, "evidence": "No AC section or bulleted list."}
+      ]
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "improve-rough-draft-stories",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.89,
+        "passed": 8,
+        "failed": 1,
+        "total": 9,
+        "time_seconds": 63.0,
+        "tokens": 24074,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Rewrites story 1 without leaking implementation details like 'template engine' or 'S3' into the narrative", "passed": true, "evidence": "Narrative clean; template engine and S3 mentioned only in What Changed."},
+        {"text": "Flags story 2 as a Fake Story / Task / not a user story", "passed": true, "evidence": "Title says '(flagged — not a user story)'; body labels it a Fake Story."},
+        {"text": "Splits story 3 into multiple independent stories (download, share, print, email)", "passed": true, "evidence": "Split into 3a–3d covering download, LinkedIn, print, email."},
+        {"text": "Uses 'I can' throughout; no 'I want' remaining", "passed": true, "evidence": "Every narrative uses 'I can'; no 'I want' remains."},
+        {"text": "Every rewritten story has an explicit Title", "passed": true, "evidence": "Every story starts with **Title:**."},
+        {"text": "Replaces generic 'user' in story 1 with a concrete role (e.g., 'learner')", "passed": true, "evidence": "Story 1 uses 'As a learner' and What Changed notes the swap."},
+        {"text": "Every story's INVEST check lists each of the six principles (I, N, V, E, S, T) individually with its own verdict — no compact 'all criteria met' one-liner", "passed": true, "evidence": "All six stories list each of I/N/V/E/S/T individually with verdicts."},
+        {"text": "Each rewritten story has an inline 'What Changed' block (or similar per-story change note) directly following its INVEST check — not a single trailing summary table covering all stories", "passed": false, "evidence": "Stories 1 and 2 have their own What Changed blocks; 3a–3d share one combined block after 3a. Note: the skill explicitly permits a shared block under splits — see analyst notes."},
+        {"text": "Does not reference system components, pages, endpoints, or concepts absent from the input drafts (e.g., no invented 'course-completion page', 'completion dashboard', or other named surfaces the user didn't write)", "passed": true, "evidence": "Uses 'completion page' (present in input), '/certificate' endpoint (input), and the four channels from draft 3. No invented surfaces."}
+      ]
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "improve-rough-draft-stories",
+      "configuration": "old_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.67,
+        "passed": 6,
+        "failed": 3,
+        "total": 9,
+        "time_seconds": 38.3,
+        "tokens": 21492,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Rewrites story 1 without leaking implementation details like 'template engine' or 'S3' into the narrative", "passed": true, "evidence": "Narrative clean."},
+        {"text": "Flags story 2 as a Fake Story / Task / not a user story", "passed": true, "evidence": "Flagged as Misleading Story (Solution Trap) and explicitly called 'should be tracked as a Task, not a story'."},
+        {"text": "Splits story 3 into multiple independent stories (download, share, print, email)", "passed": true, "evidence": "Split into 3a–3d."},
+        {"text": "Uses 'I can' throughout; no 'I want' remaining", "passed": true, "evidence": "All 'I can'."},
+        {"text": "Every rewritten story has an explicit Title", "passed": true, "evidence": "Each story has **Title:**."},
+        {"text": "Replaces generic 'user' in story 1 with a concrete role (e.g., 'learner')", "passed": true, "evidence": "Uses 'learner'."},
+        {"text": "Every story's INVEST check lists each of the six principles (I, N, V, E, S, T) individually with its own verdict — no compact 'all criteria met' one-liner", "passed": false, "evidence": "Compact one-liner used; Stories 2 and 3b omit INVEST entirely."},
+        {"text": "Each rewritten story has an inline 'What Changed' block (or similar per-story change note) directly following its INVEST check — not a single trailing summary table covering all stories", "passed": false, "evidence": "Stories 1 and 2 have per-story notes; 3a–3d lack any per-story change note and share a trailing 'Summary of edits' list."},
+        {"text": "Does not reference system components, pages, endpoints, or concepts absent from the input drafts (e.g., no invented 'course-completion page', 'completion dashboard', or other named surfaces the user didn't write)", "passed": false, "evidence": "Invents 'course-completion page' in Story 2 narrative — input said only 'the completion page'."}
+      ]
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "anti-pattern-detection",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 47.2,
+        "tokens": 22728,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Flags query-optimization ticket as Misleading Story / Solution Trap", "passed": true, "evidence": "Story 1 carries explicit Solution Trap flag."},
+        {"text": "Flags VendorX ticket as Dependency-Locked", "passed": true, "evidence": "Story 2 carries Dependency-Locked flag with a split recommendation."},
+        {"text": "Treats push-notification ticket as clean (no anti-pattern warnings)", "passed": true, "evidence": "Story 3 explicitly called 'cleanest of the three — no anti-pattern warning.'"},
+        {"text": "Uses 'I can' throughout; no 'I want' remaining", "passed": true, "evidence": "All 'I can'."},
+        {"text": "Every story has a Title", "passed": true, "evidence": "Each story starts with **Title:**."},
+        {"text": "Every story's INVEST check lists each of the six principles (I, N, V, E, S, T) individually with its own verdict — no compact 'all criteria met' one-liner, applied consistently to all three stories", "passed": true, "evidence": "All three stories itemise I/N/V/E/S/T individually with verdicts; Story 3 all pass, Stories 1–2 have mixed verdicts."},
+        {"text": "Does not add Acceptance Criteria (no AC section or bullet list of measurable requirements) — ACs are out of scope", "passed": true, "evidence": "No AC section; only brief forward-looking note."}
+      ]
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "anti-pattern-detection",
+      "configuration": "old_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.86,
+        "passed": 6,
+        "failed": 1,
+        "total": 7,
+        "time_seconds": 26.8,
+        "tokens": 20790,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Flags query-optimization ticket as Misleading Story / Solution Trap", "passed": true, "evidence": "Story 1 carries Solution Trap flag."},
+        {"text": "Flags VendorX ticket as Dependency-Locked", "passed": true, "evidence": "Story 2 carries Dependency-Locked flag."},
+        {"text": "Treats push-notification ticket as clean (no anti-pattern warnings)", "passed": true, "evidence": "Story 3 has no anti-pattern flag."},
+        {"text": "Uses 'I can' throughout; no 'I want' remaining", "passed": true, "evidence": "All 'I can'."},
+        {"text": "Every story has a Title", "passed": true, "evidence": "Each story has **Title:**."},
+        {"text": "Every story's INVEST check lists each of the six principles (I, N, V, E, S, T) individually with its own verdict — no compact 'all criteria met' one-liner, applied consistently to all three stories", "passed": false, "evidence": "Story 3 uses compact one-liner; Stories 1 and 2 omit INVEST entirely. Not itemised consistently (or at all)."},
+        {"text": "Does not add Acceptance Criteria (no AC section or bullet list of measurable requirements) — ACs are out of scope", "passed": true, "evidence": "No AC section or bulleted list."}
+      ]
+    }
+  ],
+  "summary": {
+    "with_skill": {
+      "total_passed": 23,
+      "total_assertions": 24,
+      "pass_rate": 0.958,
+      "avg_time_seconds": 52.1,
+      "avg_tokens": 23306
+    },
+    "old_skill": {
+      "total_passed": 19,
+      "total_assertions": 24,
+      "pass_rate": 0.792,
+      "avg_time_seconds": 33.8,
+      "avg_tokens": 21254
+    },
+    "delta": {
+      "pass_rate": 0.167,
+      "time_seconds": 18.3,
+      "tokens": 2052
+    }
+  },
+  "analyst_notes": [
+    "The new skill lifts pass rate from 79.2% → 95.8% (+16.7pp). Every old_skill failure tracks directly to one of the three iteration-2 changes: per-principle INVEST (all three evals), per-story What Changed (eval 1), or invented components (eval 1).",
+    "with_skill is ~18s slower per run and uses ~2000 more tokens on average — expected, since per-principle INVEST + per-story What Changed produce more output. Not a concerning tradeoff given the quality lift and that these runs are human-supervised authoring, not hot-path throughput.",
+    "The per-story 'What Changed' assertion is ambiguous under splits. The with_skill output shared a single block across 3a–3d daughter splits — the skill explicitly permits this, but the assertion was graded strictly. User feedback will determine whether this is actually a miss."
+  ]
+}
