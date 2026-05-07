@@ -178,8 +178,6 @@ Then the step completes without error,
 These items are in the source spec but are **not** written as user stories, because they are either internal invariants or workflow conventions without a standalone user-visible outcome:
 
 - The `dotclaude/` sync-manifest boundary, the `setup.sh` / `status.sh` behavioural alignment, and `teardown.sh` using `readlink` as the source of truth. These are safety/quality requirements that belong in every story's acceptance criteria, not a separate story. ⚠ Would otherwise be **Fake Stories** — the "user need" lives inside the team's Zone of Control.
-- The `main` vs `<username>/main` branch convention. This is a Git workflow for maintainers, not a feature the repository delivers; it does not require code to exist. ⚠ Would otherwise be a **Fake Story**.
-- Shipping empty `agents/`, `commands/`, `skills/` placeholder folders on `main`. This is a structural invariant of the clean-template branch, covered under the install story's expected state.
 - Verification expectations (`bash -n`, end-to-end lifecycle checks). These are quality gates for contributors, not user-facing capabilities.
 
 ---
@@ -216,16 +214,14 @@ Success means a user can clone, run setup, verify status, work normally in Claud
 - Back up conflicting `~/.claude/` entries before replacing them with symlinks.
 - Provide a read-only status command for link and backup state.
 - Provide teardown that removes repo-owned symlinks and leaves standalone local copies behind.
-- Version a default global `CLAUDE.md`, a `settings.json` whose sole responsibility is to wire the synced statusline, a `statusline.sh`, and placeholder folders for agents/commands/skills.
-- Maintain a clean-template branch (`main`) separate from personal-config branches (`<username>/main`).
-- Document clean-template usage and fork-based personalisation.
+- Version a default global `CLAUDE.md`, a `settings.json` whose sole responsibility is to wire the synced statusline, a `statusline.sh`, and the maintainer's agents/commands/skills folders.
+- Document fork-based personalisation.
 
 ##### Out of Scope
 
 - Managing credentials, `settings.local.json`, sessions, telemetry, project history, or other machine-local Claude Code state.
 - Synchronising `settings.json` keys beyond the statusline wiring. General Claude Code preferences (plugin toggles, effort level, TUI mode, permission-prompt behaviour) are user-local state that changes often and must not become part of the sync contract.
 - Restoring backups automatically.
-- Shipping personal agents, commands, or skills on the clean-template branch.
 - Managing remote branches, pull requests, or merge workflows for users.
 - Providing a general dotfiles framework beyond Claude Code configuration.
 
@@ -236,12 +232,6 @@ Success means a user can clone, run setup, verify status, work normally in Claud
 - `dotclaude/` is the authoritative synced configuration.
 - Repo plumbing that must never be synced: `setup.sh`, `status.sh`, `teardown.sh`, `README.md`, `LICENSE`, the repo-root `CLAUDE.md`, the repo-root `.claude/` project config, and the `docs/` directory (repo-internal studies/notes).
 - Adding a new synced capability means placing it under `dotclaude/` and rerunning `setup.sh` if it is a new top-level entry.
-
-##### Branches
-
-- **`main`** — the clean template. Contains the lifecycle scripts, default `CLAUDE.md`, statusline-only `settings.json`, `statusline.sh`, and empty `agents/`, `commands/`, and `skills/` placeholders (kept with `.gitkeep`). Intended starting point for anyone adopting the repo.
-- **`<username>/main`** — personal-config branches layered on top of `main`. Personal agents, commands, and skills live here. `povaz/main` is the author's personal configuration.
-- The `<username>/main` naming is a convention, not a requirement.
 
 ##### Lifecycle Scripts
 
@@ -271,10 +261,10 @@ Success means a user can clone, run setup, verify status, work normally in Claud
 
 ##### Synced Claude Code Configuration
 
-- `dotclaude/CLAUDE.md`: default global instructions placeholder.
+- `dotclaude/CLAUDE.md`: the default global Claude Code instructions file.
 - `dotclaude/settings.json`: its sole spec-level responsibility is to wire Claude Code to `~/.claude/statusline.sh`. Any additional keys present in the file at a given moment are user-local drift and are not part of the sync contract.
 - `dotclaude/statusline.sh`: reads Claude Code JSON from stdin and prints the model name, context-window usage (with a braille-dot bar), rate-limit usage when present, token counts (input/output), cache-read tokens, an estimated session cost, and the project directory plus current git branch.
-- `dotclaude/agents/`, `dotclaude/commands/`, `dotclaude/skills/`: template folders. Empty on the clean `main` branch (kept with `.gitkeep`); may contain personal content on `<username>/main` branches.
+- `dotclaude/agents/`, `dotclaude/commands/`, `dotclaude/skills/`: the maintainer's agents, commands, and skills.
 
 #### 5. Safety and Quality Requirements
 
@@ -283,7 +273,6 @@ Success means a user can clone, run setup, verify status, work normally in Claud
 - Teardown must use symlink targets as the source of truth (via `readlink`) instead of assuming a fixed layout.
 - Commands must handle filenames safely using null-separated `find` loops where applicable.
 - Re-running setup, status, or teardown must not create inconsistent state.
-- The clean-template branch (`main`) must stay free of personal configuration content; `agents/`, `commands/`, and `skills/` on `main` contain only `.gitkeep` files.
 - The sync contract for `dotclaude/settings.json` covers only the statusline wiring; other keys present in the file must not be relied upon as synced configuration.
 - `~/.claude/` entries outside the synced set (sessions, projects, statsig, todos, shell-snapshots, credentials, `settings.local.json`) must never be touched by lifecycle scripts.
 - README and project instructions must reflect the actual repository structure.

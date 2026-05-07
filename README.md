@@ -12,7 +12,6 @@ Portable Claude Code configuration — sync agents, commands, settings & skills 
 
 - [How It Works](#how-it-works)
 - [Repo Structure](#repo-structure)
-- [Branches: clean template vs. personal configs](#branches-clean-template-vs-personal-configs)
 - [Prerequisites](#prerequisites)
 - [Quick Start](#quick-start)
   - [Backups](#backups)
@@ -49,16 +48,6 @@ claude-code-dotfiles/
 ```
 
 `dotclaude/` **is** the sync manifest. `setup.sh` doesn't maintain an ignore list — it links every entry under `dotclaude/` and nothing else. Anything outside `dotclaude/` is repo plumbing (scripts, docs, the project-level `CLAUDE.md` / `.claude/` used when Claude Code runs inside this repo) and is never synced. Add a new file or directory under `dotclaude/`, re-run `setup.sh`, and it gets linked automatically.
-
-## Branches: clean template vs. personal configs
-
-This repo is published in two states:
-
-- **`main`** — the **clean template**. Setup scripts plus empty `dotclaude/` placeholders (`.gitkeep` files under `agents/`, `commands/`, `skills/`, a minimal `CLAUDE.md`, and default `settings.json` / `statusline.sh`). No personal agents, commands, or skills. This is the intended starting point for anyone adopting these dotfiles.
-- **`povaz/main`** — the **author's personal config**, layered on top of the template. Adds personal agents, commands, and skills.
-- If you want your own version [fork the repo](#setting-up-your-own-fork) instead and branch from main.
-
-The naming convention `<username>/main` is a hint, not a requirement — any branch name works.
 
 ## Prerequisites
 
@@ -118,10 +107,10 @@ Anything **outside** `dotclaude/` — including the scripts, the repo-root `CLAU
 
 ## Setting up your own fork
 
-`main` is intentionally clean so anyone can use it as a fresh starting point. The recommended way to layer your own agents, commands, and skills on top is to **fork the repo** — that way your personal config lives in your own GitHub account, decoupled from this upstream.
+To run your own personal Claude Code configuration on top of this repo, **fork it** on GitHub and edit `dotclaude/` in your fork.
 
 1. Fork [`Povaz/claude-code-dotfiles`](https://github.com/Povaz/claude-code-dotfiles) on GitHub into your own account.
-2. Clone your fork and register this repo as an `upstream` remote so you can pull template updates later:
+2. Clone your fork and register this repo as an `upstream` remote so you can pull infrastructure updates later:
 
 ```bash
 git clone https://github.com/<your-username>/claude-code-dotfiles.git
@@ -131,13 +120,11 @@ git remote add upstream https://github.com/Povaz/claude-code-dotfiles.git
 ./setup.sh
 ```
 
-Add your content under `dotclaude/` and commit it to your fork's `main` (or any branch you prefer — per-machine or per-context branches still work inside your fork).
+Edit `dotclaude/` to taste — replace or extend the maintainer's agents, commands, skills, and `CLAUDE.md` — and commit to your fork.
 
-When the template evolves upstream, pull the updates in:
+When the upstream lifecycle scripts or shared infrastructure evolve, pull the updates in:
 
 ```bash
 git fetch upstream
 git merge upstream/main
 ```
-
-Because your personal content lives in **your fork**, not the upstream repo, future `upstream/main → main` merges will never try to remove it.
